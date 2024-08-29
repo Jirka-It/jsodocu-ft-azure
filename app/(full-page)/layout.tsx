@@ -1,4 +1,3 @@
-import AppConfig from '../../layout/AppConfig';
 import React from 'react';
 
 interface FullPageLayoutProps {
@@ -9,7 +8,6 @@ export default function FullPageLayout({ children }: FullPageLayoutProps) {
     return (
         <React.Fragment>
             {children}
-            <AppConfig minimal />
         </React.Fragment>
     );
 }

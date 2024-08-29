@@ -20,7 +20,7 @@ const AppMenu = () => {
             ]
         },
         { separator: true },
-        {
+        /*{
             label: 'Apps',
             icon: 'pi pi-th-large',
             items: [
@@ -471,7 +471,7 @@ const AppMenu = () => {
                     to: '/documentation'
                 }
             ]
-        }
+        }*/
     ];
 
     return <AppSubMenu model={model} />;

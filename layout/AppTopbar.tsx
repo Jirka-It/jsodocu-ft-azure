@@ -8,17 +8,24 @@ import { LayoutContext } from './context/layoutcontext';
 import AppSidebar from './AppSidebar';
 import { StyleClass } from 'primereact/styleclass';
 import { Ripple } from 'primereact/ripple';
+import { useRouter } from 'next/navigation';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
     const btnRef1 = useRef(null);
     const btnRef2 = useRef(null);
     const menubuttonRef = useRef(null);
+    const router = useRouter();
 
     const { onMenuToggle, toggleSearch, showRightSidebar, layoutConfig } = useContext(LayoutContext);
 
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current
     }));
+
+    const handleLogout = () => {
+        localStorage.removeItem('test');
+        router.push('/auth/login');
+    }
 
     return (
         <div className="layout-topbar">
@@ -143,7 +150,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                                     </span>
                                     <Ripple />
                                 </a>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
+                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={handleLogout}>
                                     <i className="pi pi-power-off mr-3"></i>
                                     <span className="flex flex-column">
                                         <span className="font-semibold">Logout</span>

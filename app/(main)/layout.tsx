@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Layout from '../../layout/layout';
+import { ProtectedRoute } from '@/components/ProtectedRoute/ProtectedRoute';
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -24,5 +25,5 @@ export const metadata: Metadata = {
 };
 
 export default function MainLayout({ children }: MainLayoutProps) {
-    return <Layout>{children}</Layout>;
+    return <ProtectedRoute><Layout>{children}</Layout></ProtectedRoute>;
 }

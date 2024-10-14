@@ -17,17 +17,18 @@ const handler = NextAuth({
             },
 
             async authorize(credentials, req) {
-                try {
-                    const res = await axios.post(`${env.API_URL}/auth/login`, { ...credentials });
-                    const user = res.data;
-                    if (user) {
-                        return user;
-                    } else {
-                        return null;
-                    }
-                } catch (e) {
-                    console.log(e);
-                    return e;
+                const res = await axios.post(`${env.API_URL}/auth/login`, { ...credentials });
+
+                if (res.status === 401) {
+                    return { status: res?.status };
+                }
+
+                const user = res.data;
+
+                if (user) {
+                    return user;
+                } else {
+                    return null;
                 }
             }
         })
@@ -47,8 +48,10 @@ const handler = NextAuth({
             session.user = token as any;
             return session;
         },
-        async redirect({ url, baseUrl }) {
-            return '/';
+        async redirect({ url }) {
+            if (url) {
+                return url;
+            }
         }
     },
 

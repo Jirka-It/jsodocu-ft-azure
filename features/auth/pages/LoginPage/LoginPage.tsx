@@ -7,16 +7,28 @@ import { Page } from '@/types/layout';
 import { signIn } from 'next-auth/react';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const LoginPage: Page = () => {
+    const router = useRouter();
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
 
-    const handleLogin = () => {
-        signIn('credentials', {
+    const handleLogin = async () => {
+        const res = await signIn('credentials', {
             username: name,
-            password: email
+            password: email,
+            redirect: false
         });
+
+        console.log(res);
+
+        if (res.status === 200) {
+            router.push('/');
+        } else {
+            router.push('/auth/login');
+        }
     };
 
     return (

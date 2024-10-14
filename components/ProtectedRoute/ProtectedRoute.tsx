@@ -1,30 +1,27 @@
-"use client"
+'use client';
 
-import { redirect, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 // This is for testing only
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-
     const [isMounted, setIsMounted] = useState(false);
+    const { data: session, status } = useSession();
 
-    const path = usePathname();
+    console.log('status', status);
 
     useEffect(() => {
-
-        const token = !window.localStorage.getItem('test');
-
-        if (token) {
-            let redirectTo = `?redirectTo=${encodeURIComponent(path)}`;
-            if(path === "/") redirectTo = "";
-            redirect(`/auth/login${redirectTo}`);
+        if (status === 'authenticated') {
+            setIsMounted(true);
         }
 
-        setIsMounted(true);
+        if (status === 'unauthenticated') {
+            redirect('/auth/login');
+        }
+    }, [status]);
 
-    }, []);
-
-    if(!isMounted) return null;
+    if (!isMounted) return null;
 
     return children;
 };

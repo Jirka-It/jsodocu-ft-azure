@@ -170,7 +170,6 @@ const Dashboard = () => {
     return (
         <div className="layout-dashboard">
             <div className="grid">
-
                 <div className="col-12 xl:col-6">
                     <div className="card">
                         <div className="flex w-full justify-content-between align-items-center">

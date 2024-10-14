@@ -1,6 +1,8 @@
 'use client';
 import { LayoutProvider } from '../layout/context/layoutcontext';
 import { PrimeReactProvider } from 'primereact/api';
+import Providers from '@components/Providers';
+
 import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
@@ -14,9 +16,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link id="theme-link" href={`/theme/theme-light/blue/theme.css`} rel="stylesheet"></link>
             </head>
             <body>
-                <PrimeReactProvider>
-                    <LayoutProvider>{children}</LayoutProvider>
-                </PrimeReactProvider>
+                <Providers>
+                    <PrimeReactProvider>
+                        <LayoutProvider>{children}</LayoutProvider>
+                    </PrimeReactProvider>
+                </Providers>
             </body>
         </html>
     );

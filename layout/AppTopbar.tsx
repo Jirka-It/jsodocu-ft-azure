@@ -9,6 +9,7 @@ import AppSidebar from './AppSidebar';
 import { StyleClass } from 'primereact/styleclass';
 import { Ripple } from 'primereact/ripple';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
     const btnRef1 = useRef(null);
@@ -25,7 +26,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
     const handleLogout = () => {
         localStorage.removeItem('test');
         router.push('/auth/login');
-    }
+    };
 
     return (
         <div className="layout-topbar">
@@ -152,7 +153,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                                 </a>
                                 <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={handleLogout}>
                                     <i className="pi pi-power-off mr-3"></i>
-                                    <span className="flex flex-column">
+                                    <span className="flex flex-column" onClick={() => signOut({ callbackUrl: '/auth/login', redirect: true })}>
                                         <span className="font-semibold">Logout</span>
                                     </span>
                                     <Ripple />

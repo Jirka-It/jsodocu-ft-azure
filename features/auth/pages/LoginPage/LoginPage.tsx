@@ -1,24 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Page } from '@/types/layout';
-import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+
 import Link from 'next/link';
 
 const LoginPage: Page = () => {
-
-    const router = useRouter()
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
 
     const handleLogin = () => {
-        if (typeof window !== "undefined") {
-            window.localStorage.setItem('test', 'test');
-        }
-
-        router.push("/");
-        
-    }
+        signIn('credentials', {
+            username: name,
+            password: email
+        });
+    };
 
     return (
         <>
@@ -30,11 +29,15 @@ const LoginPage: Page = () => {
                         <div className="mb-3">
                             <h2>Login to your account</h2>
                             <p>
-                                Forgot password? <Link href="/auth/forgotpassword"  className="text-primary hover:underline cursor-pointer font-medium">Click here</Link> to reset.
+                                Forgot password?{' '}
+                                <Link href="/auth/forgotpassword" className="text-primary hover:underline cursor-pointer font-medium">
+                                    Click here
+                                </Link>{' '}
+                                to reset.
                             </p>
                         </div>
-                        <InputText id="email" placeholder="Email" className="w-20rem" />
-                        <InputText id="password" type="password" placeholder="Password" className="w-20rem" />
+                        <InputText onChange={(e) => setName(e.target.value)} id="email" placeholder="Email" className="w-20rem" />
+                        <InputText onChange={(e) => setEmail(e.target.value)} id="password" type="password" placeholder="Password" className="w-20rem" />
                         <Button onClick={handleLogin} label="CONTINUE" className="w-20rem"></Button>
                     </div>
 

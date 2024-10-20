@@ -8,6 +8,7 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Checkbox } from 'primereact/checkbox';
+import { Password } from 'primereact/password';
 
 const LoginPage: Page = () => {
     const router = useRouter();
@@ -40,10 +41,18 @@ const LoginPage: Page = () => {
                         <div>
                             <h2>¡Bienvenido!</h2>
                         </div>
-                        <InputText onChange={(e) => setName(e.target.value)} id="email" placeholder="Correo" className="w-20rem" />
-                        <InputText onChange={(e) => setEmail(e.target.value)} id="password" type="password" placeholder="Contraseña" className="w-20rem" />
 
-                        <div className="flex align-items-center justify-content-between w-20rem">
+                        <div className="flex flex-column gap-4">
+                            <span className="p-input-icon-left w-full">
+                                <i className="pi pi-envelope"></i>
+                                <InputText onChange={(e) => setName(e.target.value)} id="email" type="text" className="w-full md:w-25rem" placeholder="Correo" />
+                            </span>
+                            <span className="p-input-icon-left w-full">
+                                <i className="pi pi-lock z-2"></i>
+                                <Password onChange={(e) => setEmail(e.target.value)} id="password" type="password" className="w-25rem" inputClassName="w-full md:w-30rem" inputStyle={{ paddingLeft: '2.5rem' }} placeholder="Contraseña" toggleMask />
+                            </span>
+                        </div>
+                        <div className="flex align-items-center justify-content-between w-25rem">
                             <div>
                                 <Checkbox inputId="ingredient4" onChange={(e) => setSaveMe(!saveMe)} name="pizza" value="true" checked={saveMe} />
                                 <label htmlFor="ingredient4" className="ml-2">
@@ -57,7 +66,7 @@ const LoginPage: Page = () => {
                             </p>
                         </div>
 
-                        <Button onClick={handleLogin} label="Ingresar" className="w-20rem"></Button>
+                        <Button onClick={handleLogin} label="Ingresar" className="w-25rem"></Button>
 
                         <div className="flex align-items-center justify-content-center w-20rem">
                             <p className="mb-0">¿Aún no tienes cuenta?</p>

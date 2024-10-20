@@ -15,17 +15,17 @@ const ForgotPassword: Page = () => {
                 <div className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-center">
                     <img src={`/layout/images/logo-dark.svg`} className="h-4rem mt-4 mb-4" alt="diamond-layout" />
                     <div className="flex flex-column align-items-center gap-4">
-                        <div className="mb-3 w-full md:w-25rem">
+                        <div className="mb-3 w-full sm:w-25rem">
                             <h2>Recuperar contraseña</h2>
                             <p>Ingresa tu email, te enviaremos un enlace para restablecer tu contraseña.</p>
                         </div>
 
-                        <span className="p-input-icon-left w-full md:w-25rem">
+                        <span className="p-input-icon-left w-full sm:w-25rem">
                             <i className="pi pi-envelope"></i>
-                            <InputText id="email" type="text" className="w-full md:w-25rem" placeholder="Correo" />
+                            <InputText id="email" type="text" className="w-full sm:w-25rem" placeholder="Correo" />
                         </span>
 
-                        <div className="flex gap-3 w-full md:w-25rem">
+                        <div className="flex gap-3 w-full sm:w-25rem">
                             <Button outlined className="p-ripple flex-auto" onClick={() => router.push('/')} label="Cancelar"></Button>
                             <Button className="p-ripple flex-auto" onClick={() => router.push('/')} label="Enviar"></Button>
                         </div>

@@ -19,9 +19,9 @@ import { VerifyErrorsInForms } from '@/lib/VerifyErrorsInForms';
 const LoginPage: Page = () => {
     const router = useRouter();
     const toast = useRef(null);
-    const [email, setEmail] = useState<string>(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+    const [email, setEmail] = useState<string>(window ? (localStorage.getItem('email') ? localStorage.getItem('email') : '') : '');
     const [password, setPassword] = useState<string>('');
-    const [saveMe, setSaveMe] = useState<boolean>(localStorage.getItem('saveMe') ? true : false);
+    const [saveMe, setSaveMe] = useState<boolean>(window ? (localStorage.getItem('saveMe') ? true : false) : false);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {

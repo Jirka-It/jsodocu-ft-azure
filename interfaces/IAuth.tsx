@@ -10,9 +10,17 @@ export interface IRegister {
     confirmPassword?: string;
 }
 
-export interface IRegisterResponse {
+export interface IResponse {
     code: number;
     message: string;
+}
+
+export interface IRegisterResponse extends IResponse {}
+
+export interface IRecoverPassword extends IResponse {}
+
+export interface IRecover {
+    email: string;
 }
 
 export interface IZodError {

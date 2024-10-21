@@ -46,11 +46,13 @@ const RegisterPage: Page = () => {
             toast
         );
 
+        // Show errors in inputs
+        setValidations(validationFlow);
         if (validationFlow && validationFlow.length > 0) {
-            setValidations(validationFlow);
             return;
         }
 
+        // Call the API
         const res = await registerUser({
             username,
             email,

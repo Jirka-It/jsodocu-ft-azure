@@ -1,16 +1,59 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { Page } from '@/types/layout';
+import { RecoverValidation } from '@validations/RecoverPasswordValidation';
+import { ValidationFlow } from '@lib/ValidationFlow';
+import { IZodError } from '@interfaces/IAuth';
+import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
+import { Toast } from 'primereact/toast';
+import { recoverPassword } from '@api/auth/recoverPassword';
+import { showError, showSuccess } from '@lib/ToastMessages';
 
 const ForgotPassword: Page = () => {
+    const [email, setEmail] = useState<string>('');
+    const [validations, setValidations] = useState<Array<IZodError>>([]);
+
     const router = useRouter();
+    const toast = useRef(null);
+
+    const handleRecover = async () => {
+        //Validate data
+
+        const validationFlow = ValidationFlow(
+            RecoverValidation({
+                email
+            }),
+            toast
+        );
+
+        // Show errors in inputs
+        setValidations(validationFlow);
+        if (validationFlow && validationFlow.length > 0) {
+            return;
+        }
+
+        // Call the API
+        const res = await recoverPassword({
+            email
+        });
+
+        if (res.code === 200 || res.code === 201) {
+            showSuccess(toast, '', 'Correo envíado.');
+            setTimeout(() => {
+                router.push('/auth/login');
+            }, 1500);
+        } else {
+            showError(toast, '', res.message);
+        }
+    };
 
     return (
         <>
+            <Toast ref={toast} />
             <div className="flex h-screen">
                 <div className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-center">
                     <img src={`/layout/images/logo-dark.svg`} className="h-4rem mt-4 mb-4" alt="diamond-layout" />
@@ -22,12 +65,12 @@ const ForgotPassword: Page = () => {
 
                         <span className="p-input-icon-left w-full sm:w-25rem">
                             <i className="pi pi-envelope"></i>
-                            <InputText id="email" type="text" className="w-full sm:w-25rem" placeholder="Correo" />
+                            <InputText id="email" value={email} onChange={(e) => setEmail(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
                         </span>
 
                         <div className="flex gap-3 w-full sm:w-25rem">
                             <Button outlined className="p-ripple flex-auto" onClick={() => router.push('/')} label="Cancelar"></Button>
-                            <Button className="p-ripple flex-auto" onClick={() => router.push('/')} label="Enviar"></Button>
+                            <Button className="p-ripple flex-auto" onClick={() => handleRecover()} label="Enviar"></Button>
                         </div>
                     </div>
                 </div>

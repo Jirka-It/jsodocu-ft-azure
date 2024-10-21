@@ -5,6 +5,7 @@ import { Button } from 'primereact/button';
 import { Chart } from 'primereact/chart';
 import { Menu } from 'primereact/menu';
 import HomeInformationCard from '@components/Cards/HomeInformationCard';
+import AvatarInformation from '@components/Cards/AvatarInformation';
 
 const ordersChart = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
@@ -68,6 +69,9 @@ const Dashboard = () => {
 
     return (
         <div className="layout-dashboard">
+            <div className="grid">
+                <AvatarInformation />
+            </div>
             <div className="grid mb-4">
                 <div className="col-12 md:col-6 lg:col-3">
                     <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
@@ -82,6 +86,7 @@ const Dashboard = () => {
                     <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                 </div>
             </div>
+
             <div className="grid">
                 <div className="col-12">
                     <div className="card">

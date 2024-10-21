@@ -22,7 +22,10 @@
             "@/*": ["./*"],
             "@validations/*": ["./validations/*"],
             "@config/*": ["./config/*"],
+            "@lib/*": ["./lib/*"],
+            "@api/*": ["./app/api/*"],
             "@components/*": ["./components/*"],
+            "@types/*": ["./types/*"],
             "@enums/*": ["./enums/*"],
             "@interfaces/*": ["./interfaces/*"]
         }

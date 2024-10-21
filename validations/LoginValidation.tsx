@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ModelValidation } from './ModelValidation';
-import { ILogin, IZodError } from '@/interfaces/ILogin';
+import { ILogin, IZodError } from '@/interfaces/IAuth';
 
 const LoginSchema = z.object({
     email: z.string().email().min(1),

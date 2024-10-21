@@ -9,12 +9,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Checkbox } from 'primereact/checkbox';
 import { Password } from 'primereact/password';
-import { LoginValidation } from '@/validations/LoginValidation';
-import { LoginMessages } from '@/enums/LoginEnum';
+import { LoginValidation } from '@validations/LoginValidation';
 import { Toast } from 'primereact/toast';
-import { showError } from '@/lib/ToastMessages';
-import { IZodError } from '@/interfaces/ILogin';
+import { showError } from '@lib/ToastMessages';
+import { IZodError } from '@interfaces/IAuth';
 import { VerifyErrorsInForms } from '@/lib/VerifyErrorsInForms';
+import { ValidationFlow } from '@lib/ValidationFlow';
 
 const LoginPage: Page = () => {
     const router = useRouter();
@@ -36,22 +36,16 @@ const LoginPage: Page = () => {
 
     const handleLogin = async () => {
         //Validate data
-        const validation = LoginValidation({
-            email,
-            password
-        });
-        if (typeof validation === 'string') {
-            if (validation !== LoginMessages.VALIDATION_PASSED) {
-                // Add toast message
-                showError(toast, '', 'Contacte con soporte');
-                return;
-            }
-        }
-        if (Array.isArray(validation)) {
-            // Add toast message
-            showError(toast, '', 'Verifique la información ingresada');
-            // Change color of inputs
-            setValidations(validation);
+        const validationFlow = ValidationFlow(
+            LoginValidation({
+                email,
+                password
+            }),
+            toast
+        );
+
+        if (validationFlow && validationFlow.length > 0) {
+            setValidations(validationFlow);
             return;
         }
 
@@ -64,9 +58,9 @@ const LoginPage: Page = () => {
         if (res.status === 200) {
             router.push('/');
         } else if (res.status === 401) {
-            showError(toast, '', 'Credenciales incorrectas');
+            showError(toast, '', 'Credenciales incorrectas.');
         } else {
-            showError(toast, '', 'Contacte con soporte');
+            showError(toast, '', 'Contacte con soporte.');
         }
     };
 

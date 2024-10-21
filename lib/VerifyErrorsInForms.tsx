@@ -1,4 +1,4 @@
-import { IZodError } from '@/interfaces/ILogin';
+import { IZodError } from '@interfaces/IAuth';
 
 export const VerifyErrorsInForms = (errors: Array<IZodError>, fieldName: string): boolean => {
     try {

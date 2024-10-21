@@ -17,7 +17,7 @@ const handler = NextAuth({
             },
 
             async authorize(credentials, req) {
-                const res = await axios.post(`${env.API_URL}/auth/login`, { ...credentials });
+                const res = await axios.post(`${env.NEXT_PUBLIC_API_URL}/auth/login`, { ...credentials });
 
                 if (res.status === 401) {
                     return { status: res?.status };

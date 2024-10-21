@@ -19,12 +19,17 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 const LoginPage: Page = () => {
     const router = useRouter();
     const toast = useRef(null);
-    const [email, setEmail] = useState<string>(window ? (localStorage.getItem('email') ? localStorage.getItem('email') : '') : '');
+    const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [saveMe, setSaveMe] = useState<boolean>(window ? (localStorage.getItem('saveMe') ? true : false) : false);
+    const [saveMe, setSaveMe] = useState<boolean>(false);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
+        setEmail(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+        setSaveMe(localStorage.getItem('saveMe') ? true : false);
+    }, []);
+
+    const handleLocalStorage = () => {
         if (saveMe) {
             localStorage.setItem('email', email);
             localStorage.setItem('saveMe', 'true');
@@ -32,7 +37,7 @@ const LoginPage: Page = () => {
             localStorage.removeItem('email');
             localStorage.removeItem('saveMe');
         }
-    }, [email, saveMe]);
+    };
 
     const handleLogin = async () => {
         //Validate data
@@ -81,13 +86,26 @@ const LoginPage: Page = () => {
                         <div className="flex flex-column gap-4">
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-envelope"></i>
-                                <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
+                                <InputText
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        handleLocalStorage();
+                                    }}
+                                    id="email"
+                                    type="text"
+                                    className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `}
+                                    placeholder="Correo"
+                                />
                             </span>
 
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-lock z-2"></i>
                                 <Password
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        handleLocalStorage();
+                                    }}
                                     value={password}
                                     id="password"
                                     type="password"

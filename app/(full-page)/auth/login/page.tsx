@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Page } from '@/types/layout';
@@ -9,30 +9,70 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Checkbox } from 'primereact/checkbox';
 import { Password } from 'primereact/password';
+import { LoginValidation } from '@/validations/LoginValidation';
+import { LoginMessages } from '@/enums/LoginEnum';
+import { Toast } from 'primereact/toast';
+import { showError } from '@/lib/ToastMessages';
+import { IZodError } from '@/interfaces/ILogin';
+import { VerifyErrorsInForms } from '@/lib/VerifyErrorsInForms';
 
 const LoginPage: Page = () => {
     const router = useRouter();
+    const toast = useRef(null);
+    const [email, setEmail] = useState<string>(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+    const [password, setPassword] = useState<string>('');
+    const [saveMe, setSaveMe] = useState<boolean>(localStorage.getItem('saveMe') ? true : false);
+    const [validations, setValidations] = useState<Array<IZodError>>([]);
 
-    const [name, setName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [saveMe, setSaveMe] = useState<boolean>(false);
+    useEffect(() => {
+        if (saveMe) {
+            localStorage.setItem('email', email);
+            localStorage.setItem('saveMe', 'true');
+        } else {
+            localStorage.removeItem('email');
+            localStorage.removeItem('saveMe');
+        }
+    }, [email, saveMe]);
 
     const handleLogin = async () => {
+        //Validate data
+        const validation = LoginValidation({
+            email,
+            password
+        });
+        if (typeof validation === 'string') {
+            if (validation !== LoginMessages.VALIDATION_PASSED) {
+                // Add toast message
+                showError(toast, '', 'Contacte con soporte');
+                return;
+            }
+        }
+        if (Array.isArray(validation)) {
+            // Add toast message
+            showError(toast, '', 'Verifique la información ingresada');
+            // Change color of inputs
+            setValidations(validation);
+            return;
+        }
+
         const res = await signIn('credentials', {
-            username: name,
-            password: email,
+            email,
+            password,
             redirect: false
         });
 
         if (res.status === 200) {
             router.push('/');
+        } else if (res.status === 401) {
+            showError(toast, '', 'Credenciales incorrectas');
         } else {
-            router.push('/auth/login');
+            showError(toast, '', 'Contacte con soporte');
         }
     };
 
     return (
         <>
+            <Toast ref={toast} />
             <div className="flex h-screen">
                 <div className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-center">
                     <img src={`/layout/images/logo-dark.svg`} className="h-4rem mt-4 mb-4" alt="diamond-layout" />
@@ -45,16 +85,28 @@ const LoginPage: Page = () => {
                         <div className="flex flex-column gap-4">
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-envelope"></i>
-                                <InputText onChange={(e) => setName(e.target.value)} id="email" type="text" className="w-full md:w-25rem" placeholder="Correo" />
+                                <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
                             </span>
+
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-lock z-2"></i>
-                                <Password onChange={(e) => setEmail(e.target.value)} id="password" type="password" className="w-25rem" inputClassName="w-full md:w-30rem" inputStyle={{ paddingLeft: '2.5rem' }} placeholder="Contraseña" toggleMask />
+                                <Password
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={password}
+                                    id="password"
+                                    type="password"
+                                    className={`w-25rem ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
+                                    inputClassName="w-full md:w-30rem"
+                                    inputStyle={{ paddingLeft: '2.5rem' }}
+                                    placeholder="Contraseña"
+                                    feedback={false}
+                                    toggleMask
+                                />
                             </span>
                         </div>
                         <div className="flex align-items-center justify-content-between w-25rem">
                             <div>
-                                <Checkbox inputId="ingredient4" onChange={(e) => setSaveMe(!saveMe)} name="pizza" value="true" checked={saveMe} />
+                                <Checkbox inputId="ingredient4" onChange={() => setSaveMe(!saveMe)} name="pizza" value="true" checked={saveMe} />
                                 <label htmlFor="ingredient4" className="ml-2">
                                     Recuerdame
                                 </label>

@@ -22,7 +22,9 @@
             "@/*": ["./*"],
             "@validations/*": ["./validations/*"],
             "@config/*": ["./config/*"],
-            "@components/*": ["./components/*"]
+            "@components/*": ["./components/*"],
+            "@enums/*": ["./enums/*"],
+            "@interfaces/*": ["./interfaces/*"]
         }
     },
     "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

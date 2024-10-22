@@ -114,7 +114,7 @@ export default function UserModal({ state, setState }: IModal) {
                 </div>
 
                 <div className="w-full">
-                    <label htmlFor="email">Confirma contraseña</label>
+                    <label htmlFor="email">Confirmar contraseña</label>
 
                     <Password
                         value={confirmPassword}

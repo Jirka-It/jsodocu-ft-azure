@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { IModal } from '@interfaces/IModal';
 
-interface ITermsConditionsModal {
-    state: boolean;
-    setState: Function;
-}
-
-export default function TermsConditionsModal({ state, setState }: ITermsConditionsModal) {
+export default function TermsConditionsModal({ state, setState }: IModal) {
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
             <i className="pi pi-cog"></i>

@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { State } from '@enums/ConfigurationEnum';
-import { Tag } from 'primereact/tag';
 import { Button } from 'primereact/button';
 import BasicActions from '@components/TableExtensions/BasicActions';
 import BasicStates from '@components/TableExtensions/BasicStates';
+import PermissionModal from '@components/Modals/PermissionModal';
+import DeleteModal from '@components/Modals/DeleteModal';
 
 const Permissions = () => {
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+
     const [documents, setDocuments] = useState([
         {
             id: 55,
@@ -42,18 +46,20 @@ const Permissions = () => {
     ]);
 
     const handleEdit = (id: string) => {
-        console.log('edit', id);
+        setOpenModal(true);
     };
 
     const handleDelete = (id: string) => {
-        console.log('delete', id);
+        setOpenModalClose(true);
     };
 
     return (
         <div className="layout-permissions">
-            <Button icon="pi pi-plus" className="mr-2 mb-3" label="Permiso" />
+            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Permiso" />
+            <PermissionModal state={openModal} setState={(e) => setOpenModal(e)} />
+            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} />
             <div className="card">
-                <DataTable value={documents} tableStyle={{ minWidth: '50rem' }}>
+                <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="description" header="Descripción"></Column>

@@ -17,6 +17,7 @@ const Permissions = () => {
     const [documents, setDocuments] = useState([
         {
             id: 55,
+            name: 'Verificación de cuentas',
             code: 'CONF-000',
             description: 'Lorem ipsum.',
             state: State.ACTIVE,
@@ -24,6 +25,7 @@ const Permissions = () => {
         },
         {
             id: 56,
+            name: 'Verificación de usuarios',
             code: 'CONF-001',
             description: 'Lorem ipsum.',
             state: State.ACTIVE,
@@ -31,6 +33,7 @@ const Permissions = () => {
         },
         {
             id: 57,
+            name: 'Verificación de documentos',
             code: 'CONF-002',
             description: 'Lorem ipsum.',
             state: State.INACTIVE,
@@ -38,6 +41,7 @@ const Permissions = () => {
         },
         {
             id: 58,
+            name: 'Edición de documentos',
             code: 'CONF-003',
             description: 'Lorem ipsum.',
             state: State.INACTIVE,
@@ -61,6 +65,7 @@ const Permissions = () => {
             <div className="card">
                 <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
+                    <Column field="name" header="Nombre"></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>

@@ -12,7 +12,7 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 import { RolValidation } from '@validations/RolValidation';
 import { MultiSelect } from 'primereact/multiselect';
 
-const categories = [
+const permissionsArray = [
     { name: 'Verificación de documentos', code: 'DOC-000' },
     { name: 'Verificación de cuentas', code: 'ACC-000' },
     { name: 'Verificación de usuarios', code: 'USER-000' }
@@ -23,7 +23,7 @@ export default function RolModal({ state, setState }: IModal) {
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const [permission, setPermission] = useState<any>('');
+    const [permissions, setPermissions] = useState<Array<any>>([]);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     const headerElement = (
@@ -46,7 +46,7 @@ export default function RolModal({ state, setState }: IModal) {
                 code,
                 name,
                 description,
-                permission: permission.code
+                permissions
             }),
             toast
         );
@@ -62,7 +62,7 @@ export default function RolModal({ state, setState }: IModal) {
         setCode('');
         setName('');
         setDescription('');
-        setPermission('');
+        setPermissions([]);
         setValidations([]);
         setState(!state);
     };
@@ -89,7 +89,7 @@ export default function RolModal({ state, setState }: IModal) {
                 </div>
 
                 <div>
-                    <label htmlFor="code">Nombre</label>
+                    <label htmlFor="name">Nombre</label>
 
                     <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                 </div>
@@ -111,13 +111,13 @@ export default function RolModal({ state, setState }: IModal) {
                     <label htmlFor="category">Permisos</label>
 
                     <MultiSelect
-                        value={permission}
-                        onChange={(e) => setPermission(e.value)}
-                        options={categories}
+                        value={permissions}
+                        onChange={(e) => setPermissions(e.value)}
+                        options={permissionsArray}
                         optionLabel="name"
                         id="permission"
                         placeholder="Permisos"
-                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'permission') ? 'p-invalid' : ''} `}
+                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'permissions') ? 'p-invalid' : ''} `}
                     />
                 </div>
             </div>

@@ -17,6 +17,7 @@ const Roles = () => {
     const [documents, setDocuments] = useState([
         {
             id: 55,
+            name: 'Abogado',
             code: 'CONF-000',
             description: 'Lorem ipsum.',
             state: State.ACTIVE,
@@ -24,6 +25,7 @@ const Roles = () => {
         },
         {
             id: 56,
+            name: 'Comercial',
             code: 'CONF-001',
             description: 'Lorem ipsum.',
             state: State.ACTIVE,
@@ -31,6 +33,7 @@ const Roles = () => {
         },
         {
             id: 57,
+            name: 'Operativo',
             code: 'CONF-002',
             description: 'Lorem ipsum.',
             state: State.INACTIVE,
@@ -38,6 +41,7 @@ const Roles = () => {
         },
         {
             id: 58,
+            name: 'Comercial',
             code: 'CONF-003',
             description: 'Lorem ipsum.',
             state: State.INACTIVE,
@@ -61,6 +65,7 @@ const Roles = () => {
             <div className="card">
                 <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
+                    <Column field="name" header="Nombre"></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>

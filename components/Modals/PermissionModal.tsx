@@ -87,7 +87,7 @@ export default function PermissionModal({ state, setState }: IModal) {
                 </div>
 
                 <div>
-                    <label htmlFor="code">Nombre</label>
+                    <label htmlFor="name">Nombre</label>
 
                     <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                 </div>

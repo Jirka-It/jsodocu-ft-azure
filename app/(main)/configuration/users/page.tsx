@@ -19,7 +19,7 @@ const Users = () => {
             id: 55,
             user: 'bomj321',
             name: 'Jonathan Peña.',
-            state: State.ACTIVE,
+            state: State.INACTIVE,
             actions: ''
         },
         {
@@ -33,7 +33,7 @@ const Users = () => {
             id: 57,
             user: 'bomj321',
             name: 'Jonathan Peña.',
-            state: State.ACTIVE,
+            state: State.INACTIVE,
             actions: ''
         },
         {

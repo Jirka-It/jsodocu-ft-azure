@@ -19,6 +19,6 @@ const RegisterSchema = z
         }
     });
 
-export const RegisterValidation = (login: IRegister): Array<IZodError> | string => {
-    return ModelValidation(login, RegisterSchema);
+export const RegisterValidation = (data: IRegister): Array<IZodError> | string => {
+    return ModelValidation(data, RegisterSchema);
 };

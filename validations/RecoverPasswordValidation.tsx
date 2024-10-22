@@ -6,6 +6,6 @@ const RegisterSchema = z.object({
     email: z.string().email().min(1)
 });
 
-export const RecoverValidation = (recover: IRecover): Array<IZodError> | string => {
-    return ModelValidation(recover, RegisterSchema);
+export const RecoverValidation = (data: IRecover): Array<IZodError> | string => {
+    return ModelValidation(data, RegisterSchema);
 };

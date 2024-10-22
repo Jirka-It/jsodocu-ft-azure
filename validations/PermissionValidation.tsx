@@ -10,6 +10,6 @@ const PermissionSchema = z.object({
     category: z.string().min(1)
 });
 
-export const PermissionValidation = (login: IPermission): Array<IZodError> | string => {
-    return ModelValidation(login, PermissionSchema);
+export const PermissionValidation = (data: IPermission): Array<IZodError> | string => {
+    return ModelValidation(data, PermissionSchema);
 };

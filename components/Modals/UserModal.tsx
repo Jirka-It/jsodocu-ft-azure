@@ -12,11 +12,12 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Password } from 'primereact/password';
 
 import styles from './UserModal.module.css';
+import { PickList } from 'primereact/picklist';
 
-const categories = [
-    { name: 'Verificación de documentos', code: 'DOC-000' },
-    { name: 'Verificación de cuentas', code: 'ACC-000' },
-    { name: 'Verificación de usuarios', code: 'USER-000' }
+const rolesArray = [
+    { name: 'Abogado', code: 'DOC-000' },
+    { name: 'Comercial', code: 'ACC-000' },
+    { name: 'Operativo', code: 'USER-000' }
 ];
 
 export default function UserModal({ state, setState }: IModal) {
@@ -25,8 +26,9 @@ export default function UserModal({ state, setState }: IModal) {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [roles, setRoles] = useState<Array<any>>([]);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+    const [source, setSource] = useState(rolesArray);
+    const [target, setTarget] = useState([]);
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -41,6 +43,11 @@ export default function UserModal({ state, setState }: IModal) {
         </div>
     );
 
+    const onChange = (event) => {
+        setSource(event.source);
+        setTarget(event.target);
+    };
+
     const handleSubmit = async () => {
         //Validate data
         const validationFlow = ValidationFlow(
@@ -49,7 +56,7 @@ export default function UserModal({ state, setState }: IModal) {
                 email,
                 password,
                 confirmPassword,
-                roles: roles
+                roles: target
             }),
             toast
         );
@@ -66,7 +73,8 @@ export default function UserModal({ state, setState }: IModal) {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
-        setRoles([]);
+        setSource([]);
+        setTarget([]);
         setValidations([]);
         setState(!state);
     };
@@ -78,7 +86,7 @@ export default function UserModal({ state, setState }: IModal) {
             header={headerElement}
             footer={footerContent}
             closable={false}
-            style={{ width: '30rem' }}
+            style={{ width: '90rem' }}
             onHide={() => {
                 if (!state) return;
                 setState(false);
@@ -87,51 +95,72 @@ export default function UserModal({ state, setState }: IModal) {
             <Toast ref={toast} />
 
             <div className="flex flex-column gap-4">
-                <div>
-                    <label htmlFor="name">Nombre</label>
+                <div className="grid">
+                    <div className="col-12 sm:col-6">
+                        <label htmlFor="name">Nombre</label>
+                        <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                    </div>
+                    <div className="col-12 sm:col-6">
+                        <label htmlFor="email">Correo</label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                        <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
+                    </div>
                 </div>
 
-                <div>
-                    <label htmlFor="email">Correo</label>
+                <div className="grid">
+                    <div className="col-12 sm:col-6">
+                        {' '}
+                        <label htmlFor="email">Contraseña</label>
+                        <Password
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            id="password"
+                            type="password"
+                            className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
+                            placeholder="Contraseña"
+                            toggleMask
+                        />
+                    </div>
 
-                    <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
-                </div>
+                    <div className="col-12 sm:col-6">
+                        <label htmlFor="email">Confirmar contraseña</label>
 
-                <div className="w-full">
-                    <label htmlFor="email">Contraseña</label>
-
-                    <Password
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        id="password"
-                        type="password"
-                        className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
-                        placeholder="Contraseña"
-                        toggleMask
-                    />
-                </div>
-
-                <div className="w-full">
-                    <label htmlFor="email">Confirmar contraseña</label>
-
-                    <Password
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        id="confirmPassword"
-                        type="password"
-                        className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'confirmPassword') ? 'p-invalid' : ''} `}
-                        placeholder="Contraseña"
-                        feedback={false}
-                        toggleMask
-                    />
+                        <Password
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            id="confirmPassword"
+                            type="password"
+                            className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'confirmPassword') ? 'p-invalid' : ''} `}
+                            placeholder="Contraseña"
+                            feedback={false}
+                            toggleMask
+                        />
+                    </div>
                 </div>
 
                 <div>
                     <label htmlFor="category">Roles</label>
-
-                    <MultiSelect value={roles} onChange={(e) => setRoles(e.value)} options={categories} optionLabel="name" id="rol" placeholder="Roles" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'roles') ? 'p-invalid' : ''} `} />
+                    <PickList
+                        className="mt-2"
+                        itemTemplate={(item) => <p>{item.name}</p>}
+                        showSourceControls={false}
+                        showTargetControls={false}
+                        showSourceFilter={false}
+                        showTargetFilter={false}
+                        dataKey="code"
+                        source={source}
+                        target={target}
+                        onChange={onChange}
+                        filter
+                        filterBy="name"
+                        breakpoint="960px"
+                        sourceHeader="Disponibles"
+                        targetHeader="Seleccionados"
+                        sourceStyle={{ height: '24rem' }}
+                        targetStyle={{ height: '24rem' }}
+                    />
+                    {/*                     <MultiSelect value={roles} onChange={(e) => setRoles(e.value)} options={categories} optionLabel="name" id="rol" placeholder="Roles" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'roles') ? 'p-invalid' : ''} `} />
+                     */}
                 </div>
             </div>
         </Dialog>

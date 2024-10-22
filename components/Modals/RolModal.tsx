@@ -11,6 +11,7 @@ import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { RolValidation } from '@validations/RolValidation';
 import { MultiSelect } from 'primereact/multiselect';
+import { PickList } from 'primereact/picklist';
 
 const permissionsArray = [
     { name: 'Verificación de documentos', code: 'DOC-000' },
@@ -23,8 +24,9 @@ export default function RolModal({ state, setState }: IModal) {
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const [permissions, setPermissions] = useState<Array<any>>([]);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+    const [source, setSource] = useState(permissionsArray);
+    const [target, setTarget] = useState([]);
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -39,6 +41,11 @@ export default function RolModal({ state, setState }: IModal) {
         </div>
     );
 
+    const onChange = (event) => {
+        setSource(event.source);
+        setTarget(event.target);
+    };
+
     const handleSubmit = async () => {
         //Validate data
         const validationFlow = ValidationFlow(
@@ -46,7 +53,7 @@ export default function RolModal({ state, setState }: IModal) {
                 code,
                 name,
                 description,
-                permissions
+                permissions: target
             }),
             toast
         );
@@ -62,7 +69,8 @@ export default function RolModal({ state, setState }: IModal) {
         setCode('');
         setName('');
         setDescription('');
-        setPermissions([]);
+        setSource([]);
+        setTarget([]);
         setValidations([]);
         setState(!state);
     };
@@ -74,7 +82,7 @@ export default function RolModal({ state, setState }: IModal) {
             header={headerElement}
             footer={footerContent}
             closable={false}
-            style={{ width: '30rem' }}
+            style={{ width: '90rem' }}
             onHide={() => {
                 if (!state) return;
                 setState(false);
@@ -83,15 +91,17 @@ export default function RolModal({ state, setState }: IModal) {
             <Toast ref={toast} />
 
             <div className="flex flex-column gap-4">
-                <div>
-                    <label htmlFor="code">Código</label>
-                    <InputText value={code} onChange={(e) => setCode(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
-                </div>
+                <div className="grid">
+                    <div className="col-12 sm:col-6">
+                        <label htmlFor="code">Código</label>
+                        <InputText value={code} onChange={(e) => setCode(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
+                    </div>
 
-                <div>
-                    <label htmlFor="name">Nombre</label>
+                    <div className="col-12 sm:col-6">
+                        <label htmlFor="name">Nombre</label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                        <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                    </div>
                 </div>
 
                 <div className="w-full">
@@ -110,6 +120,27 @@ export default function RolModal({ state, setState }: IModal) {
                 <div>
                     <label htmlFor="category">Permisos</label>
 
+                    <PickList
+                        className="mt-2"
+                        itemTemplate={(item) => <p>{item.name}</p>}
+                        showSourceControls={false}
+                        showTargetControls={false}
+                        showSourceFilter={false}
+                        showTargetFilter={false}
+                        dataKey="code"
+                        source={source}
+                        target={target}
+                        onChange={onChange}
+                        filter
+                        filterBy="name"
+                        breakpoint="960px"
+                        sourceHeader="Disponibles"
+                        targetHeader="Seleccionados"
+                        sourceStyle={{ height: '24rem' }}
+                        targetStyle={{ height: '24rem' }}
+                    />
+
+                    {/*
                     <MultiSelect
                         value={permissions}
                         onChange={(e) => setPermissions(e.value)}
@@ -119,6 +150,8 @@ export default function RolModal({ state, setState }: IModal) {
                         placeholder="Permisos"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'permissions') ? 'p-invalid' : ''} `}
                     />
+
+                    */}
                 </div>
             </div>
         </Dialog>

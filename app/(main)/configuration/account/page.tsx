@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import BasicInformationForm from '@components/Forms/BasicInformationForm';
+import React from 'react';
+import BasicInformationForm from '@components/Cards/BasicInformationCard';
+import AccountSteps from '@components/Steps/AccountSteps';
 
 const Account = () => {
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
-
     return (
         <div className="layout-permissions">
             <div className="grid">
-                <div className="col-12 sm:col-6">
+                <div className="col-12 md:col-4">
                     <BasicInformationForm />
                 </div>
-                <div className="col-12 sm:col-6"></div>
+                <div className="col-12 md:col-8">
+                    <AccountSteps />
+                </div>
             </div>
         </div>
     );

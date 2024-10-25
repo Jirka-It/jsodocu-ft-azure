@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ModelValidation } from './ModelValidation';
-import { IZodError } from '@/interfaces/IAuth';
+import { IZodError } from '@interfaces/IAuth';
 import { IRol } from '@interfaces/IRol';
 
 const arraySchema = z.object({

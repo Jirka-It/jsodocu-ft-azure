@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ModelValidation } from './ModelValidation';
-import { IZodError } from '@/interfaces/IAuth';
+import { IZodError } from '@interfaces/IAuth';
 import { IPermission } from '@interfaces/IPermission';
 
 const PermissionSchema = z.object({

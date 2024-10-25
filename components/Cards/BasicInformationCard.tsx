@@ -10,13 +10,23 @@ import { useRef, useState } from 'react';
 
 import styles from './BasicInformationCard.module.css';
 import ReactImageCropModal from '@components/Modals/ReactImageCropModal';
+import { Toast } from 'primereact/toast';
+import { ValidationFlow } from '@lib/ValidationFlow';
+import { BasicInformationValidation } from '@validations/BasicInformationValidation';
 
 export default function BasicInformationForm() {
     const inputFile = useRef<HTMLInputElement>(null);
-
+    const toast = useRef(null);
     const [file, setFile] = useState();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [validations, setValidations] = useState<Array<IZodError>>([]);
+
+    const [name, setName] = useState<string>('');
+    const [nit, setNit] = useState<string>('');
+    const [website, setWebsite] = useState<string>('');
+    const [city, setCity] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
 
     function handleChange(e) {
         setFile(URL.createObjectURL(e.target.files[0]));
@@ -26,10 +36,27 @@ export default function BasicInformationForm() {
         inputFile?.current.click();
     };
 
-    const [validations, setValidations] = useState<Array<IZodError>>([]);
+    const handleSubmit = async () => {
+        //Validate data
+        const validationFlow = ValidationFlow(
+            BasicInformationValidation({
+                name,
+                website,
+                city
+            }),
+            toast
+        );
+
+        // Show errors in inputs
+        setValidations(validationFlow);
+        if (validationFlow && validationFlow.length > 0) {
+            return;
+        }
+    };
 
     return (
         <section>
+            <Toast ref={toast} />
             <ReactImageCropModal state={openModal} setState={(e) => setOpenModal(e)} />
             <Card>
                 <div className="mb-5">
@@ -59,7 +86,14 @@ export default function BasicInformationForm() {
                         </label>
                         <span className="p-input-icon-left w-full">
                             <i className="pi pi-cog"></i>
-                            <InputText id="name" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Escribe aquí tu nombre o razón social" />
+                            <InputText
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                id="name"
+                                type="text"
+                                className={`w-full ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `}
+                                placeholder="Escribe aquí tu nombre o razón social"
+                            />
                         </span>
                     </div>
 
@@ -69,7 +103,7 @@ export default function BasicInformationForm() {
                         </label>
                         <span className="p-input-icon-left w-full">
                             <i className="pi pi-lock"></i>
-                            <InputText id="nit" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'nit') ? 'p-invalid' : ''} `} placeholder="Escribe aquí el NIT si eres empresa" />
+                            <InputText value={nit} onChange={(e) => setNit(e.target.value)} id="nit" type="text" className="w-full" placeholder="Escribe aquí el NIT si eres empresa" />
                         </span>
                     </div>
 
@@ -79,7 +113,14 @@ export default function BasicInformationForm() {
                         </label>
                         <span className="p-input-icon-left w-full">
                             <i className="pi pi-lock"></i>
-                            <InputText id="website" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'website') ? 'p-invalid' : ''} `} placeholder="Escribe aquí la dirección de tu sitio WEB" />
+                            <InputText
+                                value={website}
+                                onChange={(e) => setWebsite(e.target.value)}
+                                id="website"
+                                type="text"
+                                className={`w-full ${VerifyErrorsInForms(validations, 'website') ? 'p-invalid' : ''} `}
+                                placeholder="Escribe aquí la dirección de tu sitio WEB"
+                            />
                         </span>
                     </div>
 
@@ -89,7 +130,14 @@ export default function BasicInformationForm() {
                         </label>
                         <span className="p-input-icon-left w-full">
                             <i className="pi pi-lock"></i>
-                            <InputText id="city" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'city') ? 'p-invalid' : ''} `} placeholder="Escribe aquí la dirección de tu sitio WEB" />
+                            <InputText
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                id="city"
+                                type="text"
+                                className={`w-full ${VerifyErrorsInForms(validations, 'city') ? 'p-invalid' : ''} `}
+                                placeholder="Escribe aquí la dirección de tu sitio WEB"
+                            />
                         </span>
                     </div>
 
@@ -101,11 +149,11 @@ export default function BasicInformationForm() {
                             </p>
                             <p>Describe tu experiencia</p>
                         </label>
-                        <InputTextarea id="description" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'description') ? 'p-invalid' : ''} `} placeholder="Descripción" rows={5} cols={30} />
+                        <InputTextarea value={description} onChange={(e) => setDescription(e.target.value)} id="description" className="w-full mt-2" placeholder="Descripción" rows={5} cols={30} />
                     </div>
 
                     <div className="flex justify-content-end">
-                        <Button label="Guardar" />
+                        <Button label="Guardar" onClick={() => handleSubmit()} />
                     </div>
                 </div>
             </Card>

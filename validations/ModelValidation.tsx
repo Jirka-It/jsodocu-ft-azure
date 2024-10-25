@@ -1,6 +1,6 @@
 import { ZodSchema } from 'zod';
 import { LoginMessages } from '@enums/LoginEnum';
-import { IZodError } from '@/interfaces/IAuth';
+import { IZodError } from '@interfaces/IAuth';
 
 export const ModelValidation = (inf: unknown, schema: ZodSchema) => {
     try {

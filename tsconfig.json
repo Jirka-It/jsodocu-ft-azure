@@ -19,7 +19,6 @@
             }
         ],
         "paths": {
-            "@/*": ["./*"],
             "@validations/*": ["./validations/*"],
             "@config/*": ["./config/*"],
             "@lib/*": ["./lib/*"],

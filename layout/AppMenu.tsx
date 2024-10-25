@@ -33,6 +33,11 @@ const AppMenu = () => {
                     label: 'Permisos',
                     icon: 'pi pi-cog',
                     to: '/configuration/permissions'
+                },
+                {
+                    label: 'Cuenta',
+                    icon: 'pi pi-user',
+                    to: '/configuration/account'
                 }
             ]
         }

@@ -48,19 +48,19 @@ export default function StepInfo() {
                 <h4 className="font-bold flex justify-content-end text-blue-500">Permisos</h4>
 
                 <div>
-                    <p className="flex justify-content-end align-items-center">
-                        Puede crear documentos <RadioButton inputId="1" className="ml-3" checked={true} />
-                    </p>
-                    <p className="flex justify-content-end align-items-center">
-                        Puede editar documentos <RadioButton inputId="2" className="ml-3" checked={true} />
-                    </p>
-                    <p className="flex justify-content-end align-items-center">
-                        Puede solicitar validaciones
+                    <div className="flex justify-content-end align-items-center mb-2">
+                        <p className="m-0">Puede crear documentos</p> <RadioButton inputId="1" className="ml-3" checked={true} />
+                    </div>
+                    <div className="flex justify-content-end align-items-center mb-2">
+                        <p className="m-0">Puede editar documentos</p> <RadioButton inputId="2" className="ml-3" checked={true} />
+                    </div>
+                    <div className="flex justify-content-end align-items-center mb-2">
+                        <p className="m-0">Puede solicitar validaciones</p>
                         <RadioButton inputId="3" className="ml-3" checked={true} />
-                    </p>
-                    <p className="flex justify-content-end align-items-center">
-                        Puede crear usuarios <RadioButton inputId="4" className="ml-3" checked={true} />
-                    </p>
+                    </div>
+                    <div className="flex justify-content-end align-items-center mb-2">
+                        <p className="m-0">Puede crear usuarios</p> <RadioButton inputId="4" className="ml-3" checked={true} />
+                    </div>
                 </div>
             </div>
             <div className="w-full flex justify-content-end mt-5">

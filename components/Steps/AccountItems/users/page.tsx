@@ -140,19 +140,20 @@ export default function StepUsers() {
                     <h4 className="font-bold flex justify-content-end text-blue-500">Roles disponibles</h4>
 
                     <div>
-                        <p className="flex justify-content-end align-items-center">
-                            Abogado <RadioButton inputId="1" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="lawyer" onChange={(e) => setRole(e.value)} checked={role === 'lawyer'} />
-                        </p>
-                        <p className="flex justify-content-end align-items-center">
-                            Comercial <RadioButton inputId="2" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="commercial" onChange={(e) => setRole(e.value)} checked={role === 'commercial'} />
-                        </p>
-                        <p className="flex justify-content-end align-items-center">
-                            Operativo
+                        <div className="flex justify-content-end align-items-center mb-2">
+                            <p className="m-0">Abogado</p> <RadioButton inputId="1" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="lawyer" onChange={(e) => setRole(e.value)} checked={role === 'lawyer'} />
+                        </div>
+                        <div className="flex justify-content-end align-items-center mb-2">
+                            <p className="m-0">Comercial</p>{' '}
+                            <RadioButton inputId="2" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="commercial" onChange={(e) => setRole(e.value)} checked={role === 'commercial'} />
+                        </div>
+                        <div className="flex justify-content-end align-items-center mb-2">
+                            <p className="m-0">Operativo</p>
                             <RadioButton inputId="3" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="operative" onChange={(e) => setRole(e.value)} checked={role === 'operative'} />
-                        </p>
-                        <p className="flex justify-content-end align-items-center">
-                            Usuario <RadioButton inputId="4" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="user" onChange={(e) => setRole(e.value)} checked={role === 'user'} />
-                        </p>
+                        </div>
+                        <div className="flex justify-content-end align-items-center mb-2">
+                            <p className="m-0">Usuario</p> <RadioButton inputId="4" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="user" onChange={(e) => setRole(e.value)} checked={role === 'user'} />
+                        </div>
                     </div>
                 </div>{' '}
                 <div className="w-full flex justify-content-end mt-5">

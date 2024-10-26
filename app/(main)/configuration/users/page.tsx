@@ -14,7 +14,7 @@ const Users = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
 
-    const [documents, setDocuments] = useState([
+    const [users, setUsers] = useState([
         {
             id: 55,
             user: 'bomj321',
@@ -59,7 +59,7 @@ const Users = () => {
             <UserModal state={openModal} setState={(e) => setOpenModal(e)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} />
             <div className="card">
-                <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
+                <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
                     <Column field="user" header="Usuario"></Column>
                     <Column field="name" header="Nombre"></Column>

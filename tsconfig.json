@@ -22,7 +22,12 @@
             "@/*": ["./*"],
             "@validations/*": ["./validations/*"],
             "@config/*": ["./config/*"],
-            "@components/*": ["./components/*"]
+            "@lib/*": ["./lib/*"],
+            "@api/*": ["./app/api/*"],
+            "@components/*": ["./components/*"],
+            "@types/*": ["./types/*"],
+            "@enums/*": ["./enums/*"],
+            "@interfaces/*": ["./interfaces/*"]
         }
     },
     "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

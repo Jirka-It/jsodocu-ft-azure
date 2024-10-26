@@ -8,18 +8,13 @@ const AppMenu = () => {
             icon: 'pi pi-home',
             items: [
                 {
-                    label: 'E-Commerce',
+                    label: 'Inicio',
                     icon: 'pi pi-fw pi-home',
                     to: '/'
-                },
-                {
-                    label: 'Banking',
-                    icon: 'pi pi-fw pi-image',
-                    to: '/dashboard-banking'
                 }
             ]
         },
-        { separator: true },
+        { separator: true }
         /*{
             label: 'Apps',
             icon: 'pi pi-th-large',

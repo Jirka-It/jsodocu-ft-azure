@@ -13,7 +13,7 @@ import { LoginValidation } from '@validations/LoginValidation';
 import { Toast } from 'primereact/toast';
 import { showError } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
-import { VerifyErrorsInForms } from '@/lib/VerifyErrorsInForms';
+import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { ValidationFlow } from '@lib/ValidationFlow';
 
 const LoginPage: Page = () => {

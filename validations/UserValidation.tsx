@@ -1,13 +1,20 @@
 import { z } from 'zod';
 import { ModelValidation } from './ModelValidation';
-import { IRegister, IZodError } from '@interfaces/IAuth';
+import { IZodError } from '@/interfaces/IAuth';
+import { IUser } from '@interfaces/IUser';
 
-const RegisterSchema = z
+const arraySchema = z.object({
+    name: z.string().min(1),
+    code: z.string().min(1)
+});
+
+const UserSchema = z
     .object({
-        username: z.string().min(1),
+        name: z.string().min(1),
         email: z.string().email().min(1),
         password: z.string().min(1),
-        confirmPassword: z.string().min(1)
+        confirmPassword: z.string().min(1),
+        roles: z.array(arraySchema).nonempty().min(1)
     })
     .superRefine(({ confirmPassword, password }, ctx) => {
         if (confirmPassword !== password) {
@@ -19,6 +26,6 @@ const RegisterSchema = z
         }
     });
 
-export const RegisterValidation = (data: IRegister): Array<IZodError> | string => {
-    return ModelValidation(data, RegisterSchema);
+export const UserValidation = (data: IUser): Array<IZodError> | string => {
+    return ModelValidation(data, UserSchema);
 };

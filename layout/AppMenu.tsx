@@ -4,7 +4,7 @@ import AppSubMenu from './AppSubMenu';
 const AppMenu = () => {
     const model: MenuModal[] = [
         {
-            label: 'Dashboards',
+            label: 'Dashboard',
             icon: 'pi pi-home',
             items: [
                 {
@@ -14,7 +14,28 @@ const AppMenu = () => {
                 }
             ]
         },
-        { separator: true }
+        { separator: true },
+        {
+            label: 'Configuración',
+            icon: 'pi pi-th-large',
+            items: [
+                {
+                    label: 'Usuarios',
+                    icon: 'pi pi-user',
+                    to: '/configuration/users'
+                },
+                {
+                    label: 'Roles',
+                    icon: 'pi pi-cog',
+                    to: '/configuration/roles'
+                },
+                {
+                    label: 'Permisos',
+                    icon: 'pi pi-cog',
+                    to: '/configuration/permissions'
+                }
+            ]
+        }
         /*{
             label: 'Apps',
             icon: 'pi pi-th-large',

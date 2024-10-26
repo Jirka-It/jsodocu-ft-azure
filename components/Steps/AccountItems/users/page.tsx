@@ -85,7 +85,7 @@ export default function StepUsers() {
                 <div className="col-12 md:col-5">
                     <div className="flex flex-column gap-4">
                         <div>
-                            <label htmlFor="nit" className="font-bold">
+                            <label htmlFor="username" className="font-bold">
                                 Nombre de usuario
                             </label>
                             <InputText
@@ -94,12 +94,12 @@ export default function StepUsers() {
                                 id="username"
                                 type="text"
                                 className={`w-full ${VerifyErrorsInForms(validations, 'username') ? 'p-invalid' : ''} `}
-                                placeholder=" Nombre de usuario"
+                                placeholder="Nombre de usuario"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="nit" className="font-bold">
+                            <label htmlFor="corporateEmail" className="font-bold">
                                 Correo corporativo
                             </label>
                             <InputText
@@ -120,7 +120,7 @@ export default function StepUsers() {
                         </div>
 
                         <div>
-                            <label htmlFor="nit" className="font-bold">
+                            <label htmlFor="password" className="font-bold">
                                 Contraseña
                             </label>
                             <Password

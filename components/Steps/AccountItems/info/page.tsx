@@ -16,31 +16,31 @@ export default function StepInfo() {
             <div className="col-12 md:col-5">
                 <div className="flex flex-column gap-4">
                     <div>
-                        <label htmlFor="nit" className="font-bold">
+                        <label htmlFor="adminName" className="font-bold">
                             Nombre de administrador
                         </label>
-                        <InputText value={adminName} onChange={(e) => setAdminName(e.target.value)} id="nit" type="text" className="w-full" placeholder=" Nombre de administrador" />
+                        <InputText value={adminName} onChange={(e) => setAdminName(e.target.value)} id="adminName" type="text" className="w-full" placeholder=" Nombre de administrador" />
                     </div>
 
                     <div>
-                        <label htmlFor="nit" className="font-bold">
+                        <label htmlFor="corporateEmail" className="font-bold">
                             Correo corporativo
                         </label>
-                        <InputText value={corporateEmail} onChange={(e) => setCorporateEmail(e.target.value)} id="nit" type="text" className="w-full" placeholder="Correo corporativo" />
+                        <InputText value={corporateEmail} onChange={(e) => setCorporateEmail(e.target.value)} id="corporateEmail" type="text" className="w-full" placeholder="Correo corporativo" />
                     </div>
 
                     <div>
-                        <label htmlFor="nit" className="font-bold">
+                        <label htmlFor="phone" className="font-bold">
                             Teléfono
                         </label>
-                        <InputText value={phone} onChange={(e) => setPhone(e.target.value)} id="nit" type="text" className="w-full" placeholder="Teléfono" />
+                        <InputText value={phone} onChange={(e) => setPhone(e.target.value)} id="phone" type="text" className="w-full" placeholder="Teléfono" />
                     </div>
 
                     <div>
-                        <label htmlFor="nit" className="font-bold">
+                        <label htmlFor="alternateEmail" className="font-bold">
                             Correo alternativo
                         </label>
-                        <InputText value={alternateEmail} onChange={(e) => setAlternateEmail(e.target.value)} id="nit" type="text" className="w-full" placeholder="Correo alternativo" />
+                        <InputText value={alternateEmail} onChange={(e) => setAlternateEmail(e.target.value)} id="alternateEmail" type="text" className="w-full" placeholder="Correo alternativo" />
                     </div>
                 </div>
             </div>

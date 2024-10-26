@@ -11,6 +11,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
+import { InputSwitch } from 'primereact/inputswitch';
 import { RadioButton } from 'primereact/radiobutton';
 import { Toast } from 'primereact/toast';
 import { useRef, useState } from 'react';
@@ -18,6 +19,7 @@ import { useRef, useState } from 'react';
 export default function StepUsers() {
     const toast = useRef(null);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [checked, setChecked] = useState(false);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
     const [username, setUsername] = useState<string>('');
     const [corporateEmail, setCorporateEmail] = useState<string>('');
@@ -163,6 +165,10 @@ export default function StepUsers() {
 
             <div className="grid mt-5">
                 <div className="col-12">
+                    <div className="w-full flex justify-content-end mb-5">
+                        <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
+                    </div>
+
                     <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} />
                     <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                         <Column field="id" header="ID"></Column>

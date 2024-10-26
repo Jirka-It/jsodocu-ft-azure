@@ -9,12 +9,14 @@ import BasicActions from '@components/TableExtensions/BasicActions';
 import BasicStates from '@components/TableExtensions/BasicStates';
 import RolModal from '@components/Modals/RolModal';
 import DeleteModal from '@components/Modals/DeleteModal';
+import { InputSwitch } from 'primereact/inputswitch';
 
 const Roles = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [checked, setChecked] = useState(false);
 
-    const [documents, setDocuments] = useState([
+    const [roles, setRoles] = useState([
         {
             id: 55,
             name: 'Abogado',
@@ -63,7 +65,10 @@ const Roles = () => {
             <RolModal state={openModal} setState={(e) => setOpenModal(e)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} />
             <div className="card">
-                <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
+                <div className="w-full flex justify-content-end mb-5">
+                    <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
+                </div>
+                <DataTable value={roles} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="code" header="Código"></Column>

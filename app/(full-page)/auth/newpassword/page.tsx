@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
-import { Page } from '@/types/layout';
+import { Page } from '@customTypes/layout';
 
 const NewPassword: Page = () => {
     const router = useRouter();

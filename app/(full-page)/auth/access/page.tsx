@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from 'primereact/button';
-import type { Page } from '@/types';
+import type { Page } from '@customTypes/layout';
 
 const AccessDenied: Page = () => {
     return (

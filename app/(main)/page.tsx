@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { Chart } from 'primereact/chart';
 import { Menu } from 'primereact/menu';
 import HomeInformationCard from '@components/Cards/HomeInformationCard';
-import AvatarInformation from '@components/Cards/AvatarInformation';
+import AvatarInformation from '@components/Cards/AvatarInformationCard';
 
 const ordersChart = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],

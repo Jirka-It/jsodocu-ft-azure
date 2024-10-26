@@ -1,0 +1,34 @@
+.avatar-background {
+    cursor: pointer;
+}
+
+.avatar-background div:global(.avatar-background-div-input),
+.avatar-background img {
+    border: 1px solid black;
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.avatar-background input:global(.avatar-background-input) {
+    border: 1px solid black;
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.avatar-background i:global(.pi-image) {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    background-color: white;
+}

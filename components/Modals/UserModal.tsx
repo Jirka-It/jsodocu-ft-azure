@@ -8,7 +8,6 @@ import { IZodError } from '@interfaces/IAuth';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { UserValidation } from '@validations/UserValidation';
-import { MultiSelect } from 'primereact/multiselect';
 import { Password } from 'primereact/password';
 
 import styles from './UserModal.module.css';

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { Page } from '@/types/layout';
+import { Page } from '@customTypes/layout';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

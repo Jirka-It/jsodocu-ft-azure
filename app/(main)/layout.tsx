@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Layout from '../../layout/layout';
-import { ProtectedRoute } from '@/components/ProtectedRoute/ProtectedRoute';
+import { ProtectedRoute } from '@components/ProtectedRoute/ProtectedRoute';
 
 interface MainLayoutProps {
     children: React.ReactNode;

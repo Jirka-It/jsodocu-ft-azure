@@ -1,11 +1,7 @@
+import { IBasicAction } from '@interfaces/IBasicAction';
 import { Button } from 'primereact/button';
 
-interface IBasicActions {
-    handleEdit: Function;
-    handleDelete: Function;
-}
-
-export default function BasicActions({ handleEdit, handleDelete }: IBasicActions) {
+export default function BasicActions({ handleEdit, handleDelete }: IBasicAction) {
     return (
         <div>
             <Button onClick={() => handleEdit()} icon="pi pi-pencil" className="mr-2" tooltip="Editar" />

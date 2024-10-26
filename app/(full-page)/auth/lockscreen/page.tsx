@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { Page } from '@/types/layout';
+import { Page } from '@customTypes/layout';
 
 const LockScreen: Page = () => {
     const router = useRouter();

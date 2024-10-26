@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
-import { Page } from '@/types/layout';
+import { Page } from '@customTypes/layout';
 import { RecoverValidation } from '@validations/RecoverPasswordValidation';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { IZodError } from '@interfaces/IAuth';

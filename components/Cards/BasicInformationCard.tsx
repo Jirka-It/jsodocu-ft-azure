@@ -57,7 +57,7 @@ export default function BasicInformationForm() {
     return (
         <section>
             <Toast ref={toast} />
-            <ReactImageCropModal state={openModal} setState={(e) => setOpenModal(e)} />
+            <ReactImageCropModal state={openModal} setState={(e) => setOpenModal(e)} /> {/* This code is, if the people wants crop the image */}
             <Card>
                 <div className="mb-5">
                     <div className={`${styles['avatar-background']} flex justify-content-center`}>

@@ -3,7 +3,7 @@
 import React, { useState, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
-import type { Page } from '@/types';
+import type { Page } from '@customTypes/layout';
 import { InputNumber } from 'primereact/inputnumber';
 
 const Verification: Page = () => {

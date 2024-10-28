@@ -8,7 +8,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuContext } from './context/menucontext';
 import { useSubmenuOverlayPosition } from './hooks/useSubmenuOverlayPosition';
-import { AppMenuItemProps } from '@/types/layout';
+import { AppMenuItemProps } from '@customTypes/layout';
 
 const AppMenuitem = (props: AppMenuItemProps) => {
     const { activeMenu, setActiveMenu } = useContext(MenuContext);

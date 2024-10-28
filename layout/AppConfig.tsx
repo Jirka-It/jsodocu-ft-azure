@@ -9,7 +9,7 @@ import { Button } from 'primereact/button';
 import { LayoutContext } from './context/layoutcontext';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect } from 'react';
-import { AppConfigProps, ColorScheme, MenuTheme } from '@/types/layout';
+import { AppConfigProps, ColorScheme, MenuTheme } from '@customTypes/layout';
 
 const AppConfig = (props: AppConfigProps) => {
     const { layoutConfig, setLayoutConfig, layoutState, setLayoutState, isSlim, isHorizontal, isCompact } = useContext(LayoutContext);

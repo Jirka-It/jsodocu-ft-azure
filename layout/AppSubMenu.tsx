@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef } from 'react';
 import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
-import { Breadcrumb, BreadcrumbItem, MenuModal, MenuProps } from '@/types/layout';
+import { Breadcrumb, BreadcrumbItem, MenuModal, MenuProps } from '@customTypes/layout';
 
 const AppSubMenu = (props: MenuProps) => {
     const { layoutState, setBreadcrumbs } = useContext(LayoutContext);

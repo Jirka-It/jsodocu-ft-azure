@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { ObjectUtils } from 'primereact/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-import { Breadcrumb } from '@/types/layout';
+import { Breadcrumb } from '@customTypes/layout';
 
 const AppBreadcrumb = () => {
     const pathname = usePathname();

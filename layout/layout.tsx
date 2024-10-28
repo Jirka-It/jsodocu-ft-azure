@@ -12,7 +12,7 @@ import AppBreadCrumb from './AppBreadCrumb';
 import AppRightMenu from './AppRightMenu';
 import { PrimeReactContext } from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
-import { ChildContainerProps } from '@/types';
+import { ChildContainerProps } from '@customTypes/index';
 
 const Layout = (props: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, isSlim, isCompact, isHorizontal, isDesktop } = useContext(LayoutContext);

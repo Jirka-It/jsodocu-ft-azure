@@ -15,6 +15,6 @@ export default function BasicStates({ state }: IBasicState) {
             return <Tag className={styles['tag-state']} value="Inactivo" severity="danger"></Tag>;
 
         default:
-            return <Tag className={styles['tag-state']} value="Sin estado" contrast="contrast"></Tag>;
+            return <Tag className={styles['tag-state']} value="Sin estado"></Tag>;
     }
 }

@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { State } from '@enums/ConfigurationEnum';
+import { State } from '@enums/DocumentEnum';
 import { Button } from 'primereact/button';
-import BasicActions from '@components/TableExtensions/BasicActions';
-import BasicStates from '@components/TableExtensions/BasicStates';
+import DocumentActions from '@components/TableExtensions/DocumentActions';
+import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { InputSwitch } from 'primereact/inputswitch';
@@ -19,34 +19,38 @@ const Documents = () => {
     const [roles, setRoles] = useState([
         {
             id: 55,
-            name: 'Abogado',
-            code: 'CONF-000',
-            description: 'Lorem ipsum.',
-            state: State.ACTIVE,
+            type: 'Reglamento de PH',
+            name: 'Conjunto Oporto',
+            date: '29 Jul. 2020',
+            version: 'V. 1',
+            state: State.APPROVED,
             actions: ''
         },
         {
             id: 56,
-            name: 'Comercial',
-            code: 'CONF-001',
-            description: 'Lorem ipsum.',
-            state: State.ACTIVE,
+            type: 'Reglamento de PH (Acid)',
+            name: 'Conjunto Oporto ETP 2',
+            date: '29 Ago. 2020',
+            version: 'V. 2',
+            state: State.ARCHIVED,
             actions: ''
         },
         {
             id: 57,
-            name: 'Operativo',
-            code: 'CONF-002',
-            description: 'Lorem ipsum.',
-            state: State.INACTIVE,
+            type: 'Reglamento de PH (Acid)',
+            name: 'Conjunto Oporto ETP 2',
+            date: '29 Jul. 2020',
+            version: 'V. 2',
+            state: State.EDITION,
             actions: ''
         },
         {
             id: 58,
-            name: 'Comercial',
-            code: 'CONF-003',
-            description: 'Lorem ipsum.',
-            state: State.INACTIVE,
+            type: 'Reglamento de PH',
+            name: 'Conjunto Oporto ETP 2',
+            date: '29 Sep. 2020',
+            version: 'V. 1',
+            state: State.REVISION,
             actions: ''
         }
     ]);
@@ -70,11 +74,12 @@ const Documents = () => {
                 </div>
                 <DataTable value={roles} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
+                    <Column field="type" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
-                    <Column field="code" header="Código"></Column>
-                    <Column field="description" header="Descripción"></Column>
-                    <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
+                    <Column field="date" header="Fecha"></Column>
+                    <Column field="version" header="Versión"></Column>
+                    <Column field="state" body={(rowData) => <DocumentStates state={rowData.state} />} header="Estado"></Column>
+                    <Column field="actions" body={(rowData) => <DocumentActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

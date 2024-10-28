@@ -1,4 +1,4 @@
-import { MenuModal } from '@/types/layout';
+import { MenuModal } from '@customTypes/layout';
 import AppSubMenu from './AppSubMenu';
 
 const AppMenu = () => {
@@ -9,8 +9,13 @@ const AppMenu = () => {
             items: [
                 {
                     label: 'Inicio',
-                    icon: 'pi pi-fw pi-home',
+                    icon: 'pi pi-home',
                     to: '/'
+                },
+                {
+                    label: 'Documentos',
+                    icon: 'pi pi-file',
+                    to: '/documents'
                 }
             ]
         },

@@ -10,11 +10,13 @@ import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { InputSwitch } from 'primereact/inputswitch';
+import { useRouter } from 'next/navigation';
 
 const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [checked, setChecked] = useState(false);
+    const router = useRouter();
 
     const [roles, setRoles] = useState([
         {
@@ -55,6 +57,10 @@ const Documents = () => {
         }
     ]);
 
+    const handleView = (id: string) => {
+        router.push(`/documents/${id}`);
+    };
+
     const handleEdit = (id: string) => {
         setOpenModal(true);
     };
@@ -79,7 +85,7 @@ const Documents = () => {
                     <Column field="date" header="Fecha"></Column>
                     <Column field="version" header="Versión"></Column>
                     <Column field="state" body={(rowData) => <DocumentStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <DocumentActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
+                    <Column field="actions" body={(rowData) => <DocumentActions handleView={() => handleView(rowData.id)} handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

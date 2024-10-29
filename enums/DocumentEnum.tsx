@@ -4,3 +4,8 @@ export const State = {
     REVISION: 'REVISION',
     ARCHIVED: 'ARCHIVED'
 };
+
+export const Variable = {
+    GENERAL: 'GENERAL',
+    PROJECT: 'PROJECT'
+};

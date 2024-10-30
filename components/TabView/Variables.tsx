@@ -6,8 +6,16 @@ import VariableModal from '@components/Modals/VariableModal';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import BasicStates from '@components/TableExtensions/BasicStates';
+import { VariableType } from '@enums/DocumentEnum';
+import { InputNumber } from 'primereact/inputnumber';
+import { Calendar } from 'primereact/calendar';
 
-const types = ['Texto', 'Número', 'Fecha', 'Municipios'];
+const types = [VariableType.TEXT, VariableType.NUMBER, VariableType.DATE, VariableType.MUNICIPALITIES];
+
+const municipalities = [
+    { name: 'Medellín', code: 'MEDELLIN' },
+    { name: 'Barranquilla', code: 'BARRANQUILLA' }
+];
 
 export default function Variables() {
     const [variables, setVariables] = useState<Array<any>>([]);
@@ -18,7 +26,32 @@ export default function Variables() {
     };
 
     const variableValue = (variable) => {
-        return <InputText value={variable.value} onChange={(e) => handleInputChange(variable.id, e.target.value, 'value')} id="value" type="text" placeholder="Valor de la variable" />;
+        switch (variable.type) {
+            case VariableType.TEXT:
+                return <InputText value={variable.value} onChange={(e) => handleInputChange(variable.id, e.target.value, 'value')} id="value" className="w-15rem" type="text" placeholder="Valor de la variable" />;
+
+            case VariableType.NUMBER:
+                return <InputNumber value={variable.value} onValueChange={(e) => handleInputChange(variable.id, e.target.value, 'value')} id="number" className="w-15rem" placeholder="Valor de la variable" useGrouping={false} />;
+
+            case VariableType.DATE:
+                return <Calendar value={variable.value} onChange={(e) => handleInputChange(variable.id, e.target.value, 'value')} id="date" className="w-15rem" placeholder="Valor de la variable" />;
+
+            case VariableType.MUNICIPALITIES:
+                return (
+                    <Dropdown
+                        value={variable.value}
+                        onChange={(e) => handleInputChange(variable.id, e.target.value, 'value')}
+                        options={municipalities}
+                        id="municipalities"
+                        optionLabel="name"
+                        placeholder="Categoría de la variable"
+                        className="w-15rem"
+                    />
+                );
+
+            default:
+                return <InputText value={variable.value} onChange={(e) => handleInputChange(variable.id, e.target.value, 'value')} id="value" type="text" className="w-15rem" placeholder="Valor de la variable" />;
+        }
     };
 
     const typeValue = (variable) => {
@@ -34,6 +67,9 @@ export default function Variables() {
         const modifiedVariables = variables.map((v) => {
             if (v.id === id) {
                 v[key] = value;
+                if (key === 'type') {
+                    v['value'] = '';
+                }
             }
             return v;
         });

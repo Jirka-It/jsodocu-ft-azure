@@ -5,6 +5,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 
 import styles from './DocumentEdit.module.css';
 import Variables from '@components/TabView/Variables';
+import Editor from '@components/TabView/Editor';
 
 const Document = () => {
     return (
@@ -14,10 +15,7 @@ const Document = () => {
                     <Variables />
                 </TabPanel>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <p className="m-0">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                        ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                    </p>
+                    <Editor />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
                     <p className="m-0">

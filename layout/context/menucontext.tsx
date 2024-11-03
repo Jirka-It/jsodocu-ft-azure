@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react';
-import type { MenuContextProps } from '@/types';
+import type { MenuContextProps } from '@customTypes/index';
 
 export const MenuContext = createContext({} as MenuContextProps);
 

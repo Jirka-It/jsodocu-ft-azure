@@ -6,7 +6,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import { StyleClass } from 'primereact/styleclass';
 import { classNames } from 'primereact/utils';
-import { Page } from '@/types/layout';
+import { Page } from '@customTypes/layout';
 
 const LandingPage: Page = () => {
     const [isHidden, setIsHidden] = useState(false);

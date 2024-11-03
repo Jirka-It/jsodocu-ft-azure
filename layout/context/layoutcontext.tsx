@@ -2,8 +2,8 @@
 
 import Head from 'next/head';
 import React, { useState } from 'react';
-import { Breadcrumb, LayoutConfig, LayoutContextProps } from '@/types/layout';
-import { ChildContainerProps } from '@/types';
+import { Breadcrumb, LayoutConfig, LayoutContextProps } from '@customTypes/layout';
+import { ChildContainerProps } from '@customTypes/index';
 
 export const LayoutContext = React.createContext({} as LayoutContextProps);
 

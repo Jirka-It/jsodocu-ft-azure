@@ -17,7 +17,7 @@ import { BasicInformationValidation } from '@validations/BasicInformationValidat
 export default function BasicInformationForm() {
     const inputFile = useRef<HTMLInputElement>(null);
     const toast = useRef(null);
-    const [file, setFile] = useState();
+    const [file, setFile] = useState<string>();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [validations, setValidations] = useState<Array<IZodError>>([]);

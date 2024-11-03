@@ -1,0 +1,4 @@
+.layout-tab-view ul:global(.p-tabview-nav) {
+    display: flex;
+    justify-content: center;
+}

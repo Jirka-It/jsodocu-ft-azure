@@ -1,7 +1,7 @@
 import { Editor as Quill } from 'primereact/editor';
 import Mention from 'quill-mention';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const data = [
     { id: 1, value: 'variable_PH', variable: 'Partha' },

@@ -16,6 +16,7 @@
 }
 
 .header-editor p:global(.header-editor__template--alert) {
+    font-size: 0.7rem;
     max-width: 16rem;
     word-break: break-word;
 }

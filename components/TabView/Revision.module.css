@@ -1,0 +1,25 @@
+.header-editor {
+    margin-bottom: 1rem;
+
+    @media (min-width: 768px) {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.header-editor div:global(.header-editor__description) {
+    margin-bottom: 1rem;
+
+    @media (min-width: 768px) {
+        margin-bottom: 0rem;
+    }
+}
+
+.header-editor p:global(.header-editor__template--alert) {
+    max-width: 16rem;
+    word-break: break-word;
+}
+
+.editor {
+    min-height: 50rem;
+}

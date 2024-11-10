@@ -17,7 +17,7 @@ const municipalities = [
     { name: 'Barranquilla', code: 'BARRANQUILLA' }
 ];
 
-export default function Variables() {
+export default function VariableList() {
     const [variables, setVariables] = useState<Array<any>>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
 

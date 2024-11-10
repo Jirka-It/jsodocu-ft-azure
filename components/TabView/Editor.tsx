@@ -4,11 +4,12 @@ import Mention from 'quill-mention';
 import { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import styles from './Editor.module.css';
 
 const data = [
-    { id: 1, chatter: 'variable_PH', variable: 'Partha' },
+    { id: 1, value: 'variable_PH', variable: 'Partha' },
 
-    { id: 2, chatter: 'date_contract', variable: 'Emma' }
+    { id: 2, value: 'date_contract', variable: 'Emma' }
 ];
 
 export default function Editor() {
@@ -38,7 +39,7 @@ export default function Editor() {
 
         //Find by mentions
         for (var i = 0; i < data.length; i++) {
-            const chatter = data[i].chatter;
+            const chatter = data[i].value;
             const regex = new RegExp(`@${chatter}`, 'g');
 
             newString = newString.replaceAll(regex, data[i].variable);
@@ -68,8 +69,8 @@ export default function Editor() {
         handleInputChange(content.id, value, 'content');
     };
 
-    // Add chapter
-    const addChapter = () => {
+    // Section
+    const addSection = () => {
         setSections((prevArray) => [
             ...prevArray,
             {
@@ -83,39 +84,50 @@ export default function Editor() {
         setContentSelected(sections.length + 1);
     };
 
+    const deleteSection = (idSection: string) => {
+        setSections((prevArray) => {
+            const modifiedSections = prevArray.filter((v) => v.id !== idSection);
+            return [...modifiedSections];
+        });
+    };
+
+    const saveSection = (idSection: string) => {
+        console.log('id', idSection);
+    };
+
     return (
         <section className="grid">
-            <div className="col-12 lg:col-4">
+            <div className="col-12 lg:col-3">
                 <h4 className="m-0">Conjunto Amatista</h4>
                 <h6 className="m-0 text-gray-500 mb-5">Reglamento PH</h6>
                 <div>
                     {sections.map((s) => {
                         return (
-                            <div key={s.id}>
+                            <div key={s.id} className="mb-3">
                                 <h5 className="m-0 mb-1 text-blue-500 font-bold cursor-pointer" onClick={() => handleClickEvent(s.id)}>
                                     Capítulo {s.id}.
                                 </h5>
                                 <div className="flex">
-                                    <InputText value={s.chatter} onChange={(e) => handleInputChange(s.id, e.target.value)} className="w-full mb-3" type="text" placeholder="Nombre del capítulo" />
-                                    <Button icon="pi pi-save" rounded severity="info" aria-label="Delete" className="ml-2" tooltip="Guardar" />
-                                    <Button icon="pi pi-times" rounded severity="danger" aria-label="Delete" className="ml-2" tooltip="Borrar" />
+                                    <InputText value={s.chatter} onChange={(e) => handleInputChange(s.id, e.target.value)} className="w-full" type="text" placeholder="Nombre del capítulo" />
+                                    <Button icon="pi pi-save" rounded severity="info" aria-label="Delete" className="ml-2" onClick={() => saveSection(s.id)} tooltip="Guardar" />
+                                    <Button icon="pi pi-times" rounded severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(s.id)} tooltip="Borrar" />
                                 </div>
                             </div>
                         );
                     })}
                 </div>
-                <div className="mt-5 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                <div className="mt-5 cursor-pointer text-blue-500" onClick={() => addSection()}>
                     <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
                 </div>
             </div>
             {sections.map((s) => {
                 return (
-                    <div key={s.id} className={`grid col-12 lg:col-8 ${s.id !== contentSelected ? 'hidden' : ''}`}>
+                    <div key={s.id} className={`grid col-12 lg:col-9 ${s.id !== contentSelected ? 'hidden' : ''}`}>
                         <div className="col-12 lg:col-6">
-                            <Quill value={s.content} onTextChange={(e) => handleChangeEvent(e.htmlValue, s)} style={{ height: '320px' }} onLoad={quillLoaded} />
+                            <Quill value={s.content} onTextChange={(e) => handleChangeEvent(e.htmlValue, s)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
                         </div>
-                        <div className="col-12 lg:col-6">
-                            <div className="shadow-1 h-full pl-2 pr-2" dangerouslySetInnerHTML={{ __html: replaceText(s.content) }}></div>
+                        <div className="col-12 lg:col-6 ql-editor">
+                            <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(s.content) }}></div>
                         </div>
                     </div>
                 );

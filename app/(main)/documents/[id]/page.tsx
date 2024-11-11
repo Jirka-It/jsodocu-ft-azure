@@ -11,7 +11,7 @@ import Revision from '@components/TabView/Revision';
 const Document = () => {
     return (
         <section className={styles['layout-tab-view']}>
-            <TabView>
+            <TabView renderActiveOnly={false}>
                 <TabPanel header="Variables" leftIcon="pi pi-times mr-2">
                     <VariableList />
                 </TabPanel>

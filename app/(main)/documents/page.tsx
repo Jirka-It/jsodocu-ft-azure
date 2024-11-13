@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { State } from '@enums/DocumentEnum';
@@ -11,6 +11,7 @@ import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { InputSwitch } from 'primereact/inputswitch';
 import { useRouter } from 'next/navigation';
+import { findAll } from '@api/documents';
 
 const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -18,7 +19,7 @@ const Documents = () => {
     const [checked, setChecked] = useState(false);
     const router = useRouter();
 
-    const [roles, setRoles] = useState([
+    const [documents, setDocuments] = useState([
         {
             id: 55,
             type: 'Reglamento de PH',
@@ -57,6 +58,15 @@ const Documents = () => {
         }
     ]);
 
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        const res = await findAll();
+        console.log('res', res);
+    };
+
     const handleView = (id: string) => {
         router.push(`/documents/${id}`);
     };
@@ -78,7 +88,7 @@ const Documents = () => {
                 <div className="w-full flex justify-content-end mb-5">
                     <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
                 </div>
-                <DataTable value={roles} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
+                <DataTable value={documents} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                     <Column field="id" header="ID"></Column>
                     <Column field="type" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>

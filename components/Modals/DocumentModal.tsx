@@ -10,6 +10,8 @@ import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
 
+import { findAll } from '@api/documents';
+
 const types = [
     { name: 'Reglamento PH', code: 'CUSTOMER_ADMIN' },
     { name: 'Reglamento PH (Adic)', code: 'CUSTOMER' },
@@ -17,11 +19,7 @@ const types = [
     { name: 'Poder', code: 'CUSTOMER' }
 ];
 
-const templates = [
-    { name: 'En blanco (Nuevo)', code: 'CUSTOMER_ADMIN' },
-    { name: 'Multifamiliar VIS', code: 'CUSTOMER' },
-    { name: 'Family Office', code: 'CUSTOMER' }
-];
+const templates = [{ name: 'En blanco (Nuevo)', code: 'CUSTOMER_ADMIN' }];
 
 export default function DocumentModal({ state, setState }: IModal) {
     const toast = useRef(null);
@@ -59,6 +57,8 @@ export default function DocumentModal({ state, setState }: IModal) {
         if (validationFlow && validationFlow.length > 0) {
             return;
         }
+
+        const res = await findAll();
     };
 
     const handleClose = async () => {

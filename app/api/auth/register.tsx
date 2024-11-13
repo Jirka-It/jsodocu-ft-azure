@@ -5,7 +5,7 @@ import axios from 'axios';
 
 export const registerUser = async (registerUser: IRegister): Promise<IRegisterResponse> => {
     const response = await axios
-        .post(`${env.NEXT_PUBLIC_API_URL}/auth/register`, registerUser)
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/register`, registerUser)
         .then((response) => {
             return {
                 code: response.status,

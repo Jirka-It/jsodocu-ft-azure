@@ -5,7 +5,7 @@ import axios from 'axios';
 
 export const recoverPassword = async (recoverPassword: IRecover): Promise<IRecoverPassword> => {
     const response = await axios
-        .post(`${env.NEXT_PUBLIC_API_URL}/auth/recover`, recoverPassword)
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/recover`, recoverPassword)
         .then((response) => {
             console.log('response', response);
             return {

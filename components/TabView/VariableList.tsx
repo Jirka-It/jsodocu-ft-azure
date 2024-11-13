@@ -83,7 +83,7 @@ export default function VariableList() {
     };
     return (
         <section>
-            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Crear nueva variable" />
+            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
             <VariableModal state={openModal} setState={(e) => setOpenModal(e)} addData={(e) => addVariable(e)} />
 
             <DataTable value={variables} emptyMessage=" ">

@@ -1,8 +1,7 @@
 import axios from 'axios';
 import axiosInstance from '../../axios';
-
-import { getSession } from 'next-auth/react';
 import { env } from '@config/env';
+import { IDocumentResponse } from '@interfaces/IDocument';
 
 const create = async () => {
     const res = await axios.post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, {
@@ -17,13 +16,13 @@ const create = async () => {
     return res;
 };
 
-const findAll = async (params = { page: 1, size: 5 }) => {
+const findAll = async (params = { page: 1, size: 5 }): Promise<IDocumentResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, {
             params: params
         })
-        .then((data) => {
-            return data;
+        .then((res) => {
+            return res.data;
         })
         .catch((error) => {
             return error;

@@ -16,17 +16,40 @@ const create = async () => {
     return res;
 };
 
-const findAll = async (params = { page: 1, size: 5 }): Promise<IDocumentResponse> => {
+const findAll = async (page: number = 1, size: number = 5): Promise<IDocumentResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, {
-            params: params
+            params: { page, size }
         })
         .then((res) => {
-            return res.data;
+            return {
+                ...res.data,
+                status: res.status
+            };
         })
         .catch((error) => {
-            return error;
+            return {
+                code: error.code,
+                status: error.status
+            };
         });
 };
 
-export { findAll };
+const remove = async (id: string): Promise<IDocumentResponse> => {
+    return await axiosInstance
+        .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+export { findAll, remove };

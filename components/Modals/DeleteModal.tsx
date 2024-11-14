@@ -1,12 +1,14 @@
 import React, { useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { IModal } from '@interfaces/IModal';
+import { IModalDelete } from '@interfaces/IModal';
 
 import { Toast } from 'primereact/toast';
-import { showSuccess } from '@lib/ToastMessages';
+import { showSuccess, showError } from '@lib/ToastMessages';
+import { IDocumentResponse } from '@interfaces/IDocument';
+import { HttpStatus } from '@enums/HttpStatus';
 
-export default function DeleteModal({ state, setState }: IModal) {
+export default function DeleteModal({ state, setState, api, update }: IModalDelete) {
     const toast = useRef(null);
 
     const headerElement = (
@@ -23,8 +25,18 @@ export default function DeleteModal({ state, setState }: IModal) {
     );
 
     const handleDelete = async () => {
-        showSuccess(toast, '', 'Registro eliminado.');
-        setState(!state);
+        const res: IDocumentResponse = await api();
+
+        if (res.status === HttpStatus.OK) {
+            showSuccess(toast, '', 'Registro eliminado.');
+            setTimeout(() => {
+                setState(!state);
+                update();
+            }, 500);
+        } else {
+            showError(toast, '', 'Contacte con soporte');
+        }
+
         //Validate data
     };
 

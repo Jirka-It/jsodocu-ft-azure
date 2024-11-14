@@ -1,7 +1,7 @@
 export const State = {
     APPROVED: 'APPROVED',
     EDITION: 'EDITION',
-    REVISION: 'REVISION',
+    REVIEW: 'REVIEW',
     ARCHIVED: 'ARCHIVED'
 };
 

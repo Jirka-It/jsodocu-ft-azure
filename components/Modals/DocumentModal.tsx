@@ -58,7 +58,7 @@ export default function DocumentModal({ state, setState }: IModal) {
             return;
         }
 
-        const res = await findAll();
+        // const res = await findAll();
     };
 
     const handleClose = async () => {

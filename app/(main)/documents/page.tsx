@@ -10,31 +10,28 @@ import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocumentResponse } from '@interfaces/IDocument';
 
-import { InputSwitch } from 'primereact/inputswitch';
 import { useRouter } from 'next/navigation';
-import { findAll, remove } from '@api/documents';
+import { findAll, remove, update } from '@api/documents';
 
 const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
-    const [checked, setChecked] = useState(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [id, setId] = useState<string>();
+    const [data, setData] = useState<IDocumentResponse>();
 
     const router = useRouter();
-
-    const [data, setData] = useState<IDocumentResponse>();
 
     useEffect(() => {
         getData();
     }, []);
 
     const getData = async (page: number = 1, size: number = 5) => {
-        const res = await findAll(page, size);
+        const res = await findAll({ page, size });
         setData(res);
     };
 
-    //Table endpoints
+    //Table actions
 
     const handleView = (id: string) => {
         router.push(`/documents/${id}`);
@@ -56,7 +53,7 @@ const Documents = () => {
 
     const handleDelete = () => {
         const page = tableState ? tableState?.page + 1 : 1;
-        getData(page);
+        getData(page, 5);
     };
 
     return (
@@ -65,9 +62,6 @@ const Documents = () => {
             <DocumentModal state={openModal} setState={(e) => setOpenModal(e)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(id)} update={() => handleDelete()} />
             <div className="card">
-                <div className="w-full flex justify-content-end mb-5">
-                    <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
-                </div>
                 <DataTable
                     value={data?.data}
                     lazy

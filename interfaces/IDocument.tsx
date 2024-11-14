@@ -2,12 +2,12 @@ import { IGeneralRequest } from './IRequest';
 import { IType } from './IType';
 
 export interface IDocument {
-    name: string;
+    name?: string;
     reviewer?: string;
     creator?: string;
-    type: IType;
+    type?: IType;
     state?: string;
-    template: string;
+    template?: string;
     createdAt?: string;
     updatedAt?: string;
 }

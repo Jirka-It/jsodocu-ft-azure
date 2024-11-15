@@ -63,7 +63,7 @@ const RegisterPage: Page = () => {
             showSuccess(toast, '', 'Usuario creado.');
             setTimeout(() => {
                 router.push('/auth/login');
-            }, 1500);
+            }, 1000);
         } else {
             showError(toast, '', res.message);
         }

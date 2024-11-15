@@ -8,16 +8,16 @@ import DocumentActions from '@components/TableExtensions/DocumentActions';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
-import { IDocumentResponse } from '@interfaces/IDocument';
+import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
-import { findAll, remove, update } from '@api/documents';
+import { findAll, remove } from '@api/documents';
 
 const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
-    const [id, setId] = useState<string>();
+    const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
 
     const router = useRouter();
@@ -26,7 +26,7 @@ const Documents = () => {
         getData();
     }, []);
 
-    const getData = async (page: number = 1, size: number = 5) => {
+    const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const res = await findAll({ page, size });
         setData(res);
     };
@@ -37,12 +37,13 @@ const Documents = () => {
         router.push(`/documents/${id}`);
     };
 
-    const handleEdit = (id: string) => {
+    const handleEdit = (data: IDocument) => {
+        setDocument(data);
         setOpenModal(true);
     };
 
-    const handleModalDelete = (id: string) => {
-        setId(id);
+    const handleModalDelete = (data: IDocument) => {
+        setDocument(data);
         setOpenModalClose(true);
     };
 
@@ -51,16 +52,17 @@ const Documents = () => {
         getData(e.page + 1);
     };
 
-    const handleDelete = () => {
-        const page = tableState ? tableState?.page + 1 : 1;
-        getData(page, 5);
+    const handleUpdate = (pageNumber: number = null) => {
+        const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
+        setDocument(null);
+        getData(page, data?.elementsByPage);
     };
 
     return (
         <div className="layout-permissions">
             <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Documento" />
-            <DocumentModal state={openModal} setState={(e) => setOpenModal(e)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(id)} update={() => handleDelete()} />
+            <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page) => handleUpdate(page)} />
+            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
                 <DataTable
                     value={data?.data}
@@ -77,7 +79,7 @@ const Documents = () => {
                     <Column field="createdAt" header="Fecha"></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <DocumentActions handleView={() => handleView(rowData._id)} handleEdit={() => handleEdit(rowData._id)} handleDelete={() => handleModalDelete(rowData._id)} />} header="Acciones"></Column>
+                    <Column field="actions" body={(rowData) => <DocumentActions handleView={() => handleView(rowData._id)} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

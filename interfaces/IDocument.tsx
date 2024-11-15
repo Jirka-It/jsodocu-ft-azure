@@ -1,16 +1,21 @@
 import { IGeneralRequest } from './IRequest';
-import { IType } from './IType';
+import { IDocType } from './IDocType';
 
 export interface IDocument {
-    name?: string;
+    _id?: string;
+    name: string;
     reviewer?: string;
-    creator?: string;
-    type?: IType;
-    state?: string;
+    creator: string;
+    version: number;
+    step: string;
+    type: IDocType;
+    state: string;
     template?: string;
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface IDocumentPartial extends Partial<IDocument> {}
 
 export interface IDocumentResponse extends IGeneralRequest {
     data: Array<IDocument>;

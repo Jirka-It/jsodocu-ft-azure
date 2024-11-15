@@ -14,7 +14,7 @@ export default function DocumentStates({ state }: IBasicState) {
         case State.EDITION:
             return <Tag className={styles['tag-state']} value="Edición" severity="warning"></Tag>;
 
-        case State.REVIEW:
+        case State.REVISION:
             return <Tag className={styles['tag-state']} value="Revisión" severity="danger"></Tag>;
 
         case State.ARCHIVED:

@@ -1,10 +1,10 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IDocument, IDocumentPartial, IDocumentResponse } from '@interfaces/IDocument';
+import { IDocType, IDocTypeResponse } from '@interfaces/IDocType';
 
-const findAll = async (params: any): Promise<IDocumentResponse> => {
+const findAll = async (params: any): Promise<IDocTypeResponse> => {
     return await axiosInstance
-        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, {
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types`, {
             params: params
         })
         .then((res) => {
@@ -21,9 +21,9 @@ const findAll = async (params: any): Promise<IDocumentResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IDocumentResponse> => {
+const findById = async (id: string): Promise<IDocTypeResponse> => {
     return await axiosInstance
-        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`)
         .then((res) => {
             return {
                 ...res.data,
@@ -38,9 +38,9 @@ const findById = async (id: string): Promise<IDocumentResponse> => {
         });
 };
 
-const create = async (data: IDocument): Promise<IDocumentResponse> => {
+const create = async (data: IDocType): Promise<IDocTypeResponse> => {
     return await axiosInstance
-        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, data)
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types`, data)
         .then((res) => {
             return {
                 ...res.data,
@@ -55,9 +55,9 @@ const create = async (data: IDocument): Promise<IDocumentResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResponse> => {
+const update = async (id: string, data: IDocType): Promise<IDocTypeResponse> => {
     return await axiosInstance
-        .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`, data)
+        .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`, data)
         .then((res) => {
             return {
                 ...res.data,
@@ -72,9 +72,9 @@ const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResp
         });
 };
 
-const remove = async (id: string): Promise<IDocumentResponse> => {
+const remove = async (id: string): Promise<IDocTypeResponse> => {
     return await axiosInstance
-        .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`)
         .then((res) => {
             return {
                 ...res.data,

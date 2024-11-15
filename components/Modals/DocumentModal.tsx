@@ -1,32 +1,50 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
+
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModal } from '@interfaces/IModal';
+import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
+import { findAll } from '@api/types';
+import { create, update as updateDoc } from '@api/documents';
+import { IDocTypeResponse } from '@interfaces/IDocType';
+import { State } from '@enums/ConfigurationEnum';
+import { ISession } from '@interfaces/ISession';
+import { showError, showSuccess } from '@lib/ToastMessages';
+import { State as Step } from '@enums/DocumentEnum';
 
-import { findAll } from '@api/documents';
-
-const types = [
-    { name: 'Reglamento PH', code: 'CUSTOMER_ADMIN' },
-    { name: 'Reglamento PH (Adic)', code: 'CUSTOMER' },
-    { name: 'Contrato', code: 'CUSTOMER' },
-    { name: 'Poder', code: 'CUSTOMER' }
-];
-
-const templates = [{ name: 'En blanco (Nuevo)', code: 'CUSTOMER_ADMIN' }];
-
-export default function DocumentModal({ state, setState }: IModal) {
+export default function DocumentModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const { data: session } = useSession(); //data:session
     const [name, setName] = useState<string>('');
+    const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
-    const [template, setTemplate] = useState<any>('');
+    //const [template, setTemplate] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+
+    useEffect(() => {
+        if (state) {
+            getTypes();
+        }
+    }, [state]);
+
+    useEffect(() => {
+        if (data) {
+            setName(data.name);
+            setType(data.type);
+        }
+    }, [data]);
+
+    const getTypes = async (page: number = 1, size: number = 100) => {
+        const res = await findAll({ page, size });
+        setTypes(res);
+    };
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -46,8 +64,8 @@ export default function DocumentModal({ state, setState }: IModal) {
         const validationFlow = ValidationFlow(
             DocumentValidation({
                 name,
-                type: type.code,
-                template: template.code
+                type: type.code
+                //template: template.code
             }),
             toast
         );
@@ -58,13 +76,42 @@ export default function DocumentModal({ state, setState }: IModal) {
             return;
         }
 
-        // const res = await findAll();
+        const v: ISession = session as any;
+
+        var res;
+        if (data) {
+            res = await updateDoc(data._id, {
+                name,
+                type: type._id
+            });
+        } else {
+            res = await create({
+                name,
+                type: type._id,
+                state: State.ACTIVE,
+                creator: v.user._id,
+                step: Step.EDITION,
+                version: 1
+            });
+        }
+
+        if (res.status === 200 || res.status === 201) {
+            showSuccess(toast, '', 'Documento creado.');
+            setTimeout(() => {
+                update(!data ? 1 : null);
+                handleClose();
+            }, 1000);
+        } else if (res.status === 400) {
+            showError(toast, '', 'Revise los datos ingresados');
+        } else {
+            showError(toast, '', 'Contacte con soporte.');
+        }
     };
 
     const handleClose = async () => {
         setName('');
         setType('');
-        setTemplate('');
+        //setTemplate('');
         setValidations([]);
         setState(!state);
     };
@@ -97,10 +144,18 @@ export default function DocumentModal({ state, setState }: IModal) {
                     <label htmlFor="type">
                         Tipo de documento <span className="text-red-500">*</span>
                     </label>
-
-                    <Dropdown value={type} onChange={(e) => setType(e.value)} options={types} id="type" optionLabel="name" placeholder="Tipo de documento" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `} />
+                    <Dropdown
+                        value={type}
+                        onChange={(e) => setType(e.value)}
+                        options={types?.data}
+                        id="type"
+                        optionLabel="name"
+                        placeholder="Tipo de documento"
+                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `}
+                    />{' '}
                 </div>
 
+                {/*
                 <div>
                     <label htmlFor="template">
                         Plantilla <span className="text-red-500">*</span>
@@ -116,6 +171,7 @@ export default function DocumentModal({ state, setState }: IModal) {
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'template') ? 'p-invalid' : ''} `}
                     />
                 </div>
+               */}
             </div>
         </Dialog>
     );

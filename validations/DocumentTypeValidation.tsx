@@ -3,7 +3,7 @@ import { ModelValidation } from './ModelValidation';
 import { IZodError } from '@interfaces/IAuth';
 import { IDocType } from '@interfaces/IDocType';
 
-const DocumentSchema = z.object({
+const DocumentTypeSchema = z.object({
     code: z.string().min(1),
     name: z.string().min(1),
     description: z.string().min(1),
@@ -11,5 +11,5 @@ const DocumentSchema = z.object({
 });
 
 export const DocumentTypeValidation = (data: IDocType): Array<IZodError> | string => {
-    return ModelValidation(data, DocumentSchema);
+    return ModelValidation(data, DocumentTypeSchema);
 };

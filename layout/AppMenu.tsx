@@ -12,6 +12,13 @@ const AppMenu = () => {
                     icon: 'pi pi-home',
                     to: '/'
                 },
+
+                {
+                    label: 'Categorías de variables',
+                    icon: 'pi pi-list',
+                    to: '/categories'
+                },
+
                 {
                     label: 'Tipos de documentos',
                     icon: 'pi pi-file',

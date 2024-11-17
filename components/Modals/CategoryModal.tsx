@@ -6,17 +6,16 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
-import { create, update as updateDoc } from '@api/types';
+import { create, update as updateDoc } from '@api/categories';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { states } from '@lib/data';
-import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
+import { CategoryValidation } from '@validations/CategoryValidation';
 
-export default function DocumentTypeModal({ state, setState, update, data }: IModalCreate) {
+export default function CategoryModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
-    const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [stateType, setStateType] = useState<any>('');
@@ -24,13 +23,11 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
 
     useEffect(() => {
         if (data) {
-            setCode(data.code);
             setName(data.name);
             setDescription(data.description);
             const state = states.filter((s) => s.code === data.state);
             setStateType(state[0]);
         } else {
-            setCode('');
             setName('');
             setDescription('');
             setStateType('');
@@ -39,7 +36,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
-            <span className="font-bold white-space-nowrap">Tipo de documento</span>
+            <span className="font-bold white-space-nowrap">Categoría de variable</span>
         </div>
     );
 
@@ -53,8 +50,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
     const handleSubmit = async () => {
         //Validate data
         const validationFlow = ValidationFlow(
-            DocumentTypeValidation({
-                code,
+            CategoryValidation({
                 name,
                 description,
                 state: stateType.code
@@ -71,14 +67,12 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         var res;
         if (data) {
             res = await updateDoc(data._id, {
-                code,
                 name,
                 description,
                 state: stateType.code
             });
         } else {
             res = await create({
-                code,
                 name,
                 description,
                 state: stateType.code
@@ -86,7 +80,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         }
 
         if (res.status === 200 || res.status === 201) {
-            showSuccess(toast, '', 'Tipo de documento creado');
+            showSuccess(toast, '', 'Categoría creada');
             setTimeout(() => {
                 update(!data ? 1 : null);
                 handleClose();
@@ -94,12 +88,11 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         } else if (res.status === 400) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
-            showError(toast, '', 'Contacte con soporte.');
+            showError(toast, '', 'Contacte con soporte');
         }
     };
 
     const handleClose = async () => {
-        setCode('');
         setName('');
         setDescription('');
         setStateType('');
@@ -124,14 +117,6 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
             <Toast ref={toast} />
 
             <div className="flex flex-column gap-4">
-                <div>
-                    <label htmlFor="name">
-                        Código <span className="text-red-500">*</span>
-                    </label>
-
-                    <InputText value={code} onChange={(e) => setCode(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
-                </div>
-
                 <div>
                     <label htmlFor="name">
                         Nombre <span className="text-red-500">*</span>

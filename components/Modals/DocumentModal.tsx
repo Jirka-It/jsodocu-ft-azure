@@ -100,7 +100,7 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
         }
 
         if (res.status === 200 || res.status === 201) {
-            showSuccess(toast, '', 'Documento creado.');
+            showSuccess(toast, '', 'Documento creado');
             setTimeout(() => {
                 update(!data ? 1 : null);
                 handleClose();

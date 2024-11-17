@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
-import { ValidationFlow } from '@lib/ValidationFlow';
 import { create, update as updateDoc } from '@api/types';
-import { showError, showSuccess } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
+import { IModalCreate } from '@interfaces/IModal';
+import { ValidationFlow } from '@lib/ValidationFlow';
+import { showError, showSuccess } from '@lib/ToastMessages';
 import { states } from '@lib/data';
 import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
 

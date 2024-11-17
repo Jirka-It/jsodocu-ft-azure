@@ -9,24 +9,33 @@ import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentTypeModal from '@components/Modals/DocumentTypeModal';
 import { findAll, remove } from '@api/types';
 import { IDocType, IDocTypeResponse } from '@interfaces/IDocType';
+import BasicStates from '@components/TableExtensions/BasicStates';
+import { InputSwitch } from 'primereact/inputswitch';
+import { State } from '@enums/StateEnum';
 
 const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [checked, setChecked] = useState(true);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [documentType, setDocumentType] = useState<IDocType>(null);
     const [data, setData] = useState<IDocTypeResponse>();
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [checked]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const res = await findAll({ page, size });
+        const state = checked ? State.ACTIVE : State.INACTIVE;
+        const res = await findAll({ page, size, state });
         setData(res);
     };
 
     //Table actions
+
+    const handleCheck = (check: boolean) => {
+        setChecked(check);
+    };
 
     const handleEdit = (data: IDocType) => {
         setDocumentType(data);
@@ -59,6 +68,13 @@ const Documents = () => {
             <DocumentTypeModal state={openModal} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
             <div className="card">
+                {data ? (
+                    <div className="w-full flex justify-content-end mb-5">
+                        <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                    </div>
+                ) : (
+                    ''
+                )}
                 <DataTable
                     value={data?.data}
                     lazy
@@ -72,7 +88,7 @@ const Documents = () => {
                     <Column field="code" header="Código"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="description" header="Descripción"></Column>
-                    <Column field="state" header="Estado"></Column>
+                    <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column field="actions" body={(rowData) => <DocumentTypeActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>

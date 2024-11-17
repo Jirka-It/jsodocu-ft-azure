@@ -13,6 +13,11 @@ const AppMenu = () => {
                     to: '/'
                 },
                 {
+                    label: 'Tipos de documentos',
+                    icon: 'pi pi-file',
+                    to: '/documents-types'
+                },
+                {
                     label: 'Documentos',
                     icon: 'pi pi-file',
                     to: '/documents'

@@ -1,4 +1,4 @@
-import { State } from '@enums/ConfigurationEnum';
+import { State } from '@enums/StateEnum';
 import { Variable } from '@enums/DocumentEnum';
 import { Tag } from 'primereact/tag';
 import styles from './BasicStates.module.css';

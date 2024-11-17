@@ -14,7 +14,7 @@ import { DocumentValidation } from '@validations/DocumentValidation';
 import { findAll } from '@api/types';
 import { create, update as updateDoc } from '@api/documents';
 import { IDocTypeResponse } from '@interfaces/IDocType';
-import { State } from '@enums/ConfigurationEnum';
+import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';

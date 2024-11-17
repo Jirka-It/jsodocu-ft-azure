@@ -1,6 +1,7 @@
 import { IGeneralRequest } from './IRequest';
 
 export interface IDocType {
+    _id?: string;
     name: string;
     code: string;
     description: string;

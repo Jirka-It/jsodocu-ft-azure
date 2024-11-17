@@ -6,7 +6,7 @@ import { IModalDelete } from '@interfaces/IModal';
 import { Toast } from 'primereact/toast';
 import { showSuccess, showError } from '@lib/ToastMessages';
 import { IDocumentResponse } from '@interfaces/IDocument';
-import { HttpStatus } from '@enums/HttpStatus';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 export default function DeleteModal({ state, setState, api, update }: IModalDelete) {
     const toast = useRef(null);

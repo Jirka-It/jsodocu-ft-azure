@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { State } from '@enums/ConfigurationEnum';
+import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
 import BasicActions from '@components/TableExtensions/BasicActions';
 import BasicStates from '@components/TableExtensions/BasicStates';

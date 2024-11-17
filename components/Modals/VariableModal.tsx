@@ -1,31 +1,41 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { Toast } from 'primereact/toast';
+import { Dropdown } from 'primereact/dropdown';
+
 import { IVariableModal } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
-import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { VariableValidation } from '@validations/VariableValidation';
-import { Dropdown } from 'primereact/dropdown';
-import { Variable } from '@enums/DocumentEnum';
+import { VariableType } from '@enums/DocumentEnum';
+import { State } from '@enums/StateEnum';
 
-const names = [
-    { name: 'Tipo entidad aprobadora de licencia', code: 'CUSTOMER_ADMIN' },
-    { name: 'Tipo entidad receptora servidumbre', code: 'CUSTOMER' }
-];
-
-const categories = [
-    { name: 'General', code: Variable.GENERAL },
-    { name: 'Proyecto', code: Variable.PROJECT }
-];
+import { create } from '@api/variables';
+import { findAll } from '@api/categories';
+import { ICategoryResponse } from '@interfaces/ICategory';
+import { HttpStatus } from '@enums/HttpStatusEnum';
+import { showError, showSuccess } from '@lib/ToastMessages';
 
 export default function VariableModal({ state, setState, addData }: IVariableModal) {
+    const params = useParams();
     const toast = useRef(null);
-    const [name, setName] = useState<any>('');
+    const [name, setName] = useState<string>('');
     const [category, setCategory] = useState<any>('');
-
+    const [categories, setCategories] = useState<ICategoryResponse>();
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async (page: number = 1, size: number = 100) => {
+        const res = await findAll({ page, size });
+        setCategories(res);
+    };
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -44,8 +54,8 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         //Validate data
         const validationFlow = ValidationFlow(
             VariableValidation({
-                name: name.code,
-                category: category.code
+                name: name,
+                category: category
             }),
             toast
         );
@@ -56,11 +66,26 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
             return;
         }
 
-        addData({
-            name: name.name,
-            category: category.code
+        const res = await create({
+            name,
+            value: '',
+            category,
+            document: params.id,
+            type: VariableType.TEXT,
+            state: State.ACTIVE
         });
-        handleClose();
+
+        if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
+            showSuccess(toast, '', 'Variable creada');
+            setTimeout(() => {
+                addData();
+                handleClose();
+            }, 500);
+        } else if (res.status === HttpStatus.BAD_REQUEST) {
+            showError(toast, '', 'Revise los datos ingresados');
+        } else {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handleClose = () => {
@@ -90,15 +115,8 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                     <label htmlFor="name">
                         Nombre de la variable <span className="text-red-500">*</span>
                     </label>
-                    <Dropdown
-                        value={name}
-                        onChange={(e) => setName(e.value)}
-                        options={names}
-                        id="name"
-                        optionLabel="name"
-                        placeholder="Nombre de la variable"
-                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `}
-                    />
+
+                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre de la variable" />
                 </div>
 
                 <div>
@@ -108,9 +126,10 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                     <Dropdown
                         value={category}
                         onChange={(e) => setCategory(e.value)}
-                        options={categories}
+                        options={categories?.data}
                         id="category"
                         optionLabel="name"
+                        optionValue="_id"
                         placeholder="Categoría de la variable"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'category') ? 'p-invalid' : ''} `}
                     />

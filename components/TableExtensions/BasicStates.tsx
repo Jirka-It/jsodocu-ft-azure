@@ -15,13 +15,7 @@ export default function BasicStates({ state }: IBasicState) {
         case State.INACTIVE:
             return <Tag className={styles['tag-state']} value="Inactivo" severity="danger"></Tag>;
 
-        case Variable.GENERAL:
-            return <Tag className={styles['tag-state']} value="General" severity="success"></Tag>;
-
-        case Variable.PROJECT:
-            return <Tag className={styles['tag-state']} value="Proyecto" severity="info"></Tag>;
-
         default:
-            return <Tag className={styles['tag-state']} value="Sin estado"></Tag>;
+            return <Tag className={styles['tag-state']} value={state}></Tag>;
     }
 }

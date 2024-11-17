@@ -18,6 +18,7 @@ import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 export default function DocumentModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
@@ -99,13 +100,13 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
             });
         }
 
-        if (res.status === 200 || res.status === 201) {
+        if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Documento creado');
             setTimeout(() => {
                 update(!data ? 1 : null);
                 handleClose();
             }, 1000);
-        } else if (res.status === 400) {
+        } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
             showError(toast, '', 'Contacte con soporte.');

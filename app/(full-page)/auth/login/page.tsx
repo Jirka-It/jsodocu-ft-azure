@@ -15,6 +15,7 @@ import { showError } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { ValidationFlow } from '@lib/ValidationFlow';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const LoginPage: Page = () => {
     const router = useRouter();
@@ -62,9 +63,9 @@ const LoginPage: Page = () => {
             redirect: false
         });
 
-        if (res.status === 200) {
+        if (res.status === HttpStatus.OK) {
             router.push('/');
-        } else if (res.status === 401) {
+        } else if (res.status === HttpStatus.UNAUTHORIZED) {
             showError(toast, '', 'Credenciales incorrectas.');
         } else {
             showError(toast, '', 'Contacte con soporte.');

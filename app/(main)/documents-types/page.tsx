@@ -14,7 +14,7 @@ const Documents = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
-    const [document, setDocument] = useState<IDocType>(null);
+    const [documentType, setDocumentType] = useState<IDocType>(null);
     const [data, setData] = useState<IDocTypeResponse>();
 
     useEffect(() => {
@@ -29,12 +29,12 @@ const Documents = () => {
     //Table actions
 
     const handleEdit = (data: IDocType) => {
-        setDocument(data);
+        setDocumentType(data);
         setOpenModal(true);
     };
 
     const handleModalDelete = (data: IDocType) => {
-        setDocument(data);
+        setDocumentType(data);
         setOpenModalClose(true);
     };
 
@@ -43,17 +43,21 @@ const Documents = () => {
         getData(e.page + 1);
     };
 
-    const handleUpdate = (pageNumber: number = null) => {
-        const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
-        setDocument(null);
-        getData(page, data?.elementsByPage);
+    const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
+        if (update) {
+            const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
+            setDocumentType(null);
+            getData(page, data?.elementsByPage);
+        } else {
+            setDocumentType(null);
+        }
     };
 
     return (
         <div className="layout-permissions">
             <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Tipo de documento" />
-            <DocumentTypeModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page) => handleUpdate(page)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
+            <DocumentTypeModal state={openModal} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
             <div className="card">
                 <DataTable
                     value={data?.data}

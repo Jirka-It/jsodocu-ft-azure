@@ -52,16 +52,20 @@ const Documents = () => {
         getData(e.page + 1);
     };
 
-    const handleUpdate = (pageNumber: number = null) => {
-        const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
-        setDocument(null);
-        getData(page, data?.elementsByPage);
+    const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
+        if (update) {
+            const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
+            setDocument(null);
+            getData(page, data?.elementsByPage);
+        } else {
+            setDocument(null);
+        }
     };
 
     return (
         <div className="layout-permissions">
             <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Documento" />
-            <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page) => handleUpdate(page)} />
+            <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
                 <DataTable

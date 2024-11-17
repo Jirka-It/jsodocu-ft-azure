@@ -38,6 +38,10 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
         if (data) {
             setName(data.name);
             setType(data.type);
+        } else {
+            setName('');
+            setType('');
+            //setTemplate('');
         }
     }, [data]);
 

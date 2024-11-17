@@ -10,7 +10,6 @@ import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { create, update as updateDoc } from '@api/types';
-import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
 import { states } from '@lib/data';
@@ -18,7 +17,6 @@ import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
 
 export default function DocumentTypeModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
-    const { data: session } = useSession();
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -32,6 +30,11 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
             setDescription(data.description);
             const state = states.filter((s) => s.code === data.state);
             setStateType(state[0]);
+        } else {
+            setCode('');
+            setName('');
+            setDescription('');
+            setStateType('');
         }
     }, [data]);
 
@@ -65,8 +68,6 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         if (validationFlow && validationFlow.length > 0) {
             return;
         }
-
-        const v: ISession = session as any;
 
         var res;
         if (data) {
@@ -104,6 +105,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         setDescription('');
         setStateType('');
         setValidations([]);
+        update(null, false);
         setState(!state);
     };
 

@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IDocType, IDocTypeResponse } from '@interfaces/IDocType';
+import { IDocType, IDocTypePartial, IDocTypeResponse } from '@interfaces/IDocType';
 
 const findAll = async (params: any): Promise<IDocTypeResponse> => {
     return await axiosInstance
@@ -55,7 +55,7 @@ const create = async (data: IDocType): Promise<IDocTypeResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocType): Promise<IDocTypeResponse> => {
+const update = async (id: string, data: IDocTypePartial): Promise<IDocTypeResponse> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`, data)
         .then((res) => {

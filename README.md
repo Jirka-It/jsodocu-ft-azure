@@ -225,3 +225,8 @@ NEXT_PUBLIC_API_URL_BACKEND=valorDeEjemplo
 ### context
 
 Contiene contextos globales de la aplicación.
+
+
+### for prod deploy
+ npm install      
+npm run build --prod

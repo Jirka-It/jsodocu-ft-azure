@@ -1,18 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: false,
+    /*output:"export",
+    basePath:"/cacao",*/
     images: {
         domains: ['dummyimage.com']
     },
-    async redirects() {
-        return [
-            {
-                source: '/apps/mail',
-                destination: '/apps/mail/inbox',
-                permanent: true
-            }
-        ];
-    }
+    reactStrictMode: true,
 };
 
 module.exports = nextConfig;

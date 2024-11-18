@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 import { env } from '@config/env';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const handler = NextAuth({
     providers: [
@@ -17,9 +18,9 @@ const handler = NextAuth({
             },
 
             async authorize(credentials, req) {
-                const res = await axios.post(`${env.NEXT_PUBLIC_API_URL}/auth/login`, { username: credentials.email, password: credentials.password });
+                const res = await axios.post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/login`, { username: credentials.email, password: credentials.password });
 
-                if (res.status === 401) {
+                if (res.status === HttpStatus.UNAUTHORIZED) {
                     return { status: res?.status };
                 }
 
@@ -45,7 +46,7 @@ const handler = NextAuth({
             return { ...token, ...user };
         },
         async session({ session, token }) {
-            session.user = token as any;
+            session = token as any;
             return session;
         },
         async redirect({ url }) {

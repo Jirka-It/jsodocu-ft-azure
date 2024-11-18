@@ -1,7 +1,7 @@
 export const State = {
     APPROVED: 'APPROVED',
     EDITION: 'EDITION',
-    REVISION: 'REVISION',
+    REVIEW: 'REVIEW',
     ARCHIVED: 'ARCHIVED'
 };
 
@@ -11,8 +11,8 @@ export const Variable = {
 };
 
 export const VariableType = {
-    TEXT: 'Texto',
-    NUMBER: 'Número',
-    DATE: 'Fecha',
-    MUNICIPALITIES: 'Municipios'
+    TEXT: 'TEXT',
+    NUMBER: 'NUMBER',
+    DATE: 'DATE',
+    MUNICIPALITIES: 'MUNICIPALITIES'
 };

@@ -69,7 +69,7 @@ const ForgotPassword: Page = () => {
                         </span>
 
                         <div className="flex gap-3 w-full sm:w-25rem">
-                            <Button outlined className="p-ripple flex-auto" onClick={() => router.push('/')} label="Cancelar"></Button>
+                            <Button outlined className="p-ripple flex-auto" onClick={() => router.push('/auth/login')} label="Cancelar"></Button>
                             <Button className="p-ripple flex-auto" onClick={() => handleRecover()} label="Enviar"></Button>
                         </div>
                     </div>

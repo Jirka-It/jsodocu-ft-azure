@@ -213,13 +213,13 @@ Contiene las variables de entorno de la aplicaci√≥n. El archivo env.ts, es de d√
 ```
 // config/env.ts
 export const env = ({
-    API_URL: process.env.NEXT_PUBLIC_API_URL
+    API_URL: process.env.NEXT_PUBLIC_API_URL_BACKEND
 });
 ```
 
 ```
 // .env
-NEXT_PUBLIC_API_URL=valorDeEjemplo
+NEXT_PUBLIC_API_URL_BACKEND=valorDeEjemplo
 ```
 
 ### context

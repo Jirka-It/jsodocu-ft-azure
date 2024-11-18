@@ -6,3 +6,7 @@ export interface IBasicAction {
 export interface IDocumentAction extends IBasicAction {
     handleView: Function;
 }
+
+export interface IDocumentTypeAction extends IBasicAction {
+    data: string;
+}

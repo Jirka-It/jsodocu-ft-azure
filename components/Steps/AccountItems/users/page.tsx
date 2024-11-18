@@ -1,7 +1,7 @@
 import DeleteModal from '@components/Modals/DeleteModal';
 import BasicActions from '@components/TableExtensions/BasicActions';
 import BasicStates from '@components/TableExtensions/BasicStates';
-import { State } from '@enums/ConfigurationEnum';
+import { State } from '@enums/StateEnum';
 import { IZodError } from '@interfaces/IAuth';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';

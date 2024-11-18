@@ -74,7 +74,7 @@ const update = async (id: string, data: IVariablePartial): Promise<IVariableResp
 
 const remove = async (id: string): Promise<IVariableResponse> => {
     return await axiosInstance
-        .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/variables/${id}`)
         .then((res) => {
             return {
                 ...res.data,

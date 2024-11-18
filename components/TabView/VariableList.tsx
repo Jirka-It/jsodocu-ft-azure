@@ -16,9 +16,10 @@ import BasicStates from '@components/TableExtensions/BasicStates';
 import { VariableType } from '@enums/DocumentEnum';
 import VariableActions from '@components/TableExtensions/VariableActions';
 import { IVariable } from '@interfaces/IVariable';
-import { findAll, update } from '@api/variables';
-import { CopyToClipBoard } from '@lib/CopyToClipBoard';
+import { findAll, update, remove } from '@api/variables';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { CopyToClipBoard } from '@lib/CopyToClipBoard';
+import { departments } from '@lib/data';
 import { showError, showSuccess } from '@lib/ToastMessages';
 
 const types = [
@@ -28,19 +29,23 @@ const types = [
     { name: 'Municipalidades', value: VariableType.MUNICIPALITIES }
 ];
 
-const municipalities = [
-    { name: 'Medellín', code: 'MEDELLIN' },
-    { name: 'Barranquilla', code: 'BARRANQUILLA' }
-];
-
 export default function VariableList() {
     const toast = useRef(null);
     const params = useParams();
     const [variables, setVariables] = useState<Array<IVariable>>([]);
+    const [municipalities, setMunicipalities] = useState<Array<string>>();
+
     const [openModal, setOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
         getData();
+        const newArray = [];
+        departments.map((d) => {
+            d.cities.map((c) => {
+                newArray.push(`${c} - ${d.department}`);
+            });
+        });
+        setMunicipalities(newArray);
     }, []);
 
     const getData = async (page: number = 1, size: number = 100) => {
@@ -64,17 +69,7 @@ export default function VariableList() {
                 return <Calendar value={new Date(variable.value)} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="date" className="w-15rem" placeholder="Valor de la variable" />;
 
             case VariableType.MUNICIPALITIES:
-                return (
-                    <Dropdown
-                        value={variable.value}
-                        onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')}
-                        options={municipalities}
-                        id="municipalities"
-                        optionLabel="name"
-                        placeholder="Categoría de la variable"
-                        className="w-15rem"
-                    />
-                );
+                return <Dropdown filter value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} options={municipalities} id="municipalities" placeholder="Categoría de la variable" className="w-15rem" />;
 
             default:
                 return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" type="text" className="w-15rem" placeholder="Valor de la variable" />;
@@ -108,9 +103,15 @@ export default function VariableList() {
         CopyToClipBoard(data, toast);
     };
 
-    const handleDelete = (id: string) => {
-        const modifiedVariables = variables.filter((v) => v._id !== id);
-        setVariables(modifiedVariables);
+    const handleDelete = async (id: string) => {
+        const res = await remove(id);
+        if (res.status === HttpStatus.OK) {
+            const modifiedVariables = variables.filter((v) => v._id !== id);
+            setVariables(modifiedVariables);
+            showSuccess(toast, '', 'Variable eliminada');
+        } else {
+            showError(toast, '', 'Contacte con soporte.');
+        }
     };
 
     const handleEdit = async (data: IVariable) => {

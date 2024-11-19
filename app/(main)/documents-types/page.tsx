@@ -27,6 +27,7 @@ const Documents = () => {
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checked]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {

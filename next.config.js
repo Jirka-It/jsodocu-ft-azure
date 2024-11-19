@@ -5,7 +5,7 @@ const nextConfig = {
     images: {
         domains: ['dummyimage.com']
     },
-    reactStrictMode: true,
+    reactStrictMode: false
 };
 
 module.exports = nextConfig;

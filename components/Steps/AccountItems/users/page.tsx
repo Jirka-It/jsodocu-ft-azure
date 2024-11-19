@@ -169,7 +169,7 @@ export default function StepUsers() {
                         <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
                     </div>
 
-                    <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} />
+                    <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
                     <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
                         <Column field="id" header="ID"></Column>
                         <Column field="name" header="Nombre"></Column>

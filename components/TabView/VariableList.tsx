@@ -46,6 +46,7 @@ export default function VariableList() {
             });
         });
         setMunicipalities(newArray);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getData = async (page: number = 1, size: number = 100) => {

@@ -14,15 +14,17 @@ import { VariableValidation } from '@validations/VariableValidation';
 import { VariableType } from '@enums/DocumentEnum';
 import { State } from '@enums/StateEnum';
 
-import { create } from '@api/variables';
+import { create, findByName } from '@api/variables';
 import { findAll } from '@api/categories';
 import { ICategoryResponse } from '@interfaces/ICategory';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
+import { CleanText } from '@lib/CleanText';
 
 export default function VariableModal({ state, setState, addData }: IVariableModal) {
     const params = useParams();
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [category, setCategory] = useState<any>('');
     const [categories, setCategories] = useState<ICategoryResponse>();
@@ -95,6 +97,27 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         setState(!state);
     };
 
+    // Inputs events
+    const handleChange = async (name: string) => {
+        const newName = CleanText(name);
+        setName(newName);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByName(params.id, newName);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe una variable con este nombre');
+                } else {
+                    showInfo(toast, '', 'Nombre disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
+
     return (
         <Dialog
             visible={state}
@@ -116,7 +139,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                         Nombre de la variable <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre de la variable" />
+                    <InputText value={name} onChange={(e) => handleChange(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre de la variable" />
                 </div>
 
                 <div>

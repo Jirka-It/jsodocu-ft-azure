@@ -38,6 +38,22 @@ const findById = async (id: string): Promise<IVariableResponse> => {
         });
 };
 
+const findByName = async (id: string, name: string): Promise<boolean> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/variables/${id}/is-unique`, {
+            params: { name }
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const create = async (data: IVariable): Promise<IVariableResponse> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/variables`, data)
@@ -89,4 +105,4 @@ const remove = async (id: string): Promise<IVariableResponse> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findById, findByName, create, update, remove };

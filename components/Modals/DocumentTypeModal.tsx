@@ -10,7 +10,7 @@ import { create, findByCode, update as updateDoc } from '@api/types';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
 import { ValidationFlow } from '@lib/ValidationFlow';
-import { showError, showSuccess, showWarn } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { states } from '@lib/data';
 import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
@@ -122,7 +122,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
                 if (!res) {
                     showWarn(toast, '', 'Ya existe un tipo con ese código');
                 } else {
-                    showWarn(toast, '', 'Código disponible');
+                    showInfo(toast, '', 'Código disponible');
                 }
             } catch (error) {
                 showError(toast, '', 'Contacte con soporte');

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -12,8 +12,12 @@ import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
 import { findAll, remove } from '@api/documents';
+import { Tag } from 'primereact/tag';
+import { CopyToClipBoard } from '@lib/CopyToClipBoard';
+import { Toast } from 'primereact/toast';
 
 const Documents = () => {
+    const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
@@ -36,6 +40,9 @@ const Documents = () => {
 
     const handleView = (id: string) => {
         router.push(`/documents/${id}`);
+    };
+    const handleCopy = (data: string) => {
+        CopyToClipBoard(data, toast);
     };
 
     const handleEdit = (data: IDocument) => {
@@ -64,7 +71,8 @@ const Documents = () => {
     };
 
     return (
-        <div className="layout-permissions">
+        <div className="layout-documents">
+            <Toast ref={toast} />
             <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
@@ -80,6 +88,7 @@ const Documents = () => {
                     onPage={(e) => handlePagination(e)}
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
+                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
                     <Column field="type.name" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="createdAt" header="Fecha"></Column>

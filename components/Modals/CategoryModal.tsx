@@ -10,7 +10,7 @@ import { create, findByName, update as updateDoc } from '@api/categories';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
 import { ValidationFlow } from '@lib/ValidationFlow';
-import { showError, showSuccess, showWarn } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { states } from '@lib/data';
 import { CategoryValidation } from '@validations/CategoryValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
@@ -115,7 +115,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
                 if (!res) {
                     showWarn(toast, '', 'Ya existe una categoría con este nombre');
                 } else {
-                    showWarn(toast, '', 'Nombre disponible');
+                    showInfo(toast, '', 'Nombre disponible');
                 }
             } catch (error) {
                 showError(toast, '', 'Contacte con soporte');

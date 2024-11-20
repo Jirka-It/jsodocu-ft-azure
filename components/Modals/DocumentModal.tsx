@@ -12,16 +12,18 @@ import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
 import { findAll } from '@api/types';
-import { create, update as updateDoc } from '@api/documents';
+import { create, findByName, update as updateDoc } from '@api/documents';
 import { IDocTypeResponse } from '@interfaces/IDocType';
 import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { CleanText } from '@lib/CleanText';
 
 export default function DocumentModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const { data: session } = useSession(); //data:session
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
@@ -121,6 +123,27 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
         setState(!state);
     };
 
+    // Inputs events
+    const handleChange = async (name: string) => {
+        const newName = CleanText(name);
+        setName(newName);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByName(newName);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe un documento con este nombre');
+                } else {
+                    showInfo(toast, '', 'Nombre disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
+
     return (
         <Dialog
             visible={state}
@@ -142,7 +165,7 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
                         Nombre del documento <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del documento" />
+                    <InputText value={name} onChange={(e) => handleChange(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del documento" />
                 </div>
 
                 <div>

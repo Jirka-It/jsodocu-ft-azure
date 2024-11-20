@@ -27,6 +27,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [category, setCategory] = useState<any>('');
+    const [isUnique, setIsUnique] = useState<boolean>(true);
     const [categories, setCategories] = useState<ICategoryResponse>();
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
@@ -53,6 +54,10 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
     );
 
     const handleSubmit = async () => {
+        if (!isUnique) {
+            showWarn(toast, '', 'Ya existe una variable con este nombre');
+            return;
+        }
         //Validate data
         const validationFlow = ValidationFlow(
             VariableValidation({
@@ -95,6 +100,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         setCategory('');
         setValidations([]);
         setState(!state);
+        setIsUnique(true);
     };
 
     // Inputs events
@@ -107,11 +113,14 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                 const res = await findByName(params.id, newName);
                 if (!res) {
                     showWarn(toast, '', 'Ya existe una variable con este nombre');
+                    setIsUnique(false);
                 } else {
                     showInfo(toast, '', 'Nombre disponible');
+                    setIsUnique(true);
                 }
             } catch (error) {
                 showError(toast, '', 'Contacte con soporte');
+                setIsUnique(true);
             }
         }, 1000);
 

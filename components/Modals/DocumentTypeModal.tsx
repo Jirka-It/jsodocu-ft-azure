@@ -6,17 +6,19 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
-import { create, update as updateDoc } from '@api/types';
+import { create, findByCode, update as updateDoc } from '@api/types';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
 import { ValidationFlow } from '@lib/ValidationFlow';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { states } from '@lib/data';
 import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { CleanText } from '@lib/CleanText';
 
 export default function DocumentTypeModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -109,6 +111,27 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
         setState(!state);
     };
 
+    // Inputs events
+    const handleChange = async (name: string) => {
+        const newCode = CleanText(name);
+        setCode(newCode);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByCode(newCode);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe un tipo con ese código');
+                } else {
+                    showInfo(toast, '', 'Código disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
+
     return (
         <Dialog
             visible={state}
@@ -130,7 +153,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
                         Código <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={code} onChange={(e) => setCode(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
+                    <InputText value={code} onChange={(e) => handleChange(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
                 </div>
 
                 <div>
@@ -173,4 +196,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
             </div>
         </Dialog>
     );
+}
+function setTimer(newTimer: NodeJS.Timeout) {
+    throw new Error('Function not implemented.');
 }

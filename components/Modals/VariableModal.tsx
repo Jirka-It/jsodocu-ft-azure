@@ -14,17 +14,20 @@ import { VariableValidation } from '@validations/VariableValidation';
 import { VariableType } from '@enums/DocumentEnum';
 import { State } from '@enums/StateEnum';
 
-import { create } from '@api/variables';
+import { create, findByName } from '@api/variables';
 import { findAll } from '@api/categories';
 import { ICategoryResponse } from '@interfaces/ICategory';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
+import { CleanText } from '@lib/CleanText';
 
 export default function VariableModal({ state, setState, addData }: IVariableModal) {
     const params = useParams();
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [category, setCategory] = useState<any>('');
+    const [isUnique, setIsUnique] = useState<boolean>(true);
     const [categories, setCategories] = useState<ICategoryResponse>();
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
@@ -51,6 +54,10 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
     );
 
     const handleSubmit = async () => {
+        if (!isUnique) {
+            showWarn(toast, '', 'Ya existe una variable con este nombre');
+            return;
+        }
         //Validate data
         const validationFlow = ValidationFlow(
             VariableValidation({
@@ -93,6 +100,31 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         setCategory('');
         setValidations([]);
         setState(!state);
+        setIsUnique(true);
+    };
+
+    // Inputs events
+    const handleChange = async (name: string) => {
+        const newName = CleanText(name);
+        setName(newName);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByName(params.id, newName);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe una variable con este nombre');
+                    setIsUnique(false);
+                } else {
+                    showInfo(toast, '', 'Nombre disponible');
+                    setIsUnique(true);
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+                setIsUnique(true);
+            }
+        }, 1000);
+
+        setTimer(newTimer);
     };
 
     return (
@@ -116,7 +148,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                         Nombre de la variable <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre de la variable" />
+                    <InputText value={name} onChange={(e) => handleChange(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre de la variable" />
                 </div>
 
                 <div>

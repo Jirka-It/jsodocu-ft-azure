@@ -154,7 +154,7 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
                         onChange={(e) => setType(e.value)}
                         options={types?.data}
                         id="type"
-                        optionLabel="name"
+                        optionLabel="code"
                         placeholder="Tipo de documento"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `}
                     />{' '}

@@ -38,6 +38,22 @@ const findById = async (id: string): Promise<ICategoryResponse> => {
         });
 };
 
+const findByName = async (name: string): Promise<boolean> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories/is-unique`, {
+            params: { name }
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const create = async (data: ICategory): Promise<ICategoryResponse> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories`, data)
@@ -89,4 +105,4 @@ const remove = async (id: string): Promise<ICategoryResponse> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findById, findByName, create, update, remove };

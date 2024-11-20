@@ -84,12 +84,13 @@ const Documents = () => {
     return (
         <div className="layout-permissions">
             <Toast ref={toast} />
-            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Tipo de documento" />
             <DocumentTypeModal state={openModal} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
             <div className="card">
                 {data ? (
-                    <div className="w-full flex justify-content-end mb-5">
+                    <div className="w-full flex justify-content-between mb-3">
+                        <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Tipo de documento" />
+
                         <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                     </div>
                 ) : (

@@ -38,6 +38,22 @@ const findById = async (id: string): Promise<IDocTypeResponse> => {
         });
 };
 
+const findByCode = async (code: string): Promise<boolean> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/is-unique`, {
+            params: { code }
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const create = async (data: IDocType): Promise<IDocTypeResponse> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types`, data)
@@ -89,4 +105,4 @@ const remove = async (id: string): Promise<IDocTypeResponse> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findById, findByCode, create, update, remove };

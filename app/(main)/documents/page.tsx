@@ -65,10 +65,11 @@ const Documents = () => {
 
     return (
         <div className="layout-permissions">
-            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Documento" />
             <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
+                <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Documento" />
+
                 <DataTable
                     value={data?.data}
                     lazy

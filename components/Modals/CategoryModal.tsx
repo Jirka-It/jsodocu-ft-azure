@@ -6,17 +6,19 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
-import { create, update as updateDoc } from '@api/categories';
+import { create, findByName, update as updateDoc } from '@api/categories';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
 import { ValidationFlow } from '@lib/ValidationFlow';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showSuccess, showWarn } from '@lib/ToastMessages';
 import { states } from '@lib/data';
 import { CategoryValidation } from '@validations/CategoryValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { CleanText } from '@lib/CleanText';
 
 export default function CategoryModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [stateType, setStateType] = useState<any>('');
@@ -31,7 +33,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
         } else {
             setName('');
             setDescription('');
-            setStateType('');
+            setStateType(states[0]);
         }
     }, [data]);
 
@@ -102,6 +104,27 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
         setState(!state);
     };
 
+    // Inputs events
+    const handleChange = async (name: string) => {
+        const newName = CleanText(name);
+        setName(newName);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByName(newName);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe una categoría con este nombre');
+                } else {
+                    showWarn(toast, '', 'Nombre disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
+
     return (
         <Dialog
             visible={state}
@@ -123,7 +146,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
                         Nombre <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                    <InputText value={name} onChange={(e) => handleChange(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                 </div>
 
                 <div className="w-full">

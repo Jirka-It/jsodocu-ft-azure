@@ -101,16 +101,13 @@ export default function Editor() {
     const nodeTemplate = (node, options) => {
         let label = <b>{node.label}</b>;
 
-        if (node.url) {
-            label = (
-                <a href={node.url} className="text-700 hover:text-primary" target="_blank" rel="noopener noreferrer">
-                    {node.label}
-                </a>
-            );
-        }
-
         if (node.chapter || node.article) {
-            label = <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />;
+            label = (
+                <div>
+                    <h6 className="m-0">{node.chapter ? 'Capítulo' : 'Artículo'}</h6>
+                    <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
+                </div>
+            );
         }
 
         return <span className={options.className}>{label}</span>;

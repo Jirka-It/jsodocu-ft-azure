@@ -7,31 +7,31 @@ export const states = [
 
 export const treeNodes = [
     {
-        key: 1,
+        key: '1',
         label: 'Documents',
         value: '',
         chapter: true,
         children: [
             {
-                key: 1,
+                key: '2',
                 label: 'Work',
                 value: '',
                 content: '',
-                OwnChapter: 1,
+                OwnChapter: '1',
                 article: true,
                 children: [
-                    { key: 1, OwnChapter: 1, OwnArticle: 1, label: 'Paragraph 1 ', content: '', paragraph: true },
-                    { key: 2, OwnChapter: 1, OwnArticle: 1, label: 'Paragraph 2', content: '', paragraph: true }
+                    { key: '3', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 1 ', content: '', paragraph: true },
+                    { key: '4', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 2', content: '', paragraph: true }
                 ]
             },
             {
-                key: 2,
+                key: '6',
                 label: 'Home',
                 value: '',
                 content: '',
-                OwnChapter: 1,
+                OwnChapter: '1',
                 article: true,
-                children: [{ key: 1, OwnChapter: 1, OwnArticle: 2, label: 'Paragraph 1', content: '', paragraph: true }]
+                children: [{ key: '5', OwnChapter: '1', OwnArticle: '6', label: 'Paragraph 1', content: '', paragraph: true }]
             }
         ]
     }

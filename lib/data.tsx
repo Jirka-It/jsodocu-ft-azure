@@ -5,16 +5,10 @@ export const states = [
     { name: 'Inactivo', code: State.INACTIVE }
 ];
 
-export const treeNodes = [
-    {
-        key: '1',
-        label: 'Documents',
-        value: '',
-        chapter: true,
-        children: [
-            {
+/*
+ {
                 key: '2',
-                label: 'Work',
+                label: 'Artículo',
                 value: '',
                 content: '',
                 OwnChapter: '1',
@@ -26,14 +20,22 @@ export const treeNodes = [
             },
             {
                 key: '6',
-                label: 'Home',
+                label: 'Artículo',
                 value: '',
                 content: '',
                 OwnChapter: '1',
                 article: true,
                 children: [{ key: '5', OwnChapter: '1', OwnArticle: '6', label: 'Paragraph 1', content: '', paragraph: true }]
             }
-        ]
+*/
+
+export const treeNodes = [
+    {
+        key: '1',
+        label: 'Capítulo',
+        value: '',
+        chapter: true,
+        children: []
     }
 ];
 export const departments = [

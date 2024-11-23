@@ -39,17 +39,6 @@ export default function Editor() {
     };
 
     //Inputs functions
-    const handleInputChange = (id: string, value: any, key = 'chatter') => {
-        setSections((prevArray) => {
-            const modifiedSections = prevArray.map((v) => {
-                if (v.id === id) {
-                    v[key] = value;
-                }
-                return v;
-            });
-            return [...modifiedSections];
-        });
-    };
 
     const handleChangeEvent = (node: INodeGeneral, content: string) => {
         if (node.chapter) {
@@ -84,19 +73,6 @@ export default function Editor() {
     };
 
     //Tree functions
-    const addSection = () => {
-        setSections((prevArray) => [
-            ...prevArray,
-            {
-                id: sections.length + 1,
-                label: `Capítulo ${sections.length + 1}`,
-                chatter: '',
-                content: ''
-            }
-        ]);
-
-        setContentSelected(sections.length + 1);
-    };
 
     const nodeTemplate = (node, options) => {
         let label = <b>{node.label}</b>;
@@ -104,8 +80,25 @@ export default function Editor() {
         if (node.chapter || node.article) {
             label = (
                 <div>
-                    <h6 className="m-0">{node.chapter ? 'Capítulo' : 'Artículo'}</h6>
-                    <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
+                    <h6 className="m-0">{node.label}</h6>
+                    <div className="flex">
+                        <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
+                        <Button icon="pi pi-save" severity="info" aria-label="Save" className="ml-2" onClick={() => saveSection(node)} tooltip="Guardar" />
+                        <Button icon="pi pi-plus" severity="info" aria-label="Add" className="ml-2" onClick={() => addSection(node)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
+                        <Button icon="pi pi-times" severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(node)} tooltip="Borrar" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (node.paragraph) {
+            label = (
+                <div>
+                    <div className="flex align-items-center">
+                        <h6 className="m-0">{node.label}</h6>
+                        <Button icon="pi pi-save" severity="info" aria-label="Save" className="ml-2" onClick={() => saveSection(node)} tooltip="Guardar" />
+                        <Button icon="pi pi-times" severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(node)} tooltip="Borrar" />
+                    </div>
                 </div>
             );
         }
@@ -113,19 +106,82 @@ export default function Editor() {
         return <span className={options.className}>{label}</span>;
     };
 
+    const addChapter = () => {
+        setNodes((prevArray) => [
+            ...prevArray,
+            {
+                key: `${nodes.length + 1}`,
+                label: `Capítulo`,
+                value: '',
+                chapter: true,
+                children: []
+            }
+        ]);
+    };
+
+    const deleteSection = (node: INodeGeneral) => {
+        console.log('nodes', nodes);
+
+        // setSections((prevArray) => {
+        //   const modifiedSections = prevArray.filter((v) => v.id !== idSection);
+        //  return [...modifiedSections];
+        // });
+    };
+
+    const saveSection = (node: INodeGeneral) => {
+        console.log('saveSection', node);
+    };
+
+    const addSection = (node: INodeGeneral) => {
+        if (node.chapter) {
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.map((v) => {
+                    if (v.key === node.key) {
+                        v.children.push({
+                            key: `${v.children.length + 1}`,
+                            label: 'Artículo',
+                            value: '',
+                            content: '',
+                            OwnChapter: v.key,
+                            article: true,
+                            children: []
+                        });
+                    }
+
+                    return v;
+                });
+                return [...modifiedNodes];
+            });
+        }
+
+        if (node.article) {
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.map((v) => {
+                    if (v.key === node.OwnChapter) {
+                        v.children.map((a) => {
+                            if (a.key === node.key) {
+                                a.children.push({
+                                    key: `${a.children.length + 1}`,
+                                    OwnChapter: v.key,
+                                    OwnArticle: a.key,
+                                    label: 'Paragrafo',
+                                    content: '',
+                                    paragraph: true
+                                });
+                            }
+                            return a;
+                        });
+                    }
+
+                    return v;
+                });
+                return [...modifiedNodes];
+            });
+        }
+    };
+
     const handleClickEvent = (id: string) => {
         setContentSelected(parseInt(id));
-    };
-
-    const deleteSection = (idSection: string) => {
-        setSections((prevArray) => {
-            const modifiedSections = prevArray.filter((v) => v.id !== idSection);
-            return [...modifiedSections];
-        });
-    };
-
-    const saveSection = (idSection: string) => {
-        console.log('id', idSection);
     };
 
     return (
@@ -133,6 +189,10 @@ export default function Editor() {
             <div className="col-12 lg:col-3">
                 <h4 className="m-0">Conjunto Amatista</h4>
                 <h6 className="m-0 text-gray-500 mb-5">Reglamento PH</h6>
+                <div className="mb-5 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                    <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
+                </div>
+
                 <div>
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full md:w-30rem" />
 
@@ -152,9 +212,6 @@ export default function Editor() {
                         );
                     })}
                         */}
-                </div>
-                <div className="mt-5 cursor-pointer text-blue-500" onClick={() => addSection()}>
-                    <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
                 </div>
             </div>
             {sections.map((s) => {

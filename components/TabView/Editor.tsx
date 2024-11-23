@@ -38,16 +38,16 @@ export default function Editor() {
         });
     };
 
-    //Inputs functions
+    //Input function
 
     const handleChangeEvent = (node: INodeGeneral, content: string) => {
         if (node.chapter) {
             setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((v) => {
-                    if (v.key === node.key) {
-                        v['value'] = content;
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.key) {
+                        c['value'] = content;
                     }
-                    return v;
+                    return c;
                 });
                 return [...modifiedNodes];
             });
@@ -55,9 +55,9 @@ export default function Editor() {
 
         if (node.article) {
             setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((v) => {
-                    if (v.key === node.OwnChapter) {
-                        v.children.map((a) => {
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.OwnChapter) {
+                        c.children.map((a) => {
                             if (a.key === node.key) {
                                 a['value'] = content;
                             }
@@ -65,7 +65,7 @@ export default function Editor() {
                         });
                     }
 
-                    return v;
+                    return c;
                 });
                 return [...modifiedNodes];
             });
@@ -119,36 +119,23 @@ export default function Editor() {
         ]);
     };
 
-    const deleteSection = (node: INodeGeneral) => {
-        console.log('nodes', nodes);
-
-        // setSections((prevArray) => {
-        //   const modifiedSections = prevArray.filter((v) => v.id !== idSection);
-        //  return [...modifiedSections];
-        // });
-    };
-
-    const saveSection = (node: INodeGeneral) => {
-        console.log('saveSection', node);
-    };
-
     const addSection = (node: INodeGeneral) => {
         if (node.chapter) {
             setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((v) => {
-                    if (v.key === node.key) {
-                        v.children.push({
-                            key: `${v.children.length + 1}`,
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.key) {
+                        c.children.push({
+                            key: `${c.children.length + 1}`,
                             label: 'Artículo',
                             value: '',
                             content: '',
-                            OwnChapter: v.key,
+                            OwnChapter: c.key,
                             article: true,
                             children: []
                         });
                     }
 
-                    return v;
+                    return c;
                 });
                 return [...modifiedNodes];
             });
@@ -156,13 +143,13 @@ export default function Editor() {
 
         if (node.article) {
             setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((v) => {
-                    if (v.key === node.OwnChapter) {
-                        v.children.map((a) => {
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.OwnChapter) {
+                        c.children.map((a) => {
                             if (a.key === node.key) {
                                 a.children.push({
                                     key: `${a.children.length + 1}`,
-                                    OwnChapter: v.key,
+                                    OwnChapter: c.key,
                                     OwnArticle: a.key,
                                     label: 'Paragrafo',
                                     content: '',
@@ -173,11 +160,56 @@ export default function Editor() {
                         });
                     }
 
-                    return v;
+                    return c;
                 });
                 return [...modifiedNodes];
             });
         }
+    };
+
+    const deleteSection = (node: INodeGeneral) => {
+        if (node.chapter) {
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.filter((c) => c.key !== node.key);
+                return [...modifiedNodes];
+            });
+        }
+
+        if (node.article) {
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.OwnChapter) {
+                        const newArticles = c.children.filter((a) => a.key !== node.key);
+                        c.children = newArticles;
+                    }
+
+                    return c;
+                });
+                return [...modifiedNodes];
+            });
+        }
+
+        if (node.paragraph) {
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.map((c) => {
+                    if (c.key === node.OwnChapter) {
+                        c.children.map((a) => {
+                            if (a.key === node.OwnArticle) {
+                                const newParagraphs = a.children.filter((p) => p.key !== node.key);
+                                a.children = newParagraphs;
+                            }
+                        });
+                    }
+
+                    return c;
+                });
+                return [...modifiedNodes];
+            });
+        }
+    };
+
+    const saveSection = (node: INodeGeneral) => {
+        console.log('saveSection', node);
     };
 
     const handleClickEvent = (id: string) => {
@@ -217,10 +249,7 @@ export default function Editor() {
             {sections.map((s) => {
                 return (
                     <div key={s.id} className={`grid col-12 lg:col-9 ${s.id !== contentSelected ? 'hidden' : ''}`}>
-                        <div className="col-12 lg:col-6">
-                            {/*                            <Quill value={s.content} onTextChange={(e) => handleChangeEvent(e.htmlValue, s)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
-                             */}
-                        </div>
+                        <div className="col-12 lg:col-6"></div>
                         <div className="col-12 lg:col-6 ql-editor">
                             <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(s.content, data) }}></div>
                         </div>

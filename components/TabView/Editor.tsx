@@ -31,11 +31,22 @@ export default function Editor() {
             source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
                 // sample data set for displaying
                 // enter your logic here
+                // Apply a logic to reduce the call to API
                 const res = await findAll({ page: 1, size: 10, documentId: params.id, searchParam: searchTerm });
 
-                setData(res.data);
+                const data = res.data;
 
-                renderList(res.data, searchTerm);
+                if (data) {
+                    data.map((r) => {
+                        const name = r.name;
+                        const value = r.value;
+                        (r.name = value), (r.value = name);
+                        return r;
+                    });
+                }
+
+                setData(data);
+                renderList(data, searchTerm);
             }
         });
     };

@@ -1,15 +1,15 @@
 export const replaceText = (text: string, data: Array<any>) => {
-    if (!text) {
+    if (!text || !data) {
         return '';
     }
     let newString = text;
 
     //Find by mentions
     for (var i = 0; i < data.length; i++) {
-        const chatter = data[i].value;
-        const regex = new RegExp(`@${chatter}`, 'g');
+        const valueMention = data[i].value;
+        const regex = new RegExp(`@${valueMention}`, 'g');
 
-        newString = newString.replaceAll(regex, data[i].variable);
+        newString = newString.replaceAll(regex, data[i].name);
     }
 
     return newString;

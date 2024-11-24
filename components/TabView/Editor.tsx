@@ -1,23 +1,25 @@
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Editor as Quill } from 'primereact/editor';
 import { Tree } from 'primereact/tree';
-import Mention from 'quill-mention';
 import { InputText } from 'primereact/inputtext';
-import { treeNodes } from '@lib/data';
-import { replaceText } from '@lib/ReplaceText';
+import Mention from 'quill-mention';
 import { INode, INodeGeneral } from '@interfaces/INode';
+import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
+import { replaceText } from '@lib/ReplaceText';
+import { treeNodes } from '@lib/data';
+
+import { findAll } from '@api/variables';
+
 import styles from './Editor.module.css';
 
-const data = [
-    { id: 1, value: 'variable_PH', variable: 'Partha' },
-
-    { id: 2, value: 'date_contract', variable: 'Emma' }
-];
-
 export default function Editor() {
+    const params = useParams();
     const [nodes, setNodes] = useState<Array<INode>>(treeNodes);
+    const [timer, setTimer] = useState(null);
     const [content, setContent] = useState<string>('');
-    const [contentSelected, setContentSelected] = useState<INodeGeneral>();
+    const [data, setData] = useState<Array<any>>();
+    const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
 
     //Events to quill
@@ -26,50 +28,17 @@ export default function Editor() {
 
         new Mention(quillInstance, {
             mentionDenotationChars: ['@'],
-            source: function (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) {
+            source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
                 // sample data set for displaying
                 // enter your logic here
+                const res = await findAll({ page: 1, size: 10, documentId: params.id, searchParam: searchTerm });
 
-                renderList(data, searchTerm);
+                setData(res.data);
+
+                renderList(res.data, searchTerm);
             }
         });
     };
-
-    //Input function
-
-    const handleChangeEvent = (node: INodeGeneral, content: string) => {
-        if (node.chapter) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.key) {
-                        c['value'] = content;
-                    }
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-
-        if (node.article) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.OwnChapter) {
-                        c.children.map((a) => {
-                            if (a.key === node.key) {
-                                a['value'] = content;
-                            }
-                            return a;
-                        });
-                    }
-
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-    };
-
-    //Tree functions
 
     const nodeTemplate = (node, options) => {
         let label = <b>{node.label}</b>;
@@ -83,13 +52,13 @@ export default function Editor() {
                                 {node.label}
                             </h6>
                             <div>
-                                <i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i>
-                                <i className="pi pi-plus cursor-pointer ml-2" onClick={() => addSection(node)} title={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'}></i>
-                                <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node)} title="Borrar"></i>
+                                {/*<i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i> */}
+                                <i className="pi pi-plus cursor-pointer ml-2" onClick={() => addSection(node, setNodes)} title={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'}></i>
+                                <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node, setNodes)} title="Borrar"></i>
                             </div>
                         </div>
 
-                        <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
+                        <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
                     </div>
                 </div>
             );
@@ -104,7 +73,7 @@ export default function Editor() {
                         </h6>
                         <div>
                             <i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i>
-                            <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node)} title="Borrar"></i>
+                            <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node, setNodes)} title="Borrar"></i>
                         </div>
                     </div>
                 </div>
@@ -127,102 +96,14 @@ export default function Editor() {
         ]);
     };
 
-    const addSection = (node: INodeGeneral) => {
-        if (node.chapter) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.key) {
-                        c.children.push({
-                            key: `${c.children.length + 1}`,
-                            label: 'Artículo',
-                            value: '',
-                            content: '',
-                            OwnChapter: c.key,
-                            article: true,
-                            children: []
-                        });
-                    }
-
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-
-        if (node.article) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.OwnChapter) {
-                        c.children.map((a) => {
-                            if (a.key === node.key) {
-                                a.children.push({
-                                    key: `${a.children.length + 1}`,
-                                    OwnChapter: c.key,
-                                    OwnArticle: a.key,
-                                    label: 'Paragrafo',
-                                    content: '',
-                                    paragraph: true
-                                });
-                            }
-                            return a;
-                        });
-                    }
-
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-    };
-
-    const deleteSection = (node: INodeGeneral) => {
-        if (node.chapter) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.filter((c) => c.key !== node.key);
-                return [...modifiedNodes];
-            });
-        }
-
-        if (node.article) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.OwnChapter) {
-                        const newArticles = c.children.filter((a) => a.key !== node.key);
-                        c.children = newArticles;
-                    }
-
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-
-        if (node.paragraph) {
-            setNodes((prevArray) => {
-                const modifiedNodes = prevArray.map((c) => {
-                    if (c.key === node.OwnChapter) {
-                        c.children.map((a) => {
-                            if (a.key === node.OwnArticle) {
-                                const newParagraphs = a.children.filter((p) => p.key !== node.key);
-                                a.children = newParagraphs;
-                            }
-                        });
-                    }
-
-                    return c;
-                });
-                return [...modifiedNodes];
-            });
-        }
-    };
-
     const saveSection = (node: INodeGeneral) => {
+        //I will delete this function cuz, we will do autosave
         console.log('saveSection', node);
     };
 
     const handleClickEvent = (node: INodeGeneral) => {
         console.log('node', node);
-        setContentSelected(node);
+        setNodeSelected(node);
     };
 
     return (

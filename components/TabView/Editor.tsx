@@ -1,14 +1,12 @@
-import { Editor as Quill } from 'primereact/editor';
-import Mention from 'quill-mention';
-
 import { useState } from 'react';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import styles from './Editor.module.css';
-import { treeNodes } from '@lib/data';
+import { Editor as Quill } from 'primereact/editor';
 import { Tree } from 'primereact/tree';
+import Mention from 'quill-mention';
+import { InputText } from 'primereact/inputtext';
+import { treeNodes } from '@lib/data';
 import { replaceText } from '@lib/ReplaceText';
 import { INode, INodeGeneral } from '@interfaces/INode';
+import styles from './Editor.module.css';
 
 const data = [
     { id: 1, value: 'variable_PH', variable: 'Partha' },
@@ -17,10 +15,9 @@ const data = [
 ];
 
 export default function Editor() {
-    const [sections, setSections] = useState([]);
     const [nodes, setNodes] = useState<Array<INode>>(treeNodes);
-
-    const [contentSelected, setContentSelected] = useState<number>();
+    const [content, setContent] = useState<string>('');
+    const [contentSelected, setContentSelected] = useState<INodeGeneral>();
     const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
 
     //Events to quill
@@ -80,12 +77,19 @@ export default function Editor() {
         if (node.chapter || node.article) {
             label = (
                 <div>
-                    <h6 className="m-0">{node.label}</h6>
-                    <div className="flex">
+                    <div>
+                        <div className="flex justify-content-between">
+                            <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node)}>
+                                {node.label}
+                            </h6>
+                            <div>
+                                <i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i>
+                                <i className="pi pi-plus cursor-pointer ml-2" onClick={() => addSection(node)} title={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'}></i>
+                                <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node)} title="Borrar"></i>
+                            </div>
+                        </div>
+
                         <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
-                        <Button icon="pi pi-save" severity="info" aria-label="Save" className="ml-2" onClick={() => saveSection(node)} tooltip="Guardar" />
-                        <Button icon="pi pi-plus" severity="info" aria-label="Add" className="ml-2" onClick={() => addSection(node)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
-                        <Button icon="pi pi-times" severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(node)} tooltip="Borrar" />
                     </div>
                 </div>
             );
@@ -94,10 +98,14 @@ export default function Editor() {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className="flex align-items-center">
-                        <h6 className="m-0">{node.label}</h6>
-                        <Button icon="pi pi-save" severity="info" aria-label="Save" className="ml-2" onClick={() => saveSection(node)} tooltip="Guardar" />
-                        <Button icon="pi pi-times" severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(node)} tooltip="Borrar" />
+                    <div className="flex align-items-center justify-content-between	">
+                        <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node)}>
+                            {node.label}
+                        </h6>
+                        <div>
+                            <i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i>
+                            <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node)} title="Borrar"></i>
+                        </div>
                     </div>
                 </div>
             );
@@ -212,8 +220,9 @@ export default function Editor() {
         console.log('saveSection', node);
     };
 
-    const handleClickEvent = (id: string) => {
-        setContentSelected(parseInt(id));
+    const handleClickEvent = (node: INodeGeneral) => {
+        console.log('node', node);
+        setContentSelected(node);
     };
 
     return (
@@ -226,36 +235,17 @@ export default function Editor() {
                 </div>
 
                 <div>
-                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full md:w-30rem" />
-
-                    {/*
-                            {sections.map((s) => {
-                        return (
-                            <div key={s.id} className="mb-3">
-                                <h5 className="m-0 mb-1 text-blue-500 font-bold cursor-pointer" onClick={() => handleClickEvent(s.id)}>
-                                    Capítulo {s.id}.
-                                </h5>
-                                <div className="flex">
-                                    <InputText value={s.chatter} onChange={(e) => handleInputChange(s.id, e.target.value)} className="w-full" type="text" placeholder="Nombre del capítulo" />
-                                    <Button icon="pi pi-save" rounded severity="info" aria-label="Delete" className="ml-2" onClick={() => saveSection(s.id)} tooltip="Guardar" />
-                                    <Button icon="pi pi-times" rounded severity="danger" aria-label="Delete" className="ml-2" onClick={() => deleteSection(s.id)} tooltip="Borrar" />
-                                </div>
-                            </div>
-                        );
-                    })}
-                        */}
+                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full" />
                 </div>
             </div>
-            {sections.map((s) => {
-                return (
-                    <div key={s.id} className={`grid col-12 lg:col-9 ${s.id !== contentSelected ? 'hidden' : ''}`}>
-                        <div className="col-12 lg:col-6"></div>
-                        <div className="col-12 lg:col-6 ql-editor">
-                            <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(s.content, data) }}></div>
-                        </div>
-                    </div>
-                );
-            })}
+            <div className="grid col-12 lg:col-9">
+                <div className="col-12 lg:col-6">
+                    <Quill value={content} onTextChange={(e) => setContent(e.htmlValue)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+                </div>
+                <div className="col-12 lg:col-6 ql-editor">
+                    <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, data) }}></div>
+                </div>
+            </div>
         </section>
     );
 }

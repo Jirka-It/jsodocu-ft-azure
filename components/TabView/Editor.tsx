@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Editor as Quill } from 'primereact/editor';
 import { Tree } from 'primereact/tree';
@@ -22,7 +22,6 @@ export default function Editor() {
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
 
-    //Events to quill
     const quillLoaded = (event) => {
         const quillInstance = event;
 
@@ -32,8 +31,8 @@ export default function Editor() {
                 // sample data set for displaying
                 // enter your logic here
                 // Apply a logic to reduce the call to API
-                const res = await findAll({ page: 1, size: 10, documentId: params.id, searchParam: searchTerm });
 
+                const res = await findAll({ page: 1, size: 10, documentId: params.id, searchParam: searchTerm });
                 const data = res.data;
 
                 if (data) {
@@ -59,7 +58,7 @@ export default function Editor() {
                 <div>
                     <div>
                         <div className="flex justify-content-between">
-                            <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node)}>
+                            <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node.chapter ? null : node)}>
                                 {node.label}
                             </h6>
                             <div>
@@ -115,6 +114,26 @@ export default function Editor() {
     const handleClickEvent = (node: INodeGeneral) => {
         console.log('node', node);
         setNodeSelected(node);
+        setContent(null);
+    };
+
+    //Events to quill
+
+    useEffect(() => {
+        // Save in API when the user stops typing
+        const delayDebounceFn = setTimeout(() => {
+            if (nodeSelected && content) {
+                console.log('Call to API', nodeSelected);
+                console.log('html', content);
+            }
+            // Send Axios request here
+        }, 700);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [content]);
+
+    const saveContent = (html: string) => {
+        setContent(html);
     };
 
     return (
@@ -130,14 +149,19 @@ export default function Editor() {
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full" />
                 </div>
             </div>
-            <div className="grid col-12 lg:col-9">
-                <div className="col-12 lg:col-6">
-                    <Quill value={content} onTextChange={(e) => setContent(e.htmlValue)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+
+            {nodeSelected ? (
+                <div className="grid col-12 lg:col-9">
+                    <div className="col-12 lg:col-6">
+                        <Quill value={content} onTextChange={(e) => saveContent(e.htmlValue)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+                    </div>
+                    <div className="col-12 lg:col-6 ql-editor">
+                        <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, data) }}></div>
+                    </div>
                 </div>
-                <div className="col-12 lg:col-6 ql-editor">
-                    <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, data) }}></div>
-                </div>
-            </div>
+            ) : (
+                ''
+            )}
         </section>
     );
 }

@@ -1,26 +1,39 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { Toast } from 'primereact/toast';
 import { Editor as Quill } from 'primereact/editor';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import Mention from 'quill-mention';
 import { INode, INodeGeneral } from '@interfaces/INode';
-import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
-import { replaceText } from '@lib/ReplaceText';
-import { treeNodes } from '@lib/data';
 
 import { findAll } from '@api/variables';
+import { findAll as findAllChapters, create } from '@api/chapters';
+import { replaceText } from '@lib/ReplaceText';
+import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
 
 import styles from './Editor.module.css';
+import { HttpStatus } from '@enums/HttpStatusEnum';
+import { showError, showSuccess } from '@lib/ToastMessages';
 
 export default function Editor() {
+    const toast = useRef(null);
     const params = useParams();
-    const [nodes, setNodes] = useState<Array<INode>>(treeNodes);
+    const [nodes, setNodes] = useState<Array<INode>>();
     const [timer, setTimer] = useState(null);
     const [content, setContent] = useState<string>('');
     const [data, setData] = useState<Array<any>>();
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
+
+    useEffect(() => {
+        getChapters();
+    }, []);
+
+    const getChapters = async () => {
+        const res = await findAllChapters({ documentId: params.id });
+        setNodes(res.data);
+    };
 
     const quillLoaded = (event) => {
         const quillInstance = event;
@@ -93,17 +106,23 @@ export default function Editor() {
         return <span className={options.className}>{label}</span>;
     };
 
-    const addChapter = () => {
-        setNodes((prevArray) => [
-            ...prevArray,
-            {
-                key: `${nodes.length + 1}`,
-                label: `Capítulo`,
-                value: '',
-                chapter: true,
-                children: []
-            }
-        ]);
+    const addChapter = async () => {
+        const res = await create({
+            label: `Capítulo`,
+            value: '',
+            chapter: true,
+            children: [],
+            document: params.id
+        });
+
+        if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
+            setNodes((prevArray) => [...prevArray, { ...res.data, key: res.data._id }]);
+            showSuccess(toast, '', 'Capítulo creado');
+        } else if (res.status === HttpStatus.BAD_REQUEST) {
+            showError(toast, '', 'Revise los datos ingresados');
+        } else {
+            showError(toast, '', 'Contacte con soporte.');
+        }
     };
 
     const saveSection = (node: INodeGeneral) => {
@@ -138,6 +157,7 @@ export default function Editor() {
 
     return (
         <section className="grid">
+            <Toast ref={toast} />
             <div className="col-12 lg:col-3">
                 <h4 className="m-0">Conjunto Amatista</h4>
                 <h6 className="m-0 text-gray-500 mb-5">Reglamento PH</h6>

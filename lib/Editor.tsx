@@ -1,4 +1,5 @@
 import { INodeGeneral } from '@interfaces/INode';
+import { update, remove } from '@api/chapters';
 
 export const addSection = (node: INodeGeneral, setNodes: Function) => {
     if (node.chapter) {
@@ -95,19 +96,23 @@ export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes:
             showError(toast, '', 'Contacte con soporte');
         }
       */
-
-        console.log('content', content);
-    }, 500);
+        if (node.chapter) {
+            update(node.key, { value: content });
+        }
+    }, 800);
 
     setTimer(newTimer);
 };
 
-export const deleteSection = (node: INodeGeneral, setNodes: Function) => {
+export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     if (node.chapter) {
-        setNodes((prevArray) => {
-            const modifiedNodes = prevArray.filter((c) => c.key !== node.key);
-            return [...modifiedNodes];
-        });
+        try {
+            await remove(node.key);
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.filter((c) => c.key !== node.key);
+                return [...modifiedNodes];
+            });
+        } catch (error) {}
     }
 
     if (node.article) {

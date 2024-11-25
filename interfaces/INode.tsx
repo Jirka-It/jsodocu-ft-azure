@@ -18,10 +18,12 @@ export interface IArticle {
 }
 
 export interface INode {
-    key: string;
+    _id?: string;
+    key?: string;
     label: string;
     value: string;
     chapter: boolean;
+    document?: string;
     children?: Array<IArticle>;
 }
 

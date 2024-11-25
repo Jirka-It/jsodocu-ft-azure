@@ -1,20 +1,21 @@
-export interface IParagraph {
+export interface INodeParagraph {
     key: string;
-    OwnChapter: string;
-    OwnArticle: string;
+    ownChapter: string;
+    ownArticle: string;
     label: string;
     content: string;
     paragraph: boolean;
 }
 
-export interface IArticle {
-    key: string;
+export interface INodeArticle {
+    _id?: string;
+    key?: string;
     label: string;
     value: string;
     content: string;
-    OwnChapter: string;
+    ownChapter: string;
     article: boolean;
-    children?: Array<IParagraph>;
+    children?: Array<INodeParagraph>;
 }
 
 export interface INode {
@@ -24,14 +25,14 @@ export interface INode {
     value: string;
     chapter: boolean;
     document?: string;
-    children?: Array<IArticle>;
+    children?: Array<INodeArticle>;
 }
 
 export interface INodeGeneral {
     key: string;
     value?: string;
-    OwnChapter?: string;
-    OwnArticle?: string;
+    ownChapter?: string;
+    ownArticle?: string;
     label: string;
     content?: string;
     chapter?: boolean;

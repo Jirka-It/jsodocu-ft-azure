@@ -131,7 +131,6 @@ export default function Editor() {
     };
 
     const handleClickEvent = (node: INodeGeneral) => {
-        console.log('node', node);
         setNodeSelected(node);
         setContent(null);
     };

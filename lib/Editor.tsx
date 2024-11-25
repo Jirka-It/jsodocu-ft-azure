@@ -1,8 +1,17 @@
 import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
+import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 
-export const addSection = (node: INodeGeneral, setNodes: Function) => {
+export const addSection = async (node: INodeGeneral, setNodes: Function) => {
     if (node.chapter) {
+        await create({
+            label: `Capítulo`,
+            value: '',
+            article: true,
+            content: '',
+            children: [],
+            ownChapter: node.key
+        });
         //Endpoint to add article associated
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
@@ -12,7 +21,7 @@ export const addSection = (node: INodeGeneral, setNodes: Function) => {
                         label: 'Artículo',
                         value: '',
                         content: '',
-                        OwnChapter: c.key,
+                        ownChapter: c.key,
                         article: true,
                         children: []
                     });
@@ -28,12 +37,12 @@ export const addSection = (node: INodeGeneral, setNodes: Function) => {
         //Endpoint to add paragraph associated
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.OwnChapter) {
+                if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key === node.key) {
                             a.children.push({
                                 key: `${a.children.length + 1}`,
-                                OwnChapter: c.key,
+                                ownChapter: c.key,
                                 OwnArticle: a.key,
                                 label: 'Paragrafo',
                                 content: '',
@@ -67,7 +76,7 @@ export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes:
     if (node.article) {
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.OwnChapter) {
+                if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key === node.key) {
                             a['value'] = content;
@@ -84,18 +93,10 @@ export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes:
 
     clearTimeout(timer);
     const newTimer = setTimeout(async () => {
-        /*
-        try {
-            const res = await findByName(newName);
-            if (!res) {
-                showWarn(toast, '', 'Ya existe un documento con este nombre');
-            } else {
-                showInfo(toast, '', 'Nombre disponible');
-            }
-        } catch (error) {
-            showError(toast, '', 'Contacte con soporte');
+        if (node.article) {
+            updateArticle(node.key, { value: content });
         }
-      */
+
         if (node.chapter) {
             update(node.key, { value: content });
         }
@@ -116,9 +117,10 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     }
 
     if (node.article) {
+        await removeArticle(node.key);
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.OwnChapter) {
+                if (c.key === node.ownChapter) {
                     const newArticles = c.children.filter((a) => a.key !== node.key);
                     c.children = newArticles;
                 }
@@ -132,9 +134,9 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     if (node.paragraph) {
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.OwnChapter) {
+                if (c.key === node.ownChapter) {
                     c.children.map((a) => {
-                        if (a.key === node.OwnArticle) {
+                        if (a.key === node.ownArticle) {
                             const newParagraphs = a.children.filter((p) => p.key !== node.key);
                             a.children = newParagraphs;
                         }

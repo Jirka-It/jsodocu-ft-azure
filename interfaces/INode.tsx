@@ -1,5 +1,6 @@
 export interface INodeParagraph {
-    key: string;
+    _id?: string;
+    key?: string;
     ownChapter: string;
     ownArticle: string;
     label: string;

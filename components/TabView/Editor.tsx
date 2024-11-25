@@ -95,7 +95,6 @@ export default function Editor() {
                             {node.label}
                         </h6>
                         <div>
-                            <i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i>
                             <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node, setNodes)} title="Borrar"></i>
                         </div>
                     </div>

@@ -1,11 +1,12 @@
 import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
+import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
 
 export const addSection = async (node: INodeGeneral, setNodes: Function) => {
     if (node.chapter) {
-        await create({
-            label: `Capítulo`,
+        const res = await create({
+            label: `Artículo`,
             value: '',
             article: true,
             content: '',
@@ -13,18 +14,11 @@ export const addSection = async (node: INodeGeneral, setNodes: Function) => {
             ownChapter: node.key
         });
         //Endpoint to add article associated
+
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.key) {
-                    c.children.push({
-                        key: `${c.children.length + 1}`,
-                        label: 'Artículo',
-                        value: '',
-                        content: '',
-                        ownChapter: c.key,
-                        article: true,
-                        children: []
-                    });
+                    c.children.push({ ...res.data, key: res.data._id });
                 }
 
                 return c;
@@ -35,19 +29,19 @@ export const addSection = async (node: INodeGeneral, setNodes: Function) => {
 
     if (node.article) {
         //Endpoint to add paragraph associated
+        const res = await createParagraph({
+            label: `Paragrafo`,
+            paragraph: true,
+            content: '',
+            ownChapter: node.ownChapter,
+            ownArticle: node.key
+        });
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key === node.key) {
-                            a.children.push({
-                                key: `${a.children.length + 1}`,
-                                ownChapter: c.key,
-                                OwnArticle: a.key,
-                                label: 'Paragrafo',
-                                content: '',
-                                paragraph: true
-                            });
+                            a.children.push({ ...res.data, key: res.data._id });
                         }
                         return a;
                     });
@@ -132,6 +126,7 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     }
 
     if (node.paragraph) {
+        await removeParagraph(node.key);
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.ownChapter) {

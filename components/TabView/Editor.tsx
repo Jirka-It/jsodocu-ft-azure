@@ -18,16 +18,19 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
+import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
 
 export default function Editor() {
     const toast = useRef(null);
     const params = useParams();
-    const [nodes, setNodes] = useState<Array<INode>>();
-    const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [timer, setTimer] = useState(null);
+    const [nodes, setNodes] = useState<Array<INode>>();
+    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [content, setContent] = useState<string>(null);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
-    const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
+    const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
+    const [expandedKeys, setExpandedKeys] = useState<any>();
 
     useEffect(() => {
         getChapters();
@@ -83,7 +86,14 @@ export default function Editor() {
                             <div>
                                 {/*<i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i> */}
                                 <i className="pi pi-plus cursor-pointer ml-2" onClick={() => addSection(node, setNodes)} title={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'}></i>
-                                <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node, setNodes)} title="Borrar"></i>
+                                <i
+                                    className="pi pi-times cursor-pointer ml-2"
+                                    onClick={() => {
+                                        setNodeSelectedToDelete(node);
+                                        setOpenModalClose(!openModalClose);
+                                    }}
+                                    title="Borrar"
+                                ></i>
                             </div>
                         </div>
 
@@ -101,7 +111,14 @@ export default function Editor() {
                             {node.label}
                         </h6>
                         <div>
-                            <i className="pi pi-times cursor-pointer ml-2" onClick={() => deleteSection(node, setNodes)} title="Borrar"></i>
+                            <i
+                                className="pi pi-times cursor-pointer ml-2"
+                                onClick={() => {
+                                    setNodeSelectedToDelete(node);
+                                    setOpenModalClose(!openModalClose);
+                                }}
+                                title="Borrar"
+                            ></i>
                         </div>
                     </div>
                 </div>
@@ -128,6 +145,13 @@ export default function Editor() {
         } else {
             showError(toast, '', 'Contacte con soporte.');
         }
+    };
+
+    const deleteNode = async () => {
+        //node, setNodes
+        await deleteSection(nodeSelectedToDelete, setNodes);
+        setNodeSelectedToDelete(null);
+        setOpenModalClose(!openModalClose);
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
@@ -168,6 +192,7 @@ export default function Editor() {
     return (
         <section className="grid">
             <Toast ref={toast} />
+            <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h4 className="m-0">Conjunto Amatista</h4>
                 <h6 className="m-0 text-gray-500 mb-5">Reglamento PH</h6>

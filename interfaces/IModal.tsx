@@ -8,6 +8,10 @@ export interface IModalDelete extends IModal {
     update: Function;
 }
 
+export interface IModalEditorDelete extends IModal {
+    remove: Function;
+}
+
 export interface IModalCreate extends IModal {
     data: any;
     update: Function;

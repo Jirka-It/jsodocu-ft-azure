@@ -36,6 +36,7 @@ export const addSection = async (node: INodeGeneral, setNodes: Function) => {
             ownChapter: node.ownChapter,
             ownArticle: node.key
         });
+
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.ownChapter) {

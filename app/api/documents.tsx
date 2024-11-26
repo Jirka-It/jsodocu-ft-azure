@@ -38,6 +38,23 @@ const findById = async (id: string): Promise<IDocument> => {
         });
 };
 
+const findByIdLight = async (id: string): Promise<IDocument> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/light/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const findByName = async (name: string): Promise<boolean> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/is-unique`, {
@@ -105,4 +122,4 @@ const remove = async (id: string): Promise<IDocumentResponse> => {
         });
 };
 
-export { findAll, findById, findByName, create, update, remove };
+export { findAll, findById, findByIdLight, findByName, create, update, remove };

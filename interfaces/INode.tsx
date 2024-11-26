@@ -32,6 +32,7 @@ export interface INode {
 export interface INodeGeneral {
     key: string;
     value?: string;
+    title?: string;
     ownChapter?: string;
     ownArticle?: string;
     label: string;
@@ -39,4 +40,5 @@ export interface INodeGeneral {
     chapter?: boolean;
     article?: boolean;
     paragraph?: boolean;
+    document?: boolean;
 }

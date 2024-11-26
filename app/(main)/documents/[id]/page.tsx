@@ -8,7 +8,7 @@ import styles from './DocumentEdit.module.css';
 import VariableList from '@components/TabView/VariableList';
 import Editor from '@components/TabView/Editor';
 import Revision from '@components/TabView/Revision';
-import { findById } from '@api/documents';
+import { findByIdLight } from '@api/documents';
 import { IDocument } from '@interfaces/IDocument';
 
 const Document = () => {
@@ -20,13 +20,13 @@ const Document = () => {
     }, []);
 
     const getData = async () => {
-        const res = await findById(params.id);
+        const res = await findByIdLight(params.id);
         setDocument(res);
     };
 
     return (
         <section className={styles['layout-tab-view']}>
-            <TabView renderActiveOnly={false}>
+            <TabView>
                 <TabPanel header="Variables" leftIcon="pi pi-times mr-2">
                     <VariableList />
                 </TabPanel>

@@ -17,9 +17,12 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
+import { findByIdLight as findDocument, update as updateDocument } from '@api/documents';
+
 import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
 
 import styles from './Editor.module.css';
+import { Button } from 'primereact/button';
 
 export default function Editor({ document }) {
     const toast = useRef(null);
@@ -177,6 +180,13 @@ export default function Editor({ document }) {
         }
     };
 
+    const selectTitle = async () => {
+        setContent(null);
+        setNodeSelected(null);
+        const res = await findDocument(document._id);
+        setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
+    };
+
     //Events to quill
 
     useEffect(() => {
@@ -189,6 +199,11 @@ export default function Editor({ document }) {
 
                 if (nodeSelected && nodeSelected.paragraph) {
                     await updateParagraph(nodeSelected.key, { content });
+                }
+
+                if (nodeSelected && nodeSelected.document) {
+                    updateDocument(document._id, { title: content });
+                    return;
                 }
             }
         }, 800);
@@ -207,6 +222,8 @@ export default function Editor({ document }) {
                 </div>
 
                 <div>
+                    <Button className="w-full mb-3 font-bold" onClick={() => selectTitle()} label="Título" />
+
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full" />
                 </div>
             </div>

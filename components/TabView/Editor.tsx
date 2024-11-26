@@ -216,14 +216,17 @@ export default function Editor({ document }) {
             <Toast ref={toast} />
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
-                <h4 className="m-0">{document?.name}</h4>
+                <h4 className="m-0 mb-3 ">{document?.name}</h4>
+
+                <div className="mt-3 mb-3 cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    <i className="pi pi-plus-circle mr-3"></i> Título
+                </div>
+
                 <div className="mt-3 mb-3 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                     <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
                 </div>
 
                 <div>
-                    <Button className="w-full mb-3 font-bold" onClick={() => selectTitle()} label="Título" />
-
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full" />
                 </div>
             </div>

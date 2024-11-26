@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IArticleResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IArticleResponse> => {
+const findById = async (id: string): Promise<IArticle> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/${id}`)
         .then((res) => {

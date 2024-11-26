@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IVariable, IVariablePartial, IVariableResponse } from '@interfaces/IVariable';
+import { IVariable, IVariableLightResponse, IVariablePartial, IVariableResponse } from '@interfaces/IVariable';
 
 const findAll = async (params: any): Promise<IVariableResponse> => {
     return await axiosInstance
@@ -10,6 +10,25 @@ const findAll = async (params: any): Promise<IVariableResponse> => {
         .then((res) => {
             return {
                 ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const findAllWithOutPagination = async (params: any): Promise<IVariableLightResponse> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/variables/with-out-pagination`, {
+            params: params
+        })
+        .then((res) => {
+            return {
+                data: res.data,
                 status: res.status
             };
         })
@@ -105,4 +124,4 @@ const remove = async (id: string): Promise<IVariableResponse> => {
         });
 };
 
-export { findAll, findById, findByName, create, update, remove };
+export { findAll, findAllWithOutPagination, findById, findByName, create, update, remove };

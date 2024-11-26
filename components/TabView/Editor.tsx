@@ -6,33 +6,54 @@ import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import Mention from 'quill-mention';
 import { INode, INodeGeneral } from '@interfaces/INode';
+import { IVariableLight } from '@interfaces/IVariable';
 
-import { findAll } from '@api/variables';
+import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
-import { replaceText } from '@lib/ReplaceText';
+import { replaceText, replaceTextQuill } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
 
 import styles from './Editor.module.css';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
+import { findById, update } from '@api/articles';
+import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 
 export default function Editor() {
     const toast = useRef(null);
     const params = useParams();
     const [nodes, setNodes] = useState<Array<INode>>();
+    const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [timer, setTimer] = useState(null);
-    const [content, setContent] = useState<string>('');
-    const [data, setData] = useState<Array<any>>();
+    const [content, setContent] = useState<string>(null);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [expandedKeys, setExpandedKeys] = useState<any>({ '0': true, '0-0': true });
 
     useEffect(() => {
         getChapters();
+        getVariables();
     }, []);
 
     const getChapters = async () => {
         const res = await findAllChapters({ documentId: params.id });
         setNodes(res.data);
+    };
+
+    const getVariables = async () => {
+        const res = await findAllWithOutPagination({ documentId: params.id });
+        const data = res.data;
+
+        if (data) {
+            // This code is to change the name by the value and vice versa
+            data.map((r) => {
+                const name = r.name;
+                const value = r.value;
+                (r.name = value), (r.value = name);
+                return r;
+            });
+        }
+
+        setVariables(data);
     };
 
     const quillLoaded = (event) => {
@@ -42,24 +63,9 @@ export default function Editor() {
             mentionDenotationChars: ['@'],
             source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
                 // sample data set for displaying
-                // enter your logic here
-                // Apply a logic to reduce the call to API
-
-                const res = await findAll({ page: 1, size: 10, documentId: params.id, searchParam: searchTerm });
-                const data = res.data;
-
-                if (data) {
-                    data.map((r) => {
-                        const name = r.name;
-                        const value = r.value;
-                        (r.name = value), (r.value = name);
-                        return r;
-                    });
-                }
-
-                setData(data);
-                renderList(data, searchTerm);
-            }
+                renderList(variables, searchTerm);
+            },
+            listItemClass: 'sdasd'
         });
     };
 
@@ -124,34 +130,40 @@ export default function Editor() {
         }
     };
 
-    const saveSection = (node: INodeGeneral) => {
-        //I will delete this function cuz, we will do autosave
-        console.log('saveSection', node);
-    };
-
-    const handleClickEvent = (node: INodeGeneral) => {
-        setNodeSelected(node);
+    const handleClickEvent = async (node: INodeGeneral) => {
         setContent(null);
+        setNodeSelected(null);
+        if (node && node.article) {
+            const res = await findById(node.key);
+            setNodeSelected({ ...res, key: res._id });
+            return;
+        }
+
+        if (node && node.paragraph) {
+            const res = await findParagraph(node.key);
+            setNodeSelected({ ...res, key: res._id });
+            return;
+        }
     };
 
     //Events to quill
 
     useEffect(() => {
         // Save in API when the user stops typing
-        const delayDebounceFn = setTimeout(() => {
-            if (nodeSelected && content) {
-                console.log('Call to API', nodeSelected);
-                console.log('html', content);
+        const delayDebounceFn = setTimeout(async () => {
+            if (nodeSelected && content !== null) {
+                if (nodeSelected && nodeSelected.article) {
+                    await update(nodeSelected.key, { content });
+                }
+
+                if (nodeSelected && nodeSelected.paragraph) {
+                    await updateParagraph(nodeSelected.key, { content });
+                }
             }
-            // Send Axios request here
-        }, 700);
+        }, 800);
 
         return () => clearTimeout(delayDebounceFn);
     }, [content]);
-
-    const saveContent = (html: string) => {
-        setContent(html);
-    };
 
     return (
         <section className="grid">
@@ -171,10 +183,10 @@ export default function Editor() {
             {nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
-                        <Quill value={content} onTextChange={(e) => saveContent(e.htmlValue)} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+                        <Quill value={content ?? nodeSelected.content} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, data) }}></div>
+                        <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>
                     </div>
                 </div>
             ) : (

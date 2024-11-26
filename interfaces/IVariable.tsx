@@ -18,6 +18,12 @@ export interface IVariable {
     state: string;
 }
 
+export interface IVariableLight {
+    _id: string;
+    name: string;
+    value: string;
+}
+
 export interface IVariableSelect {
     _id?: string;
     name: string;
@@ -32,4 +38,10 @@ export interface IVariablePartial extends Partial<IVariable> {}
 
 export interface IVariableResponse extends IGeneralRequest {
     data: Array<IVariable>;
+}
+
+export interface IVariableLightResponse {
+    data?: Array<IVariableLight>;
+    code?: number;
+    status: number;
 }

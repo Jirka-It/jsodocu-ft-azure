@@ -11,6 +11,7 @@ export interface IDocument {
     type: IDocType;
     state: string;
     template?: string;
+    title?: string;
     createdAt?: string;
     updatedAt?: string;
 }

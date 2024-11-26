@@ -1,3 +1,9 @@
 .div-editor-html {
     word-break: break-all;
 }
+
+.custom-label:hover {
+    color: #073d8b;
+    font-size: 1.1rem;
+    transition: all 1s;
+}

@@ -21,9 +21,26 @@ const findAll = async (params: any): Promise<IDocumentResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IDocumentResponse> => {
+const findById = async (id: string): Promise<IDocument> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const findByIdLight = async (id: string): Promise<IDocument> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/light/${id}`)
         .then((res) => {
             return {
                 ...res.data,
@@ -105,4 +122,4 @@ const remove = async (id: string): Promise<IDocumentResponse> => {
         });
 };
 
-export { findAll, findById, findByName, create, update, remove };
+export { findAll, findById, findByIdLight, findByName, create, update, remove };

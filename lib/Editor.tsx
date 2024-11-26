@@ -1,0 +1,184 @@
+import { INodeGeneral } from '@interfaces/INode';
+import { update, remove } from '@api/chapters';
+import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
+import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
+
+export const addSection = async (node: INodeGeneral, setNodes: Function) => {
+    if (node.chapter) {
+        const res = await create({
+            label: `Artículo`,
+            value: '',
+            article: true,
+            content: '',
+            children: [],
+            ownChapter: node.key
+        });
+        //Endpoint to add article associated
+
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.key) {
+                    c.children.push({ ...res.data, key: res.data._id });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.article) {
+        //Endpoint to add paragraph associated
+        const res = await createParagraph({
+            label: `Paragrafo`,
+            paragraph: true,
+            content: '',
+            ownChapter: node.ownChapter,
+            ownArticle: node.key
+        });
+
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key === node.key) {
+                            a.children.push({ ...res.data, key: res.data._id });
+                        }
+                        return a;
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};
+
+export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any) => {
+    if (node.chapter) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.key) {
+                    c['value'] = content;
+                }
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.article) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key === node.key) {
+                            a['value'] = content;
+                        }
+                        return a;
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    clearTimeout(timer);
+    const newTimer = setTimeout(async () => {
+        if (node.article) {
+            updateArticle(node.key, { value: content });
+        }
+
+        if (node.chapter) {
+            update(node.key, { value: content });
+        }
+    }, 800);
+
+    setTimer(newTimer);
+};
+
+export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
+    if (node.chapter) {
+        try {
+            await remove(node.key);
+            setNodes((prevArray) => {
+                const modifiedNodes = prevArray.filter((c) => c.key !== node.key);
+                return [...modifiedNodes];
+            });
+        } catch (error) {}
+    }
+
+    if (node.article) {
+        await removeArticle(node.key);
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    const newArticles = c.children.filter((a) => a.key !== node.key);
+                    c.children = newArticles;
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.paragraph) {
+        await removeParagraph(node.key);
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key === node.ownArticle) {
+                            const newParagraphs = a.children.filter((p) => p.key !== node.key);
+                            a.children = newParagraphs;
+                        }
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};
+
+export const renderHeader = () => {
+    return (
+        <div>
+            <span className="ql-formats">
+                <button className="ql-header" value="1"></button>
+                <button className="ql-header" value="2"></button>
+                <select className="ql-size">
+                    <option value="small">Pequeña</option>
+                    <option value="">Normal</option>
+                    <option value="large">Grande</option>
+                    <option value="huge">Gigante</option>
+                </select>
+            </span>
+
+            <span className="ql-formats">
+                <button className="ql-bold" aria-label="Bold"></button>
+                <button className="ql-italic" aria-label="Italic"></button>
+                <button className="ql-underline" aria-label="Underline"></button>
+                <button className="ql-strike" aria-label="Strike"></button>
+                <button className="ql-blockquote" aria-label="Blockquote"></button>
+                <button className="ql-link" aria-label="Link"></button>
+            </span>
+
+            <span className="ql-formats">
+                <select title="Text Alignment" className="ql-align">
+                    <option value="center">Gauche</option>
+                    <option value="center" label="Centro"></option>
+                    <option value="right" label="Derecha"></option>
+                    <option value="justify" label="Justificado"></option>
+                </select>
+                <button type="button" className="ql-list" aria-label="List" value="ordered"></button>
+                <button type="button" className="ql-list" aria-label="Bullet" value="bullet"></button>
+            </span>
+        </div>
+    );
+};

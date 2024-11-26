@@ -5,6 +5,39 @@ export const states = [
     { name: 'Inactivo', code: State.INACTIVE }
 ];
 
+/*
+ {
+                key: '2',
+                label: 'Artículo',
+                value: '',
+                content: '',
+                OwnChapter: '1',
+                article: true,
+                children: [
+                    { key: '3', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 1 ', content: '', paragraph: true },
+                    { key: '4', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 2', content: '', paragraph: true }
+                ]
+            },
+            {
+                key: '6',
+                label: 'Artículo',
+                value: '',
+                content: '',
+                OwnChapter: '1',
+                article: true,
+                children: [{ key: '5', OwnChapter: '1', OwnArticle: '6', label: 'Paragraph 1', content: '', paragraph: true }]
+            }
+*/
+
+export const treeNodes = [
+    {
+        key: '1',
+        label: 'Capítulo',
+        value: '',
+        chapter: true,
+        children: []
+    }
+];
 export const departments = [
     {
         id: 0,

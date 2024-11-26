@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IDocumentResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IDocumentResponse> => {
+const findById = async (id: string): Promise<IDocument> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
         .then((res) => {

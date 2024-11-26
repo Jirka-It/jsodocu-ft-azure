@@ -11,7 +11,7 @@ import { IVariableLight } from '@interfaces/IVariable';
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { replaceText, replaceTextQuill } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
+import { addSection, deleteSection, handleChangeEvent, renderHeader } from '@lib/Editor';
 
 import styles from './Editor.module.css';
 import { HttpStatus } from '@enums/HttpStatusEnum';
@@ -20,9 +20,10 @@ import { findById, update } from '@api/articles';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
 
-export default function Editor() {
+export default function Editor({ document }) {
     const toast = useRef(null);
     const params = useParams();
+    const header = renderHeader();
     const [timer, setTimer] = useState(null);
     const [nodes, setNodes] = useState<Array<INode>>();
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
@@ -36,6 +37,8 @@ export default function Editor() {
         getChapters();
         getVariables();
     }, []);
+
+    // Endpoints
 
     const getChapters = async () => {
         const res = await findAllChapters({ documentId: params.id });
@@ -59,6 +62,8 @@ export default function Editor() {
         setVariables(data);
     };
 
+    // Events to load quill's information
+
     const quillLoaded = (event) => {
         const quillInstance = event;
 
@@ -67,8 +72,7 @@ export default function Editor() {
             source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
                 // sample data set for displaying
                 renderList(variables, searchTerm);
-            },
-            listItemClass: 'sdasd'
+            }
         });
     };
 
@@ -127,6 +131,8 @@ export default function Editor() {
 
         return <span className={options.className}>{label}</span>;
     };
+
+    //Button events
 
     const addChapter = async () => {
         const res = await create({
@@ -194,9 +200,8 @@ export default function Editor() {
             <Toast ref={toast} />
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
-                <h4 className="m-0">Conjunto Amatista</h4>
-                <h6 className="m-0 text-gray-500 mb-5">Reglamento PH</h6>
-                <div className="mb-5 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                <h4 className="m-0">{document.name}</h4>
+                <div className="mt-3 mb-3 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                     <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
                 </div>
 
@@ -208,7 +213,7 @@ export default function Editor() {
             {nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
-                        <Quill value={content ?? nodeSelected.content} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+                        <Quill value={content ?? nodeSelected.content} headerTemplate={header} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>

@@ -49,7 +49,7 @@ export default function VariableList() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const getData = async (page: number = 1, size: number = 100) => {
+    const getData = async (page: number = 1, size: number = 999) => {
         const res = await findAll({ page, size, documentId: params.id });
         setVariables(res.data);
     };

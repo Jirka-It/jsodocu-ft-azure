@@ -13,12 +13,13 @@ import { findAll as findAllChapters, create } from '@api/chapters';
 import { replaceText, replaceTextQuill } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, renderHeader } from '@lib/Editor';
 
-import styles from './Editor.module.css';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
+
+import styles from './Editor.module.css';
 
 export default function Editor({ document }) {
     const toast = useRef(null);
@@ -84,7 +85,7 @@ export default function Editor({ document }) {
                 <div>
                     <div>
                         <div className="flex justify-content-between">
-                            <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node.chapter ? null : node)}>
+                            <h6 className={`m-0 cursor-pointer ${node.article ? styles['custom-label'] : ''}`} onClick={() => handleClickEvent(node.chapter ? null : node)}>
                                 {node.label}
                             </h6>
                             <div>
@@ -110,8 +111,8 @@ export default function Editor({ document }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className="flex align-items-center justify-content-between	">
-                        <h6 className="m-0 cursor-pointer" onClick={() => handleClickEvent(node)}>
+                    <div className="flex align-items-center justify-content-between">
+                        <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
                         </h6>
                         <div>
@@ -200,7 +201,7 @@ export default function Editor({ document }) {
             <Toast ref={toast} />
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
-                <h4 className="m-0">{document.name}</h4>
+                <h4 className="m-0">{document?.name}</h4>
                 <div className="mt-3 mb-3 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                     <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
                 </div>

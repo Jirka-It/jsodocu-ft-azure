@@ -3,7 +3,21 @@ import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
 
-export const addSection = async (node: INodeGeneral, setNodes: Function) => {
+export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
+    if (node.chapter) {
+        const nodeToOpen = node.key;
+        let object = {};
+        object[nodeToOpen] = node.key;
+        setExpandedKeys(object);
+    }
+
+    if (node.article) {
+        let object = {};
+        object[node.ownChapter] = node.key;
+        object[node.key] = node.key;
+        setExpandedKeys(object);
+    }
+
     if (node.chapter) {
         const res = await create({
             label: `Artículo`,

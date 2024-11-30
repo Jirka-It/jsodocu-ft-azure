@@ -12,3 +12,12 @@
 .tree div:global(.p-treenode-content) {
     padding: 0;
 }
+
+.input-node {
+    font-weight: 800;
+}
+
+.input-node::placeholder {
+    font-weight: lighter !important;
+    opacity: 0.5;
+}

@@ -90,9 +90,9 @@ export default function Editor({ document }) {
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
                         onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)}
-                        className="w-full"
+                        className={`${styles['input-node']} w-full`}
                         type="text"
-                        placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'}
+                        placeholder={node.chapter ? 'Capítulo' : 'Artículo'}
                     />
                     <Button icon="pi pi pi-plus" outlined size="small" className="p-button-success" onClick={() => addSection(node, setNodes, setExpandedKeys)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
                     <Button

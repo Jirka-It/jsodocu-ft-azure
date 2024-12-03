@@ -85,28 +85,27 @@ export default function Editor({ document }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div>
-                    <div>
-                        <div className="flex justify-content-between">
-                            <h6 className={`m-0 cursor-pointer ${node.article ? styles['custom-label'] : ''}`} onClick={() => handleClickEvent(node.chapter ? null : node)}>
-                                {node.label}
-                            </h6>
-                            <div>
-                                {/*<i className="pi pi-save cursor-pointer" onClick={() => saveSection(node)} title="Guardar"></i> */}
-                                <i className="pi pi-plus cursor-pointer ml-2" onClick={() => addSection(node, setNodes)} title={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'}></i>
-                                <i
-                                    className="pi pi-times cursor-pointer ml-2"
-                                    onClick={() => {
-                                        setNodeSelectedToDelete(node);
-                                        setOpenModalClose(!openModalClose);
-                                    }}
-                                    title="Borrar"
-                                ></i>
-                            </div>
-                        </div>
-
-                        <InputText value={node.value} onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)} className="w-full" type="text" placeholder={node.chapter ? 'Nombre del capítulo' : 'Nombre del artículo'} />
-                    </div>
+                <div className="p-inputgroup flex-1 h-2rem">
+                    <InputText
+                        onClick={() => handleClickEvent(node.chapter ? null : node)}
+                        value={node.value}
+                        onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)}
+                        className={`${styles['input-node']} w-full`}
+                        type="text"
+                        placeholder={node.chapter ? 'Capítulo' : 'Artículo'}
+                    />
+                    <Button icon="pi pi pi-plus" outlined size="small" className="p-button-success" onClick={() => addSection(node, setNodes, setExpandedKeys)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
+                    <Button
+                        icon="pi pi pi-times"
+                        outlined
+                        size="small"
+                        className="p-button-danger"
+                        onClick={() => {
+                            setNodeSelectedToDelete(node);
+                            setOpenModalClose(!openModalClose);
+                        }}
+                        tooltip="Borrar"
+                    />
                 </div>
             );
         }
@@ -114,19 +113,22 @@ export default function Editor({ document }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className="flex align-items-center justify-content-between">
+                    <div className="flex align-items-center justify-content-between h-2rem">
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
                         </h6>
                         <div>
-                            <i
-                                className="pi pi-times cursor-pointer ml-2"
+                            <Button
+                                size="small"
+                                icon="pi pi pi-times"
+                                outlined
+                                className="p-button-danger h-2rem"
                                 onClick={() => {
                                     setNodeSelectedToDelete(node);
                                     setOpenModalClose(!openModalClose);
                                 }}
-                                title="Borrar"
-                            ></i>
+                                tooltip="Borrar"
+                            />
                         </div>
                     </div>
                 </div>
@@ -216,28 +218,28 @@ export default function Editor({ document }) {
             <Toast ref={toast} />
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
-                <h4 className="m-0 mb-3 ">{document?.name}</h4>
+                <h5 className="m-0">{document?.name}</h5>
 
-                <div className="mt-3 mb-3 cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    <i className="pi pi-plus-circle mr-3"></i> Título
+                <div className="mt-2 mb-2 cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    Título
                 </div>
 
-                <div className="mt-3 mb-3 cursor-pointer text-blue-500" onClick={() => addChapter()}>
-                    <i className="pi pi-plus-circle mr-3"></i> Agregar Capítulo
+                <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                    <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
                 </div>
 
                 <div>
-                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className="w-full" />
+                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                 </div>
             </div>
 
             {nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
-                        <Quill value={content ?? nodeSelected.content} headerTemplate={header} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} style={{ minHeight: '30rem' }} onLoad={quillLoaded} />
+                        <Quill value={content ?? nodeSelected.content} headerTemplate={header} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} onLoad={quillLoaded} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 h-full p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>
+                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>
                     </div>
                 </div>
             ) : (

@@ -1,9 +1,23 @@
 .div-editor-html {
     word-break: break-all;
+    min-height: 42.5rem;
 }
 
 .custom-label:hover {
     color: #073d8b;
     font-size: 1.1rem;
     transition: all 1s;
+}
+
+.tree div:global(.p-treenode-content) {
+    padding: 0;
+}
+
+.input-node {
+    font-weight: 800;
+}
+
+.input-node::placeholder {
+    font-weight: lighter !important;
+    opacity: 0.5;
 }

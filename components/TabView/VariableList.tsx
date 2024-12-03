@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -33,12 +34,12 @@ export default function VariableList() {
     const toast = useRef(null);
     const params = useParams();
     const [variables, setVariables] = useState<Array<IVariable>>([]);
+    const [page, setPage] = useState<number>(1);
     const [municipalities, setMunicipalities] = useState<Array<string>>();
-
     const [openModal, setOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
-        getData();
+        getData(1, 1);
         const newArray = [];
         departments.map((d) => {
             d.cities.map((c) => {
@@ -49,13 +50,25 @@ export default function VariableList() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const getData = async (page: number = 1, size: number = 999) => {
+    const getData = async (page: number = 1, size: number = 20) => {
         const res = await findAll({ page, size, documentId: params.id });
-        setVariables(res.data);
+        setVariables((prevArray) => {
+            const newArray = prevArray.concat(res.data);
+            return newArray;
+        });
     };
 
-    const addVariable = () => {
-        getData();
+    const addVariable = (v: IVariable) => {
+        setVariables((prevArray) => {
+            const newArray = [{ ...v }].concat(prevArray);
+            return newArray;
+        });
+    };
+
+    const fetchMoreData = () => {
+        const newPage = page + 1;
+        getData(newPage, 1);
+        setPage(newPage);
     };
 
     const variableValue = (variable) => {
@@ -132,18 +145,20 @@ export default function VariableList() {
     };
 
     return (
-        <section>
-            <Toast ref={toast} />
-            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
-            <VariableModal state={openModal} setState={(e) => setOpenModal(e)} addData={() => addVariable()} />
-            <DataTable value={variables} emptyMessage=" ">
-                <Column field="_id" header="ID" body={(rowData: IVariable) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
-                <Column field="name" header="Nombre"></Column>
-                <Column field="value" header="Valor" body={variableValue}></Column>
-                <Column field="category.name" header="Categoría" body={(rowData) => <BasicStates state={rowData.category.name} />}></Column>
-                <Column field="type" header="Tipo" body={typeValue}></Column>
-                <Column field="actions" header="Acciones" body={(rowData: IVariable) => <VariableActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData._id)} />}></Column>
-            </DataTable>
-        </section>
+        <InfiniteScroll dataLength={variables.length} next={fetchMoreData} hasMore={true} loader={''}>
+            <section>
+                <Toast ref={toast} />
+                <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
+                <VariableModal state={openModal} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} />
+                <DataTable value={variables} emptyMessage=" ">
+                    <Column field="_id" header="ID" body={(rowData: IVariable) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
+                    <Column field="name" header="Nombre"></Column>
+                    <Column field="value" header="Valor" body={variableValue}></Column>
+                    <Column field="category.name" header="Categoría" body={(rowData) => <BasicStates state={rowData.category.name} />}></Column>
+                    <Column field="type" header="Tipo" body={typeValue}></Column>
+                    <Column field="actions" header="Acciones" body={(rowData: IVariable) => <VariableActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData._id)} />}></Column>
+                </DataTable>
+            </section>
+        </InfiniteScroll>
     );
 }

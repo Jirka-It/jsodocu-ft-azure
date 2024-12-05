@@ -39,7 +39,7 @@ export default function VariableList() {
     const [openModal, setOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
-        getData(1, 1);
+        getData();
         const newArray = [];
         departments.map((d) => {
             d.cities.map((c) => {
@@ -67,7 +67,7 @@ export default function VariableList() {
 
     const fetchMoreData = () => {
         const newPage = page + 1;
-        getData(newPage, 1);
+        getData(newPage, 20);
         setPage(newPage);
     };
 

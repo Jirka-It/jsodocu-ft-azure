@@ -89,8 +89,7 @@ const Documents = () => {
             <div className="card">
                 {data ? (
                     <div className="w-full flex justify-content-between mb-3">
-                        <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Tipo de documento" />
-
+                        <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Tipo" />
                         <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                     </div>
                 ) : (

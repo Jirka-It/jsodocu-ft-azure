@@ -1,9 +1,0 @@
-.tag-state {
-    padding: 0.5rem;
-    min-width: 5rem;
-}
-
-.tag-state span:global(.p-tag-value) {
-    font-size: 0.9rem;
-    font-weight: bold;
-}

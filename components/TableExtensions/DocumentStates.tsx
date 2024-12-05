@@ -1,6 +1,7 @@
 import { State } from '@enums/DocumentEnum';
+import { Badge } from 'primereact/badge';
+
 import { Tag } from 'primereact/tag';
-import styles from './BasicStates.module.css';
 
 interface IBasicState {
     state: string;
@@ -9,18 +10,18 @@ interface IBasicState {
 export default function DocumentStates({ state }: IBasicState) {
     switch (state) {
         case State.APPROVED:
-            return <Tag className={styles['tag-state']} value="Aprobado" severity="success"></Tag>;
+            return <Badge value="Aprobado" severity="success"></Badge>;
 
         case State.EDITION:
-            return <Tag className={styles['tag-state']} value="Edición" severity="warning"></Tag>;
+            return <Badge value="Edición" severity="warning"></Badge>;
 
         case State.REVIEW:
-            return <Tag className={styles['tag-state']} value="Revisión" severity="danger"></Tag>;
+            return <Badge value="Revisión" severity="danger"></Badge>;
 
         case State.ARCHIVED:
-            return <Tag className={styles['tag-state']} value="Archivado" severity="info"></Tag>;
+            return <Badge value="Archivado" severity="info"></Badge>;
 
         default:
-            return <Tag className={styles['tag-state']} value="Sin estado"></Tag>;
+            return <Badge value="Sin estado"></Badge>;
     }
 }

@@ -6,11 +6,9 @@ import { IModal } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { RolValidation } from '@validations/RolValidation';
-import { MultiSelect } from 'primereact/multiselect';
 import { PickList } from 'primereact/picklist';
 
 const permissionsArray = [

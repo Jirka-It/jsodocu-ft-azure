@@ -85,7 +85,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Variable creada');
             setTimeout(() => {
-                addData();
+                addData(res);
                 handleClose();
             }, 500);
         } else if (res.status === HttpStatus.BAD_REQUEST) {

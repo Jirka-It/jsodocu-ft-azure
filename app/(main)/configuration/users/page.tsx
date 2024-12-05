@@ -57,11 +57,12 @@ const Users = () => {
 
     return (
         <div className="layout-permissions">
-            <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Usuario" />
             <UserModal state={openModal} setState={(e) => setOpenModal(e)} />
+
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
             <div className="card">
-                <div className="w-full flex justify-content-end mb-5">
+                <div className="w-full flex justify-content-between mb-3">
+                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Usuario" />
                     <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
                 </div>
                 <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>

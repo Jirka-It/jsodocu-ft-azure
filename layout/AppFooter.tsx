@@ -15,7 +15,7 @@ const AppFooter = () => {
                 <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="diamond-layout" />
                 <span className="footer-app-name">DIAMOND</span>
             </div>
-            <span className="footer-copyright">&#169; Your Organization - 2023</span>
+            <span className="footer-copyright">&#169; Jirka - 2024</span>
         </div>
     );
 };

@@ -13,8 +13,8 @@ import BasicStates from '@components/TableExtensions/BasicStates';
 import { InputSwitch } from 'primereact/inputswitch';
 import { State } from '@enums/StateEnum';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
-import { Tag } from 'primereact/tag';
 import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -105,7 +105,7 @@ const Documents = () => {
                     onPage={(e) => handlePagination(e)}
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
-                    <Column field="_id" header="Id" body={(rowData: IDocType) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IDocType) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="description" header="Descripción"></Column>

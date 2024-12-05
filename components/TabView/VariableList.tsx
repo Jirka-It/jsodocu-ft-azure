@@ -10,7 +10,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { Toast } from 'primereact/toast';
-import { Tag } from 'primereact/tag';
 
 import VariableModal from '@components/Modals/VariableModal';
 import BasicStates from '@components/TableExtensions/BasicStates';
@@ -22,6 +21,7 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { departments } from '@lib/data';
 import { showError, showSuccess } from '@lib/ToastMessages';
+import { Badge } from 'primereact/badge';
 
 const types = [
     { name: 'Texto', value: VariableType.TEXT },
@@ -151,7 +151,7 @@ export default function VariableList() {
                 <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
                 <VariableModal state={openModal} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} />
                 <DataTable value={variables} emptyMessage=" ">
-                    <Column field="_id" header="ID" body={(rowData: IVariable) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
+                    <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="value" header="Valor" body={variableValue}></Column>
                     <Column field="category.name" header="Categoría" body={(rowData) => <BasicStates state={rowData.category.name} />}></Column>

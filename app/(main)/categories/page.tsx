@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { Tag } from 'primereact/tag';
 import { Toast } from 'primereact/toast';
 import DocumentTypeActions from '@components/TableExtensions/DocumentTypeActions';
 import DeleteModal from '@components/Modals/DeleteModal';
@@ -15,6 +14,7 @@ import { InputSwitch } from 'primereact/inputswitch';
 import { State } from '@enums/StateEnum';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { ICategory, ICategoryResponse } from '@interfaces/ICategory';
+import { Badge } from 'primereact/badge';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -106,7 +106,7 @@ const Documents = () => {
                     onPage={(e) => handlePagination(e)}
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
-                    <Column field="_id" header="Id" body={(rowData: ICategory) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: ICategory) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="state" body={(rowData: ICategory) => <BasicStates state={rowData.state} />} header="Estado"></Column>

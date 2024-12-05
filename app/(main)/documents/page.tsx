@@ -12,9 +12,9 @@ import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
 import { findAll, remove } from '@api/documents';
-import { Tag } from 'primereact/tag';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -88,7 +88,7 @@ const Documents = () => {
                     onPage={(e) => handlePagination(e)}
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
-                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Tag onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Tag>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="type.name" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="createdAt" header="Fecha"></Column>

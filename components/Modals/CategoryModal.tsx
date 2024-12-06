@@ -21,7 +21,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const [stateType, setStateType] = useState<any>('');
+    const [stateCategory, setStateCategory] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
@@ -29,11 +29,11 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
             setName(data.name);
             setDescription(data.description);
             const state = states.filter((s) => s.code === data.state);
-            setStateType(state[0]);
+            setStateCategory(state[0]);
         } else {
             setName('');
             setDescription('');
-            setStateType(states[0]);
+            setStateCategory(states[0]);
         }
     }, [data]);
 
@@ -56,7 +56,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
             CategoryValidation({
                 name,
                 description,
-                state: stateType.code
+                state: stateCategory.code
             }),
             toast
         );
@@ -72,13 +72,13 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
             res = await updateDoc(data._id, {
                 name,
                 description,
-                state: stateType.code
+                state: stateCategory.code
             });
         } else {
             res = await create({
                 name,
                 description,
-                state: stateType.code
+                state: stateCategory.code
             });
         }
 
@@ -98,7 +98,7 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
     const handleClose = async () => {
         setName('');
         setDescription('');
-        setStateType('');
+        setStateCategory('');
         setValidations([]);
         update(null, false);
         setState(!state);
@@ -165,12 +165,12 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
                 </div>
 
                 <div>
-                    <label htmlFor="type">
+                    <label htmlFor="state">
                         Estado <span className="text-red-500">*</span>
                     </label>
                     <Dropdown
-                        value={stateType}
-                        onChange={(e: any) => setStateType(e.value)}
+                        value={stateCategory}
+                        onChange={(e: any) => setStateCategory(e.value)}
                         options={states}
                         id="state"
                         optionLabel="name"

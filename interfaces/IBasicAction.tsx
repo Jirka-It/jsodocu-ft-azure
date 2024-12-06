@@ -7,6 +7,6 @@ export interface IDocumentAction extends IBasicAction {
     handleView: Function;
 }
 
-export interface IDocumentTypeAction extends IBasicAction {
+export interface ICustomAction extends IBasicAction {
     data: string;
 }

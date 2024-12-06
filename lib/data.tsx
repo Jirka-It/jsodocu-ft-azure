@@ -5,6 +5,11 @@ export const states = [
     { name: 'Inactivo', code: State.INACTIVE }
 ];
 
+export const applyToAccounts = [
+    { name: 'Si', code: true },
+    { name: 'No', code: false }
+];
+
 /*
  {
                 key: '2',

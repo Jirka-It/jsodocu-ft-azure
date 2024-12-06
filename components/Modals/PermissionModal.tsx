@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModal } from '@interfaces/IModal';
+import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -13,7 +13,7 @@ import { PermissionValidation } from '@validations/PermissionValidation';
 import { Configuration } from '@enums/PermissionEnum';
 import { CleanText } from '@lib/CleanText';
 import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
-import { create, findByCode } from '@api/permissions';
+import { create, findByCode, update as updatePermission } from '@api/permissions';
 import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 import { HttpStatus } from '@enums/HttpStatusEnum';
@@ -24,7 +24,7 @@ const categories = [
     { name: 'Sistema', code: Configuration.SYSTEM }
 ];
 
-export default function PermissionModal({ state, setState }: IModal) {
+export default function PermissionModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const { data: session } = useSession(); //data:session
@@ -33,6 +33,20 @@ export default function PermissionModal({ state, setState }: IModal) {
     const [description, setDescription] = useState<string>('');
     const [category, setCategory] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+
+    useEffect(() => {
+        if (data) {
+            setCode(data.code);
+            setName(data.name);
+            setDescription(data.description);
+            setCategory(categories.find((c) => c.code === data.category));
+        } else {
+            setCode('');
+            setName('');
+            setDescription('');
+            setCategory('');
+        }
+    }, [data]);
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -90,18 +104,27 @@ export default function PermissionModal({ state, setState }: IModal) {
 
         var res;
 
-        res = await create({
-            code,
-            name,
-            description,
-            category: category.code,
-            creator: v.user._id
-        });
+        if (data) {
+            res = await updatePermission(data._id, {
+                code,
+                name,
+                description,
+                category: category.code
+            });
+        } else {
+            res = await create({
+                code,
+                name,
+                description,
+                category: category.code,
+                creator: v.user._id
+            });
+        }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Permiso creado');
             setTimeout(() => {
-                // update(!data ? 1 : null);
+                update(!data ? 1 : null);
                 handleClose();
             }, 1000);
         } else if (res.status === HttpStatus.BAD_REQUEST) {

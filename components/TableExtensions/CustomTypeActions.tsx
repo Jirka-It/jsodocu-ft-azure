@@ -3,7 +3,7 @@ import { ICustomAction } from '@interfaces/IBasicAction';
 import { Button } from 'primereact/button';
 
 //<Button onClick={() => handleDelete()} icon="pi pi-trash" severity="danger" tooltip="Eliminar" />
-export default function DocumentTypeActions({ handleEdit, handleDelete, data }: ICustomAction) {
+export default function CustomTypeActions({ handleEdit, handleDelete, data }: ICustomAction) {
     return (
         <div>
             <Button onClick={() => handleEdit()} icon="pi pi-file-edit" className="mr-2" tooltip="Editar" />

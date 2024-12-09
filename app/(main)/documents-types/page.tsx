@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import DocumentTypeActions from '@components/TableExtensions/DocumentTypeActions';
+import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentTypeModal from '@components/Modals/DocumentTypeModal';
 import { findAll, remove, update } from '@api/types';
@@ -110,7 +110,7 @@ const Documents = () => {
                     <Column field="name" header="Nombre"></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="state" body={(rowData: IDocType) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData: IDocType) => <DocumentTypeActions data={rowData.state} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
+                    <Column field="actions" body={(rowData: IDocType) => <CustomTypeActions data={rowData.state} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

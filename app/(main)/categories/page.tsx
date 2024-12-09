@@ -5,7 +5,7 @@ import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import DocumentTypeActions from '@components/TableExtensions/DocumentTypeActions';
+import DocumentTypeActions from '@components/TableExtensions/CustomTypeActions';
 //import DeleteModal from '@components/Modals/DeleteModal';
 import CategoryModal from '@components/Modals/CategoryModal';
 import { findAll, remove, update } from '@api/categories';

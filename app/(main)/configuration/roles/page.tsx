@@ -5,7 +5,6 @@ import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
-import BasicActions from '@components/TableExtensions/BasicActions';
 import BasicStates from '@components/TableExtensions/BasicStates';
 import RolModal from '@components/Modals/RolModal';
 //import DeleteModal from '@components/Modals/DeleteModal';
@@ -16,6 +15,7 @@ import { IRol, IRolResponse } from '@interfaces/IRol';
 import { findAll, update } from '@api/roles';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
+import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 
 const Roles = () => {
     const toast = useRef(null);
@@ -109,7 +109,7 @@ const Roles = () => {
                     <Column field="description" header="Descripción"></Column>
                     <Column field="state" body={(rowData: IRol) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column field="applyToAccount" body={(rowData: IRol) => <BasicStates state={rowData.applyToAccount} />} header="Cuenta"></Column>
-                    <Column field="actions" body={(rowData: IRol) => <BasicActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
+                    <Column field="actions" body={(rowData: IRol) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

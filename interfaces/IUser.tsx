@@ -3,10 +3,12 @@ export interface IUser {
     username: string;
     name: string;
     lastName: string;
-    password: string;
+    password?: string;
     confirmPassword?: string;
+    accountId?: string;
     state: string;
     roles: Array<any>;
+    creator?: string;
 }
 
 import { IGeneralRequest } from './IRequest';

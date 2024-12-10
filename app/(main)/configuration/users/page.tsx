@@ -20,7 +20,7 @@ import { Badge } from 'primereact/badge';
 const Users = () => {
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    // const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [checked, setChecked] = useState(true);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [user, setUser] = useState<IUser>(null);
@@ -85,12 +85,20 @@ const Users = () => {
     return (
         <div className="layout-users">
             <Toast ref={toast} />
-            <UserModal state={openModal} setState={(e) => setOpenModal(e)} />
+            <UserModal state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
 
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
+            {/*  <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />  */}
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
-                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Usuario" />
+                    <Button
+                        onClick={() => {
+                            setOpenModal(true);
+                            setUser(null);
+                        }}
+                        icon="pi pi-plus"
+                        className="mr-2"
+                        label="Usuario"
+                    />
                     <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                 </div>
                 <DataTable

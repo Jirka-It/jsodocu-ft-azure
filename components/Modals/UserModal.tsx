@@ -1,34 +1,73 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModal } from '@interfaces/IModal';
+import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { UserValidation } from '@validations/UserValidation';
 import { Password } from 'primereact/password';
-
 import styles from './UserModal.module.css';
-import { PickList } from 'primereact/picklist';
+import { PickList, PickListEvent } from 'primereact/picklist';
+import { Dropdown } from 'primereact/dropdown';
+import { IAccountResponse } from '@interfaces/IAccount';
+import { findAll } from '@api/accounts';
+import { findAll as findAllRoles } from '@api/roles';
+import { create, findByUsername, update as updateUser } from '@api/users';
 
-const rolesArray = [
-    { name: 'Abogado', code: 'DOC-000' },
-    { name: 'Comercial', code: 'ACC-000' },
-    { name: 'Operativo', code: 'USER-000' }
-];
+import { State } from '@enums/StateEnum';
+import { Badge } from 'primereact/badge';
+import { IRol } from '@interfaces/IRol';
+import { states } from '@lib/data';
+import { HttpStatus } from '@enums/HttpStatusEnum';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
+import { useSession } from 'next-auth/react';
+import { ISession } from '@interfaces/ISession';
 
-export default function UserModal({ state, setState }: IModal) {
+export default function UserModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
+    const { data: session } = useSession(); //data:session
     const [lastName, setLastName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
+    const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [stateUser, setStateUser] = useState<any>(states[0]);
+
+    const [accountId, setAccountId] = useState<any>('');
+    const [accounts, setAccounts] = useState<IAccountResponse>();
     const [validations, setValidations] = useState<Array<IZodError>>([]);
-    const [source, setSource] = useState(rolesArray);
+    const [source, setSource] = useState<Array<IRol>>([]);
     const [target, setTarget] = useState([]);
+    const [allRoles, setAllRoles] = useState<Array<IRol>>([]);
+    const [sourceFilterValue, setSourceFilterValue] = useState<string>('');
+    const [targetFilterValue, setTargetFilterValue] = useState('');
+
+    useEffect(() => {
+        getData();
+    }, [data]);
+
+    useEffect(() => {
+        if (data) {
+            setName(data.name);
+            setLastName(data.lastName);
+            setUsername(data.username);
+            setAccountId(data.accountId);
+            const state = states.filter((s) => s.code === data.state);
+            setStateUser(state[0]);
+            setTarget(data.roles ?? []);
+        } else {
+            setName('');
+            setLastName('');
+            setUsername('');
+            setAccountId('');
+            setStateUser(states[0]);
+            setTarget([]);
+        }
+    }, [data]);
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -43,39 +82,151 @@ export default function UserModal({ state, setState }: IModal) {
         </div>
     );
 
+    const getData = async (page: number = 1, size: number = 100, state: string = State.ACTIVE) => {
+        const res = await findAll({ page, size, state });
+        setAccounts(res);
+
+        let resRoles = { data: allRoles };
+        if (!allRoles || allRoles.length === 0) {
+            resRoles = await findAllRoles({ page, size, applyToAccount: true });
+        }
+
+        if (data && resRoles.data) {
+            setAllRoles(resRoles.data);
+            const rolesFormatted = data.roles.map((i) => i._id);
+            const dataFiltered = resRoles.data.filter((r) => !rolesFormatted.includes(r._id));
+
+            setSource(dataFiltered);
+            return;
+        } else {
+            setSource(allRoles);
+        }
+
+        setSource(resRoles.data);
+    };
+
+    // Inputs events
+    const handleChange = async (username: string) => {
+        setUsername(username);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByUsername(username);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe un usuario con este correo');
+                } else {
+                    showInfo(toast, '', 'Usuario disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
+
+    // PickList events
     const onChange = (event) => {
         setSource(event.source);
         setTarget(event.target);
     };
 
+    const onSourceFilterChange = (event: PickListEvent) => {
+        setSourceFilterValue(event.value);
+    };
+
+    const onTargetFilterChange = (event: PickListEvent) => {
+        setTargetFilterValue(event.value);
+    };
+
     const handleSubmit = async () => {
+        let newTarget = []; //Array with IDs
+        if (target && target.length > 0) {
+            newTarget = target.map((t) => t._id);
+        }
+
         //Validate data
-        const validationFlow = ValidationFlow(
-            UserValidation({
-                name,
-                lastName,
-                username: email,
-                password,
-                state: 'ACTIVE',
-                confirmPassword,
-                roles: target
-            }),
-            toast
-        );
+        var validationFlow = null;
+        if (data) {
+            validationFlow = ValidationFlow(
+                UserValidation({
+                    name,
+                    lastName,
+                    username,
+                    state: stateUser.code,
+                    accountId,
+                    roles: newTarget
+                }),
+                toast
+            );
+        } else {
+            validationFlow = ValidationFlow(
+                UserValidation({
+                    name,
+                    lastName,
+                    username,
+                    password,
+                    state: stateUser.code,
+                    confirmPassword,
+                    accountId,
+                    roles: newTarget
+                }),
+                toast
+            );
+        }
 
         // Show errors in inputs
         setValidations(validationFlow);
         if (validationFlow && validationFlow.length > 0) {
             return;
         }
+
+        const v: ISession = session as any;
+        var res;
+
+        if (data) {
+            res = await updateUser(data._id, {
+                name,
+                lastName,
+                username,
+                accountId,
+                state: stateUser.code,
+                roles: newTarget
+            });
+        } else {
+            res = await create({
+                name,
+                lastName,
+                username,
+                password,
+                accountId,
+                state: stateUser.code,
+                roles: newTarget,
+                creator: v.user._id
+            });
+        }
+
+        if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
+            showSuccess(toast, '', 'Usuario creado');
+            setTimeout(() => {
+                update(!data ? 1 : null);
+                handleClose();
+            }, 1000);
+        } else if (res.status === HttpStatus.BAD_REQUEST) {
+            showError(toast, '', 'Revise los datos ingresados');
+        } else {
+            showError(toast, '', 'Contacte con soporte.');
+        }
     };
 
     const handleClose = async () => {
         setName('');
-        setEmail('');
+        setLastName('');
+        setStateUser(states[0]);
+        setAccountId('');
+        setUsername('');
         setPassword('');
         setConfirmPassword('');
-        setSource([]);
         setTarget([]);
         setValidations([]);
         setState(!state);
@@ -88,7 +239,7 @@ export default function UserModal({ state, setState }: IModal) {
             header={headerElement}
             footer={footerContent}
             closable={false}
-            style={{ width: '90rem' }}
+            style={{ width: '70rem' }}
             onHide={() => {
                 if (!state) return;
                 setState(false);
@@ -99,44 +250,99 @@ export default function UserModal({ state, setState }: IModal) {
             <div className="flex flex-column gap-4">
                 <div className="grid">
                     <div className="col-12 sm:col-6">
-                        <label htmlFor="name">Nombre</label>
+                        <label htmlFor="name">
+                            Nombre <span className="text-red-500">*</span>
+                        </label>
                         <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                     </div>
                     <div className="col-12 sm:col-6">
-                        <label htmlFor="email">Correo</label>
+                        <label htmlFor="lastName">
+                            Apellido <span className="text-red-500">*</span>
+                        </label>
 
-                        <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
+                        <InputText value={lastName} onChange={(e) => setLastName(e.target.value)} id="lastName" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'lastName') ? 'p-invalid' : ''} `} placeholder="Apellido" />
                     </div>
                 </div>
 
                 <div className="grid">
                     <div className="col-12 sm:col-6">
-                        {' '}
-                        <label htmlFor="email">Contraseña</label>
-                        <Password
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            id="password"
-                            type="password"
-                            className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
-                            placeholder="Contraseña"
-                            toggleMask
-                        />
+                        <label htmlFor="email">
+                            Correo <span className="text-red-500">*</span>
+                        </label>
+
+                        <InputText value={username} onChange={(e) => handleChange(e.target.value)} id="username" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'username') ? 'p-invalid' : ''} `} placeholder="Correo" />
                     </div>
 
                     <div className="col-12 sm:col-6">
-                        <label htmlFor="email">Confirmar contraseña</label>
-
-                        <Password
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            id="confirmPassword"
-                            type="password"
-                            className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'confirmPassword') ? 'p-invalid' : ''} `}
-                            placeholder="Contraseña"
-                            feedback={false}
-                            toggleMask
+                        <label htmlFor="account">
+                            Cuenta <span className="text-red-500">*</span>
+                        </label>
+                        <Dropdown
+                            value={accountId}
+                            onChange={(e) => setAccountId(e.value)}
+                            options={accounts?.data}
+                            id="account"
+                            optionLabel="name"
+                            optionValue="_id"
+                            placeholder="Cuenta"
+                            className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'accountId') ? 'p-invalid' : ''} `}
                         />
+                    </div>
+                </div>
+
+                <div className="grid">
+                    {!data ? (
+                        <>
+                            <div className="col-12 sm:col-4">
+                                {' '}
+                                <label htmlFor="email">
+                                    Contraseña <span className="text-red-500">*</span>
+                                </label>
+                                <Password
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    id="password"
+                                    type="password"
+                                    className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
+                                    placeholder="Contraseña"
+                                    toggleMask
+                                />
+                            </div>
+
+                            <div className="col-12 sm:col-4">
+                                <label htmlFor="email">
+                                    Confirmar contraseña <span className="text-red-500">*</span>
+                                </label>
+
+                                <Password
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    id="confirmPassword"
+                                    type="password"
+                                    className={`${styles['input-password']} w-full mt-2 ${VerifyErrorsInForms(validations, 'confirmPassword') ? 'p-invalid' : ''} `}
+                                    placeholder="Contraseña"
+                                    feedback={false}
+                                    toggleMask
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        ''
+                    )}
+
+                    <div className="col-12 sm:col-4">
+                        <label htmlFor="state">
+                            Estado <span className="text-red-500">*</span>
+                        </label>
+                        <Dropdown
+                            value={stateUser}
+                            onChange={(e: any) => setStateUser(e.value)}
+                            options={states}
+                            id="state"
+                            optionLabel="name"
+                            placeholder="Estado"
+                            className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'state') ? 'p-invalid' : ''} `}
+                        />{' '}
                     </div>
                 </div>
 
@@ -144,25 +350,34 @@ export default function UserModal({ state, setState }: IModal) {
                     <label htmlFor="category">Roles</label>
                     <PickList
                         className="mt-2"
-                        itemTemplate={(item) => <p>{item.name}</p>}
+                        itemTemplate={(item) => (
+                            <div className="flex">
+                                <Badge className="mr-2" value={item.code} severity="success"></Badge>
+                                <p>{item.name}</p>
+                            </div>
+                        )}
                         showSourceControls={false}
                         showTargetControls={false}
-                        showSourceFilter={false}
-                        showTargetFilter={false}
+                        showSourceFilter={true}
+                        showTargetFilter={true}
                         dataKey="code"
                         source={source}
                         target={target}
                         onChange={onChange}
+                        onSourceFilterChange={onSourceFilterChange}
+                        onTargetFilterChange={onTargetFilterChange}
                         filter
                         filterBy="name"
+                        sourceFilterValue={sourceFilterValue}
+                        targetFilterValue={targetFilterValue}
+                        sourceFilterPlaceholder="Buscar por nombre"
+                        targetFilterPlaceholder="Buscar por nombre"
                         breakpoint="960px"
                         sourceHeader="Disponibles"
                         targetHeader="Seleccionados"
                         sourceStyle={{ height: '24rem' }}
                         targetStyle={{ height: '24rem' }}
                     />
-                    {/*                     <MultiSelect value={roles} onChange={(e) => setRoles(e.value)} options={categories} optionLabel="name" id="rol" placeholder="Roles" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'roles') ? 'p-invalid' : ''} `} />
-                     */}
                 </div>
             </div>
         </Dialog>

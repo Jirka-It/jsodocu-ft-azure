@@ -107,8 +107,8 @@ const Roles = () => {
                     <Column field="name" header="Nombre"></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="description" header="Descripción"></Column>
-                    <Column field="state" body={(rowData: IRol) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column field="applyToAccount" body={(rowData: IRol) => <BasicStates state={rowData.applyToAccount} />} header="Cuenta"></Column>
+                    <Column field="state" body={(rowData: IRol) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column field="actions" body={(rowData: IRol) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>

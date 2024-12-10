@@ -7,7 +7,8 @@ const RegisterSchema = z
         name: z.string().min(1),
         username: z.string().email().min(1),
         password: z.string().min(1),
-        confirmPassword: z.string().min(1)
+        confirmPassword: z.string().min(1),
+        state: z.string().min(1)
     })
     .superRefine(({ confirmPassword, password }, ctx) => {
         if (confirmPassword !== password) {

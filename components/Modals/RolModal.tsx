@@ -68,6 +68,9 @@ export default function RolModal({ state, setState, update, data }: IModalCreate
             res = await findAll({ page, size });
         }
 
+        console.log('allPermissions', allPermissions);
+        console.log('res', res);
+
         if (data && res.data) {
             setAllPermissions(res.data);
             const permissionsFormatted = data.permissions.map((i) => i._id);

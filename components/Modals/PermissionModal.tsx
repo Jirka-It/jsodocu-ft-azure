@@ -160,18 +160,24 @@ export default function PermissionModal({ state, setState, update, data }: IModa
 
             <div className="flex flex-column gap-4">
                 <div>
-                    <label htmlFor="code">Código</label>
+                    <label htmlFor="code">
+                        Código <span className="text-red-500">*</span>
+                    </label>
                     <InputText value={code} onChange={(e) => handleChange(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
                 </div>
 
                 <div>
-                    <label htmlFor="name">Nombre</label>
+                    <label htmlFor="name">
+                        Nombre <span className="text-red-500">*</span>
+                    </label>
 
                     <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                 </div>
 
                 <div className="w-full">
-                    <label htmlFor="description">Descripción</label>
+                    <label htmlFor="description">
+                        Descripción <span className="text-red-500">*</span>
+                    </label>
                     <InputTextarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
@@ -184,7 +190,9 @@ export default function PermissionModal({ state, setState, update, data }: IModa
                 </div>
 
                 <div>
-                    <label htmlFor="category">Categoría</label>
+                    <label htmlFor="category">
+                        Categoría <span className="text-red-500">*</span>
+                    </label>
 
                     <Dropdown
                         value={category}

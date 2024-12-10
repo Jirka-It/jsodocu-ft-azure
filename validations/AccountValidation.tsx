@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { ModelValidation } from './ModelValidation';
 import { IZodError } from '@interfaces/IAuth';
-import { IUserAccount } from '@interfaces/IUserAccount';
+import { IAccount } from '@interfaces/IAccount';
 
-const UserAccountSchema = z.object({
+const AccountSchema = z.object({
     username: z.string().min(1),
     corporateEmail: z.string().email().min(1),
     phone: z.string().min(1),
@@ -11,6 +11,6 @@ const UserAccountSchema = z.object({
     role: z.string().min(1)
 });
 
-export const UserAccountValidation = (data: IUserAccount): Array<IZodError> | string => {
-    return ModelValidation(data, UserAccountSchema);
+export const AccountValidation = (data: IAccount): Array<IZodError> | string => {
+    return ModelValidation(data, AccountSchema);
 };

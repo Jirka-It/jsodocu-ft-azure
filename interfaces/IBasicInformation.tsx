@@ -1,5 +1,9 @@
 export interface IBasicInformation {
-    name: string;
-    website: string;
-    city: string;
+    name?: string;
+    email?: string;
+    alternateEmail?: string;
+    nit?: string;
+    website?: string;
+    city?: string;
+    description?: string;
 }

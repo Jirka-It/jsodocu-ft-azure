@@ -18,13 +18,12 @@ import { Badge } from 'primereact/badge';
 
 const Documents = () => {
     const toast = useRef(null);
+    const router = useRouter();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
-
-    const router = useRouter();
 
     useEffect(() => {
         getData();

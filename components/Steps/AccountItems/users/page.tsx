@@ -5,7 +5,7 @@ import { State } from '@enums/StateEnum';
 import { IZodError } from '@interfaces/IAuth';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
-import { UserAccountValidation } from '@validations/UserAccountValidation';
+import { AccountValidation } from '@validations/AccountValidation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -56,8 +56,8 @@ export default function StepUsers() {
 
     const handleSubmit = async () => {
         //Validate data
-        const validationFlow = ValidationFlow(
-            UserAccountValidation({
+        /* const validationFlow = ValidationFlow(
+            AccountValidation({
                 username,
                 corporateEmail,
                 phone,
@@ -71,7 +71,7 @@ export default function StepUsers() {
         setValidations(validationFlow);
         if (validationFlow && validationFlow.length > 0) {
             return;
-        }
+        }*/
     };
 
     const handleEdit = (id: string) => {};
@@ -83,6 +83,7 @@ export default function StepUsers() {
     return (
         <section>
             <Toast ref={toast} />
+            {/*
             <div className="grid mt-5">
                 <div className="col-12 md:col-5">
                     <div className="flex flex-column gap-4">
@@ -162,10 +163,18 @@ export default function StepUsers() {
                     <Button label="Guardar" onClick={() => handleSubmit()} />
                 </div>
             </div>
+           */}
 
-            <div className="grid mt-5">
+            {/*
+  onClick={() => {
+                            setOpenModal(true);
+                            setUser(null);
+                        }}
+*/}
+            <div className="grid">
                 <div className="col-12">
-                    <div className="w-full flex justify-content-end mb-5">
+                    <div className="w-full flex justify-content-between mb-5">
+                        <Button icon="pi pi-plus" className="mr-2" label="Usuario" />
                         <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
                     </div>
 

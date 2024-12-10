@@ -130,14 +130,7 @@ export default function BasicInformationForm() {
                         </label>
                         <span className="p-input-icon-left w-full">
                             <i className="pi pi-lock"></i>
-                            <InputText
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                id="city"
-                                type="text"
-                                className={`w-full ${VerifyErrorsInForms(validations, 'city') ? 'p-invalid' : ''} `}
-                                placeholder="Escribe aquí la dirección de tu sitio WEB"
-                            />
+                            <InputText value={city} onChange={(e) => setCity(e.target.value)} id="city" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'city') ? 'p-invalid' : ''} `} placeholder="Escribe aquí tu ciudad" />
                         </span>
                     </div>
 

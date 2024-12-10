@@ -28,8 +28,12 @@ export default function AccountSteps() {
 
     return (
         <Card className={`${styles.card}`}>
+            {/*
             <Steps model={items} activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={false} />
             {renderContent()}
+            */}
+
+            <StepUsers />
         </Card>
     );
 }

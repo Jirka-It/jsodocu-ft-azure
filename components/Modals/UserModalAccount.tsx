@@ -90,12 +90,10 @@ export default function UserModalAccount({ state, setState, update, data, accoun
             const dataFiltered = resRoles.data.filter((r) => !rolesFormatted.includes(r._id));
 
             setSource(dataFiltered);
-            return;
         } else {
-            setSource(allRoles);
+            setAllRoles(resRoles.data);
+            setSource(resRoles.data);
         }
-
-        setSource(resRoles.data);
     };
 
     // Inputs events

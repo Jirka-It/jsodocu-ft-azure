@@ -62,7 +62,7 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
         const validationFlow = ValidationFlow(
             VariableValidation({
                 name: name,
-                category: category
+                category
             }),
             toast
         );

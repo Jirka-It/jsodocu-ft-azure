@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useRef, useState } from 'react';
+import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
@@ -10,67 +10,113 @@ import BasicStates from '@components/TableExtensions/BasicStates';
 import UserModal from '@components/Modals/UserModal';
 import DeleteModal from '@components/Modals/DeleteModal';
 import { InputSwitch } from 'primereact/inputswitch';
+import { IUser, IUserResponse } from '@interfaces/IUser';
+import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
+import { findAll, update } from '@api/users';
+import { CopyToClipBoard } from '@lib/CopyToClipBoard';
+import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
 
 const Users = () => {
+    const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
-    const [checked, setChecked] = useState(false);
+    // const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [checked, setChecked] = useState(true);
+    const [tableState, setTableState] = useState<DataTableStateEvent>();
+    const [user, setUser] = useState<IUser>(null);
+    const [data, setData] = useState<IUserResponse>();
 
-    const [users, setUsers] = useState([
-        {
-            id: 55,
-            user: 'bomj321',
-            name: 'Jonathan Peña.',
-            state: State.INACTIVE,
-            actions: ''
-        },
-        {
-            id: 56,
-            user: 'bomj321',
-            name: 'Jonathan Peña.',
-            state: State.ACTIVE,
-            actions: ''
-        },
-        {
-            id: 57,
-            user: 'bomj321',
-            name: 'Jonathan Peña.',
-            state: State.INACTIVE,
-            actions: ''
-        },
-        {
-            id: 58,
-            user: 'bomj321',
-            name: 'Jonathan Peña.',
-            state: State.ACTIVE,
-            actions: ''
-        }
-    ]);
+    useEffect(() => {
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [checked]);
 
-    const handleEdit = (id: string) => {
+    const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
+        const state = checked ? State.ACTIVE : State.INACTIVE;
+        const res = await findAll({ page, size, state });
+        setData(res);
+    };
+
+    //Table actions
+
+    const handleCheck = (check: boolean) => {
+        setChecked(check);
+    };
+
+    const handleCopy = (data: string) => {
+        CopyToClipBoard(data, toast);
+    };
+
+    const handleEdit = (data: IUser) => {
+        setUser(data);
         setOpenModal(true);
     };
 
-    const handleDelete = (id: string) => {
+    /*
+    const handleModalDelete = (data: IDocType) => {
+        setDocumentType(data);
         setOpenModalClose(true);
+    };
+   */
+
+    const handleDelete = async (user: IUser) => {
+        const state = user.state === State.ACTIVE ? State.INACTIVE : State.ACTIVE;
+        await update(user._id, {
+            state
+        });
+        getData(data.page);
+    };
+
+    const handlePagination = (e: DataTableStateEvent) => {
+        setTableState(e);
+        getData(e.page + 1);
+    };
+
+    const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
+        if (update) {
+            const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
+            setUser(null);
+            getData(page, data?.elementsByPage);
+        } else {
+            setUser(null);
+        }
     };
 
     return (
-        <div className="layout-permissions">
-            <UserModal state={openModal} setState={(e) => setOpenModal(e)} />
+        <div className="layout-users">
+            <Toast ref={toast} />
+            <UserModal state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
 
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
+            {/*  <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />  */}
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
-                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Usuario" />
-                    <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
+                    <Button
+                        onClick={() => {
+                            setOpenModal(true);
+                            setUser(null);
+                        }}
+                        icon="pi pi-plus"
+                        className="mr-2"
+                        label="Usuario"
+                    />
+                    <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                 </div>
-                <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
-                    <Column field="id" header="ID"></Column>
-                    <Column field="user" header="Usuario"></Column>
+                <DataTable
+                    value={data?.data}
+                    lazy
+                    tableStyle={{ minWidth: '50rem' }}
+                    paginator={true}
+                    first={tableState?.first ?? 0}
+                    rows={data?.elementsByPage}
+                    onPage={(e) => handlePagination(e)}
+                    totalRecords={data?.elementsByPage * data?.totalPages}
+                >
+                    <Column field="_id" header="Id" body={(rowData: IUser) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
+                    <Column field="lastName" header="Apellido"></Column>
+                    <Column field="username" header="Usuario"></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
+                    <Column field="actions" body={(rowData: IUser) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

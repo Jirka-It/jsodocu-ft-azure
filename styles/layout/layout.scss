@@ -55,3 +55,15 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
 .ql-mention-list-container.ql-mention-list-container-bottom {
     background: white;
 }
+
+.p-dialog-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.p-dialog-content {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}

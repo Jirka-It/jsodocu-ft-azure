@@ -23,7 +23,15 @@ export const ValidationFlow = (validation: any, toast: any): Array<IZodError> | 
     }
     if (Array.isArray(validation)) {
         // Add toast message
-        showError(toast, '', 'Verifique la información ingresada.');
+
+        const arrayValidation = validation.find((v) => v.code === 'too_small');
+
+        if (arrayValidation) {
+            showError(toast, '', 'Verifique la información ingresada y si añadió permisos al rol.');
+        } else {
+            showError(toast, '', 'Verifique la información ingresada.');
+        }
+
         // Change color of inputs
         validations = validation;
         return validations;

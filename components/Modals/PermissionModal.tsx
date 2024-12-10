@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModal } from '@interfaces/IModal';
+import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -10,19 +10,43 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { PermissionValidation } from '@validations/PermissionValidation';
+import { Configuration } from '@enums/PermissionEnum';
+import { CleanText } from '@lib/CleanText';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
+import { create, findByCode, update as updatePermission } from '@api/permissions';
+import { useSession } from 'next-auth/react';
+import { ISession } from '@interfaces/ISession';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const categories = [
-    { name: 'Administración', code: 'CUSTOMER_ADMIN' },
-    { name: 'Operativo', code: 'CUSTOMER' }
+    { name: 'Seguridad', code: Configuration.SECURITY },
+    { name: 'Configuración', code: Configuration.CONFIGURATION },
+    { name: 'Sistema', code: Configuration.SYSTEM }
 ];
 
-export default function PermissionModal({ state, setState }: IModal) {
+export default function PermissionModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);
+    const [timer, setTimer] = useState(null);
+    const { data: session } = useSession(); //data:session
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [category, setCategory] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
+
+    useEffect(() => {
+        if (data) {
+            setCode(data.code);
+            setName(data.name);
+            setDescription(data.description);
+            setCategory(categories.find((c) => c.code === data.category));
+        } else {
+            setCode('');
+            setName('');
+            setDescription('');
+            setCategory('');
+        }
+    }, [data]);
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -36,6 +60,27 @@ export default function PermissionModal({ state, setState }: IModal) {
             <Button label="Guardar" onClick={() => handleSubmit()} />
         </div>
     );
+
+    // Inputs events
+    const handleChange = async (code: string) => {
+        const newCode = CleanText(code);
+        setCode(newCode);
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            try {
+                const res = await findByCode(newCode);
+                if (!res) {
+                    showWarn(toast, '', 'Ya existe un permiso con este código');
+                } else {
+                    showInfo(toast, '', 'Código disponible');
+                }
+            } catch (error) {
+                showError(toast, '', 'Contacte con soporte');
+            }
+        }, 1000);
+
+        setTimer(newTimer);
+    };
 
     const handleSubmit = async () => {
         //Validate data
@@ -53,6 +98,39 @@ export default function PermissionModal({ state, setState }: IModal) {
         setValidations(validationFlow);
         if (validationFlow && validationFlow.length > 0) {
             return;
+        }
+
+        const v: ISession = session as any;
+
+        var res;
+
+        if (data) {
+            res = await updatePermission(data._id, {
+                code,
+                name,
+                description,
+                category: category.code
+            });
+        } else {
+            res = await create({
+                code,
+                name,
+                description,
+                category: category.code,
+                creator: v.user._id
+            });
+        }
+
+        if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
+            showSuccess(toast, '', 'Permiso creado');
+            setTimeout(() => {
+                update(!data ? 1 : null);
+                handleClose();
+            }, 1000);
+        } else if (res.status === HttpStatus.BAD_REQUEST) {
+            showError(toast, '', 'Revise los datos ingresados');
+        } else {
+            showError(toast, '', 'Contacte con soporte.');
         }
     };
 
@@ -83,7 +161,7 @@ export default function PermissionModal({ state, setState }: IModal) {
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="code">Código</label>
-                    <InputText value={code} onChange={(e) => setCode(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
+                    <InputText value={code} onChange={(e) => handleChange(e.target.value)} id="code" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'code') ? 'p-invalid' : ''} `} placeholder="Código" />
                 </div>
 
                 <div>

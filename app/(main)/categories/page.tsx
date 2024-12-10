@@ -5,8 +5,8 @@ import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import DocumentTypeActions from '@components/TableExtensions/DocumentTypeActions';
-import DeleteModal from '@components/Modals/DeleteModal';
+import DocumentTypeActions from '@components/TableExtensions/CustomTypeActions';
+//import DeleteModal from '@components/Modals/DeleteModal';
 import CategoryModal from '@components/Modals/CategoryModal';
 import { findAll, remove, update } from '@api/categories';
 import BasicStates from '@components/TableExtensions/BasicStates';
@@ -85,7 +85,8 @@ const Documents = () => {
         <div className="layout-permissions">
             <Toast ref={toast} />
             <CategoryModal state={openModal} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
+            {/*            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
+             */}
             <div className="card">
                 {data ? (
                     <div className="w-full flex justify-content-between mb-3">

@@ -2,7 +2,7 @@ import { State } from '@enums/StateEnum';
 import { Badge } from 'primereact/badge';
 
 interface IBasicState {
-    state: string;
+    state: string | boolean;
 }
 
 export default function BasicStates({ state }: IBasicState) {
@@ -13,7 +13,13 @@ export default function BasicStates({ state }: IBasicState) {
         case State.INACTIVE:
             return <Badge value="Inactivo" severity="danger"></Badge>;
 
+        case true:
+            return <Badge value="Si" severity="success"></Badge>;
+
+        case false:
+            return <Badge value="No" severity="danger"></Badge>;
+
         default:
-            return <Badge value={state}></Badge>;
+            return <Badge value="Sin información"></Badge>;
     }
 }

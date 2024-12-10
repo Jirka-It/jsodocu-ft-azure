@@ -1,8 +1,8 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IRol, IRolPartial, IRolResponse } from '@interfaces/IRol';
+import { IUser, IUserPartial, IUserResponse } from '@interfaces/IUser';
 
-const findAll = async (params: any): Promise<IRolResponse> => {
+const findAll = async (params: any): Promise<IUserResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users`, {
             params: params
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IRolResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IRolResponse> => {
+const findById = async (id: string): Promise<IUserResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
         .then((res) => {
@@ -38,23 +38,7 @@ const findById = async (id: string): Promise<IRolResponse> => {
         });
 };
 
-const findByCode = async (code: string): Promise<boolean> => {
-    return await axiosInstance
-        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/is-unique`, {
-            params: { code }
-        })
-        .then((res) => {
-            return res.data;
-        })
-        .catch((error) => {
-            return {
-                code: error.code,
-                status: error.status
-            };
-        });
-};
-
-const create = async (data: IRol): Promise<IRolResponse> => {
+const create = async (data: IUser): Promise<IUserResponse> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users`, data)
         .then((res) => {
@@ -71,7 +55,7 @@ const create = async (data: IRol): Promise<IRolResponse> => {
         });
 };
 
-const update = async (id: string, data: IRolPartial): Promise<IRolResponse> => {
+const update = async (id: string, data: IUserPartial): Promise<IUserResponse> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`, data)
         .then((res) => {
@@ -88,7 +72,7 @@ const update = async (id: string, data: IRolPartial): Promise<IRolResponse> => {
         });
 };
 
-const remove = async (id: string): Promise<IRolResponse> => {
+const remove = async (id: string): Promise<IUserResponse> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
         .then((res) => {
@@ -105,4 +89,4 @@ const remove = async (id: string): Promise<IRolResponse> => {
         });
 };
 
-export { findAll, findById, findByCode, create, update, remove };
+export { findAll, findById, create, update, remove };

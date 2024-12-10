@@ -3,9 +3,9 @@ export interface IUser {
     username: string;
     name: string;
     lastName: string;
-    email: string;
     password: string;
     confirmPassword?: string;
+    state: string;
     roles: Array<any>;
 }
 

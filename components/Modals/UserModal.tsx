@@ -22,6 +22,7 @@ const rolesArray = [
 export default function UserModal({ state, setState }: IModal) {
     const toast = useRef(null);
     const [name, setName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -52,8 +53,10 @@ export default function UserModal({ state, setState }: IModal) {
         const validationFlow = ValidationFlow(
             UserValidation({
                 name,
-                email,
+                lastName,
+                username: email,
                 password,
+                state: 'ACTIVE',
                 confirmPassword,
                 roles: target
             }),

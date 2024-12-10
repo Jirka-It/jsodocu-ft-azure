@@ -11,9 +11,11 @@ const arraySchema = z.object({
 const UserSchema = z
     .object({
         name: z.string().min(1),
-        email: z.string().email().min(1),
+        lastName: z.string().min(1),
+        username: z.string().email().min(1),
         password: z.string().min(1),
         confirmPassword: z.string().min(1),
+        state: z.string().min(1),
         roles: z.array(arraySchema).nonempty().min(1)
     })
     .superRefine(({ confirmPassword, password }, ctx) => {

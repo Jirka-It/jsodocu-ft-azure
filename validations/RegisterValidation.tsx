@@ -4,8 +4,8 @@ import { IRegister, IZodError } from '@interfaces/IAuth';
 
 const RegisterSchema = z
     .object({
-        username: z.string().min(1),
-        email: z.string().email().min(1),
+        name: z.string().min(1),
+        username: z.string().email().min(1),
         password: z.string().min(1),
         confirmPassword: z.string().min(1)
     })

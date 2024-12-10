@@ -18,8 +18,8 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 import { registerUser } from '@api/auth/register';
 
 const RegisterPage: Page = () => {
+    const [name, setName] = useState<string>('');
     const [username, setUsername] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [confirmed, setConfirmed] = useState<boolean>(false);
@@ -38,8 +38,8 @@ const RegisterPage: Page = () => {
 
         const validationFlow = ValidationFlow(
             RegisterValidation({
+                name,
                 username,
-                email,
                 password,
                 confirmPassword
             }),
@@ -54,8 +54,8 @@ const RegisterPage: Page = () => {
 
         // Call the API
         const res = await registerUser({
+            name,
             username,
-            email,
             password
         });
 
@@ -84,18 +84,11 @@ const RegisterPage: Page = () => {
                         <div className="flex flex-column gap-4">
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-user"></i>
-                                <InputText
-                                    id="username"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    type="text"
-                                    className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'username') ? 'p-invalid' : ''} `}
-                                    placeholder="Nombre de usuario"
-                                />
+                                <InputText id="name" value={name} onChange={(e) => setName(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
                             </span>
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-envelope"></i>
-                                <InputText id="email" value={email} onChange={(e) => setEmail(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
+                                <InputText id="email" value={username} onChange={(e) => setUsername(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Correo" />
                             </span>
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-lock z-2"></i>

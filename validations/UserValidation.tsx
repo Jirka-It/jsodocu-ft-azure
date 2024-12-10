@@ -9,7 +9,7 @@ const UserSchema = z
         lastName: z.string().min(1),
         username: z.string().email().min(1),
         password: z.string().min(1).optional(),
-        accountId: z.string().min(1),
+        accountId: z.string().min(1).optional(),
         confirmPassword: z.string().min(1).optional(),
         state: z.string().min(1),
         roles: z.array(z.string()).nonempty().min(1)

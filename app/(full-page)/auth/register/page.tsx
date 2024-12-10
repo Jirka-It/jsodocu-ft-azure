@@ -16,6 +16,7 @@ import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { registerUser } from '@api/auth/register';
+import { State } from '@enums/StateEnum';
 
 const RegisterPage: Page = () => {
     const [name, setName] = useState<string>('');
@@ -41,7 +42,8 @@ const RegisterPage: Page = () => {
                 name,
                 username,
                 password,
-                confirmPassword
+                confirmPassword,
+                state: State.ACTIVE
             }),
             toast
         );
@@ -56,7 +58,8 @@ const RegisterPage: Page = () => {
         const res = await registerUser({
             name,
             username,
-            password
+            password,
+            state: State.ACTIVE
         });
 
         if (res.code === 200 || res.code === 201) {

@@ -20,6 +20,6 @@ export default function BasicStates({ state }: IBasicState) {
             return <Badge value="No" severity="danger"></Badge>;
 
         default:
-            return <Badge value="Sin información"></Badge>;
+            return <Badge value="-"></Badge>;
     }
 }

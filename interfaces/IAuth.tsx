@@ -7,6 +7,7 @@ export interface IRegister {
     name: string;
     username: string;
     password: string;
+    state: string;
     confirmPassword?: string;
 }
 

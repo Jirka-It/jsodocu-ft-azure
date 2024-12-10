@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IAccountResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IAccountResponse> => {
+const findById = async (id: string): Promise<IAccount> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/accounts/${id}`)
         .then((res) => {

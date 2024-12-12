@@ -17,11 +17,9 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 import { InputText } from 'primereact/inputtext';
-import { showError } from '@lib/ToastMessages';
 
 const Roles = () => {
     const toast = useRef(null);
-    const [timer, setTimer] = useState(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
     const [checked, setChecked] = useState(true);
@@ -30,14 +28,18 @@ const Roles = () => {
     const [data, setData] = useState<IRolResponse>();
 
     useEffect(() => {
-        getData();
+        let debounce = setTimeout(() => {
+            getData();
+        }, 500);
+        return () => {
+            clearTimeout(debounce);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [checked]);
+    }, [searchParam]);
 
-    const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10, search: string = '') => {
+    const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const param = search ? search : searchParam;
-        const res = await findAll({ page, size, state, searchParam: param });
+        const res = await findAll({ page, size, state, searchParam });
         setData(res);
     };
 
@@ -86,20 +88,6 @@ const Roles = () => {
         }
     };
 
-    const handleChange = async (searchParam: string) => {
-        setSearchParam(searchParam);
-        clearTimeout(timer);
-        const newTimer = setTimeout(async () => {
-            try {
-                getData(1, data?.elementsByPage, searchParam);
-            } catch (error) {
-                showError(toast, '', 'Contacte con soporte');
-            }
-        }, 1000);
-
-        setTimer(newTimer);
-    };
-
     return (
         <div className="layout-roles">
             <Toast ref={toast} />
@@ -111,7 +99,7 @@ const Roles = () => {
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Rol" />
 
                     <div className="flex">
-                        <InputText value={searchParam} onChange={(e) => handleChange(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                        <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                     </div>
                 </div>

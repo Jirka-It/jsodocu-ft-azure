@@ -26,7 +26,8 @@
             "@components/*": ["./components/*"],
             "@customTypes/*": ["./types/*"],
             "@enums/*": ["./enums/*"],
-            "@interfaces/*": ["./interfaces/*"]
+            "@interfaces/*": ["./interfaces/*"],
+            "@hooks/*": ["./hooks/*"]
         }
     },
     "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

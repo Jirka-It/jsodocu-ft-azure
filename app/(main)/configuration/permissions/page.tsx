@@ -14,6 +14,7 @@ import { findAll, remove } from '@api/permissions';
 import { Badge } from 'primereact/badge';
 import { categories } from '@lib/data';
 import { InputText } from 'primereact/inputtext';
+import { useDebounce } from 'primereact/hooks';
 
 const Permissions = () => {
     const toast = useRef(null);
@@ -21,22 +22,20 @@ const Permissions = () => {
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [permission, setPermission] = useState<IPermission>(null);
 
     const [data, setData] = useState<IPermissionResponse>();
 
     useEffect(() => {
-        let debounce = setTimeout(() => {
-            getData();
-        }, 500);
-        return () => {
-            clearTimeout(debounce);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParam]);
+        getData();
+    }, [debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const res = await findAll({ page, size, searchParam });
+        const params = { page, size };
+        if (searchParam) params['searchParam'] = searchParam;
+
+        const res = await findAll(params);
         setData(res);
     };
 

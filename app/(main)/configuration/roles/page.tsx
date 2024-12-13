@@ -17,29 +17,29 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 import { InputText } from 'primereact/inputtext';
+import { useDebounce } from 'primereact/hooks';
 
 const Roles = () => {
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [checked, setChecked] = useState(true);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [rol, setRol] = useState<IRol>(null);
     const [data, setData] = useState<IRolResponse>();
 
     useEffect(() => {
-        let debounce = setTimeout(() => {
-            getData();
-        }, 500);
-        return () => {
-            clearTimeout(debounce);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParam]);
+        getData();
+    }, [checked, debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const res = await findAll({ page, size, state, searchParam });
+
+        const params = { page, size, state };
+        if (searchParam) params['searchParam'] = searchParam;
+
+        const res = await findAll(params);
         setData(res);
     };
 

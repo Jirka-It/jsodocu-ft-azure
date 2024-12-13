@@ -98,7 +98,7 @@ const Roles = () => {
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Rol" />
 
-                    <div className="flex">
+                    <div className="flex align-items-center">
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                     </div>

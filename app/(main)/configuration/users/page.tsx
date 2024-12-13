@@ -145,7 +145,7 @@ const Users = () => {
                         className="mr-2"
                         label="Usuario"
                     />
-                    <div className="flex">
+                    <div className="flex align-items-center">
                         <Dropdown
                             value={accountId}
                             onChange={(e) => setAccountId(e.value)}

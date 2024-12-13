@@ -15,12 +15,16 @@ import { findAll, remove } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
+import { InputText } from 'primereact/inputtext';
+import useDebounce from '@hooks/debounceHook';
 
 const Documents = () => {
     const toast = useRef(null);
     const router = useRouter();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
@@ -28,10 +32,12 @@ const Documents = () => {
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const res = await findAll({ page, size });
+        const params = { page, size };
+        if (searchParam) params['searchParam'] = searchParam;
+        const res = await findAll(params);
         setData(res);
     };
 
@@ -75,7 +81,10 @@ const Documents = () => {
             <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
-                <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Documento" />
+                <div className="w-full flex justify-content-between mb-3">
+                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Documento" />
+                    <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                </div>
 
                 <DataTable
                     value={data?.data}

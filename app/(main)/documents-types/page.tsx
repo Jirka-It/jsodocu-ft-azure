@@ -15,11 +15,15 @@ import { State } from '@enums/StateEnum';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
+import { InputText } from 'primereact/inputtext';
+import useDebounce from '@hooks/debounceHook';
 
 const Documents = () => {
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [checked, setChecked] = useState(true);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [documentType, setDocumentType] = useState<IDocType>(null);
@@ -28,11 +32,13 @@ const Documents = () => {
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [checked]);
+    }, [checked, debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const res = await findAll({ page, size, state });
+        const params = { page, size, state };
+        if (searchParam) params['searchParam'] = searchParam;
+        const res = await findAll(params);
         setData(res);
     };
 
@@ -90,7 +96,10 @@ const Documents = () => {
                 {data ? (
                     <div className="w-full flex justify-content-between mb-3">
                         <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Tipo" />
-                        <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                        <div className="flex align-items-center">
+                            <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                            <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                        </div>
                     </div>
                 ) : (
                     ''

@@ -10,3 +10,7 @@ export interface IDocumentAction extends IBasicAction {
 export interface ICustomAction extends IBasicAction {
     data: string;
 }
+
+export interface ICustomUserAction extends ICustomAction {
+    handleEditPassword: Function;
+}

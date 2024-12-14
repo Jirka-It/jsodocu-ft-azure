@@ -98,8 +98,8 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
     const handleClose = async () => {
         setName('');
         setDescription('');
-        setStateCategory('');
         setValidations([]);
+        setStateCategory(states[0]);
         update(null, false);
         setState(!state);
     };

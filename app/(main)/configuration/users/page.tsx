@@ -22,10 +22,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { IAccountResponse } from '@interfaces/IAccount';
 import useDebounce from '@hooks/debounceHook';
 import { IRolResponse } from '@interfaces/IRol';
+import UserPasswordModal from '@components/Modals/UserPasswordModal';
+import CustomUserTypeActions from '@components/TableExtensions/CustomUserTypeActions';
 
 const Users = () => {
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [openPasswordModal, setOpenPasswordModal] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
     const debouncedSearchParam = useDebounce(searchParam, 500);
     const [accounts, setAccounts] = useState<IAccountResponse>();
@@ -88,6 +91,7 @@ const Users = () => {
     //Table actions
 
     const handleCheck = (check: boolean) => {
+        setTableState(null);
         setChecked(check);
     };
 
@@ -98,6 +102,11 @@ const Users = () => {
     const handleEdit = (data: IUser) => {
         setUser(data);
         setOpenModal(true);
+    };
+
+    const handleEditPassword = (data: IUser) => {
+        setUser(data);
+        setOpenPasswordModal(true);
     };
 
     /*
@@ -124,6 +133,7 @@ const Users = () => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setUser(null);
+            setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
             setUser(null);
@@ -134,6 +144,7 @@ const Users = () => {
         <div className="layout-users">
             <Toast ref={toast} />
             <UserModal state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <UserPasswordModal state={openPasswordModal} data={user} setState={(e) => setOpenPasswordModal(e)} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button
@@ -159,7 +170,7 @@ const Users = () => {
                             id="account"
                             optionLabel="name"
                             optionValue="_id"
-                            placeholder="Buscar por cuenta"
+                            placeholder="Cuenta"
                             className="w-15rem mr-3"
                         />
 
@@ -176,12 +187,13 @@ const Users = () => {
                             id="rol"
                             optionLabel="name"
                             optionValue="_id"
-                            placeholder="Buscar por rol"
+                            placeholder="Rol"
                             className="w-15rem mr-3"
                         />
 
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
-                        <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                        <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />
+                        <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                     </div>
                 </div>
                 <DataTable
@@ -199,7 +211,11 @@ const Users = () => {
                     <Column field="lastName" header="Apellido"></Column>
                     <Column field="username" header="Usuario"></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData: IUser) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
+                    <Column
+                        field="actions"
+                        body={(rowData: IUser) => <CustomUserTypeActions handleEdit={() => handleEdit(rowData)} handleEditPassword={() => handleEditPassword(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />}
+                        header="Acciones"
+                    ></Column>
                 </DataTable>
             </div>
         </div>

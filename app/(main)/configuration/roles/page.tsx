@@ -17,7 +17,7 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 import { InputText } from 'primereact/inputtext';
-import { useDebounce } from 'primereact/hooks';
+import useDebounce from '@hooks/debounceHook';
 
 const Roles = () => {
     const toast = useRef(null);
@@ -46,6 +46,7 @@ const Roles = () => {
     //Table actions
 
     const handleCheck = (check: boolean) => {
+        setTableState(null);
         setChecked(check);
     };
 
@@ -82,6 +83,7 @@ const Roles = () => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setRol(null);
+            setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
             setRol(null);
@@ -100,7 +102,8 @@ const Roles = () => {
 
                     <div className="flex align-items-center">
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
-                        <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                        <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />
+                        <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                     </div>
                 </div>
                 <DataTable

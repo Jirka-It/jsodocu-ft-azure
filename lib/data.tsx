@@ -1,3 +1,4 @@
+import { Configuration } from '@enums/PermissionEnum';
 import { State } from '@enums/StateEnum';
 
 export const states = [
@@ -10,29 +11,11 @@ export const applyToAccounts = [
     { name: 'No', code: false }
 ];
 
-/*
- {
-                key: '2',
-                label: 'Artículo',
-                value: '',
-                content: '',
-                OwnChapter: '1',
-                article: true,
-                children: [
-                    { key: '3', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 1 ', content: '', paragraph: true },
-                    { key: '4', OwnChapter: '1', OwnArticle: '2', label: 'Paragraph 2', content: '', paragraph: true }
-                ]
-            },
-            {
-                key: '6',
-                label: 'Artículo',
-                value: '',
-                content: '',
-                OwnChapter: '1',
-                article: true,
-                children: [{ key: '5', OwnChapter: '1', OwnArticle: '6', label: 'Paragraph 1', content: '', paragraph: true }]
-            }
-*/
+export const categories = [
+    { name: 'Seguridad', code: Configuration.SECURITY },
+    { name: 'Configuración', code: Configuration.CONFIGURATION },
+    { name: 'Sistema', code: Configuration.SYSTEM }
+];
 
 export const treeNodes = [
     {

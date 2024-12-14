@@ -10,19 +10,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { PermissionValidation } from '@validations/PermissionValidation';
-import { Configuration } from '@enums/PermissionEnum';
 import { CleanText } from '@lib/CleanText';
 import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { create, findByCode, update as updatePermission } from '@api/permissions';
 import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-
-const categories = [
-    { name: 'Seguridad', code: Configuration.SECURITY },
-    { name: 'Configuración', code: Configuration.CONFIGURATION },
-    { name: 'Sistema', code: Configuration.SYSTEM }
-];
+import { categories } from '@lib/data';
 
 export default function PermissionModal({ state, setState, update, data }: IModalCreate) {
     const toast = useRef(null);

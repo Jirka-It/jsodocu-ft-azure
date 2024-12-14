@@ -12,22 +12,30 @@ import { IPermission, IPermissionResponse } from '@interfaces/IPermission';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { findAll, remove } from '@api/permissions';
 import { Badge } from 'primereact/badge';
+import { categories } from '@lib/data';
+import { InputText } from 'primereact/inputtext';
+import { useDebounce } from 'primereact/hooks';
 
 const Permissions = () => {
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
+    const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [permission, setPermission] = useState<IPermission>(null);
+
     const [data, setData] = useState<IPermissionResponse>();
 
     useEffect(() => {
         getData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const res = await findAll({ page, size });
+        const params = { page, size };
+        if (searchParam) params['searchParam'] = searchParam;
+
+        const res = await findAll(params);
         setData(res);
     };
 
@@ -68,6 +76,8 @@ const Permissions = () => {
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Permiso" />
+
+                    <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" type="text" placeholder="Buscar" />
                 </div>
                 <DataTable
                     value={data?.data}
@@ -80,8 +90,9 @@ const Permissions = () => {
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
                     <Column field="_id" header="Id" body={(rowData: IPermission) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
-                    <Column field="name" header="Nombre"></Column>
                     <Column field="code" header="Código"></Column>
+                    <Column field="name" header="Nombre"></Column>
+                    <Column field="category" header="Categoría" body={(rowData: IPermission) => `${categories.find((c) => c.code === rowData.category)?.name}`}></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>

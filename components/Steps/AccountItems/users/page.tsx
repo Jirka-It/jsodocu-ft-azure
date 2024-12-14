@@ -1,192 +1,119 @@
-import DeleteModal from '@components/Modals/DeleteModal';
-import BasicActions from '@components/TableExtensions/BasicActions';
-import BasicStates from '@components/TableExtensions/BasicStates';
-import { State } from '@enums/StateEnum';
-import { IZodError } from '@interfaces/IAuth';
-import { ValidationFlow } from '@lib/ValidationFlow';
-import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
-import { AccountValidation } from '@validations/AccountValidation';
-import { Button } from 'primereact/button';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
+import { State } from '@enums/StateEnum';
+import { Button } from 'primereact/button';
+import BasicStates from '@components/TableExtensions/BasicStates';
 import { InputSwitch } from 'primereact/inputswitch';
-import { RadioButton } from 'primereact/radiobutton';
+import { IUser, IUserResponse } from '@interfaces/IUser';
+import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
+import { findAll, update } from '@api/users';
+import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
-import { useRef, useState } from 'react';
+import { Badge } from 'primereact/badge';
+import { useParams } from 'next/navigation';
+import UserModalAccount from '@components/Modals/UserModalAccount';
 
-export default function StepUsers() {
+const Users = () => {
     const toast = useRef(null);
-    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
-    const [checked, setChecked] = useState(false);
-    const [validations, setValidations] = useState<Array<IZodError>>([]);
-    const [username, setUsername] = useState<string>('');
-    const [corporateEmail, setCorporateEmail] = useState<string>('');
-    const [phone, setPhone] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [role, setRole] = useState('');
+    const params = useParams();
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    // const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [checked, setChecked] = useState(true);
+    const [tableState, setTableState] = useState<DataTableStateEvent>();
+    const [user, setUser] = useState<IUser>(null);
+    const [data, setData] = useState<IUserResponse>();
 
-    const [users, setUsers] = useState([
-        {
-            id: 55,
-            name: 'Jonathan Peña.',
-            state: State.INACTIVE,
-            actions: ''
-        },
-        {
-            id: 56,
-            name: 'Jonathan Peña.',
-            state: State.ACTIVE,
-            actions: ''
-        },
-        {
-            id: 57,
-            name: 'Jonathan Peña.',
-            state: State.INACTIVE,
-            actions: ''
-        },
-        {
-            id: 58,
-            name: 'Jonathan Peña.',
-            state: State.ACTIVE,
-            actions: ''
-        }
-    ]);
+    useEffect(() => {
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [checked]);
 
-    const handleSubmit = async () => {
-        //Validate data
-        /* const validationFlow = ValidationFlow(
-            AccountValidation({
-                username,
-                corporateEmail,
-                phone,
-                password,
-                role
-            }),
-            toast
-        );
-
-        // Show errors in inputs
-        setValidations(validationFlow);
-        if (validationFlow && validationFlow.length > 0) {
-            return;
-        }*/
+    const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
+        const state = checked ? State.ACTIVE : State.INACTIVE;
+        const res = await findAll({ page, size, state, accountId: params.id });
+        setData(res);
     };
 
-    const handleEdit = (id: string) => {};
+    //Table actions
 
-    const handleDelete = (id: string) => {
-        setOpenModalClose(true);
+    const handleCheck = (check: boolean) => {
+        setChecked(check);
+    };
+
+    const handleCopy = (data: string) => {
+        CopyToClipBoard(data, toast);
+    };
+
+    const handleEdit = (data: IUser) => {
+        setUser(data);
+        setOpenModal(true);
+    };
+
+    const handleDelete = async (user: IUser) => {
+        const state = user.state === State.ACTIVE ? State.INACTIVE : State.ACTIVE;
+        await update(user._id, {
+            state
+        });
+        getData(data.page);
+    };
+
+    const handlePagination = (e: DataTableStateEvent) => {
+        setTableState(e);
+        getData(e.page + 1);
+    };
+
+    const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
+        if (update) {
+            const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
+            setUser(null);
+            getData(page, data?.elementsByPage);
+        } else {
+            setUser(null);
+        }
     };
 
     return (
-        <section>
+        <div className="layout-users">
             <Toast ref={toast} />
-            {/*
-            <div className="grid mt-5">
-                <div className="col-12 md:col-5">
-                    <div className="flex flex-column gap-4">
-                        <div>
-                            <label htmlFor="username" className="font-bold">
-                                Nombre de usuario
-                            </label>
-                            <InputText
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                id="username"
-                                type="text"
-                                className={`w-full ${VerifyErrorsInForms(validations, 'username') ? 'p-invalid' : ''} `}
-                                placeholder="Nombre de usuario"
-                            />
-                        </div>
+            <UserModalAccount state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} account={params.id} />
 
-                        <div>
-                            <label htmlFor="corporateEmail" className="font-bold">
-                                Correo corporativo
-                            </label>
-                            <InputText
-                                value={corporateEmail}
-                                onChange={(e) => setCorporateEmail(e.target.value)}
-                                id="corporateEmail"
-                                type="text"
-                                className={`w-full ${VerifyErrorsInForms(validations, 'corporateEmail') ? 'p-invalid' : ''} `}
-                                placeholder="Correo corporativo"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="nit" className="font-bold">
-                                Teléfono
-                            </label>
-                            <InputText value={phone} onChange={(e) => setPhone(e.target.value)} id="phone" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'phone') ? 'p-invalid' : ''} `} placeholder="Teléfono" />
-                        </div>
-
-                        <div>
-                            <label htmlFor="password" className="font-bold">
-                                Contraseña
-                            </label>
-                            <Password
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                type="password"
-                                className={`w-full ${VerifyErrorsInForms(validations, 'password') ? 'p-invalid' : ''} `}
-                                inputClassName="w-full"
-                                placeholder="Contraseña"
-                                toggleMask
-                            />{' '}
-                        </div>
-                    </div>
-                </div>
-                <div className="col-12 md:col-7">
-                    <h4 className="font-bold flex justify-content-end text-blue-500">Roles disponibles</h4>
-
-                    <div>
-                        <div className="flex justify-content-end align-items-center mb-2">
-                            <p className="m-0">Abogado</p> <RadioButton inputId="1" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="lawyer" onChange={(e) => setRole(e.value)} checked={role === 'lawyer'} />
-                        </div>
-                        <div className="flex justify-content-end align-items-center mb-2">
-                            <p className="m-0">Comercial</p>{' '}
-                            <RadioButton inputId="2" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="commercial" onChange={(e) => setRole(e.value)} checked={role === 'commercial'} />
-                        </div>
-                        <div className="flex justify-content-end align-items-center mb-2">
-                            <p className="m-0">Operativo</p>
-                            <RadioButton inputId="3" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="operative" onChange={(e) => setRole(e.value)} checked={role === 'operative'} />
-                        </div>
-                        <div className="flex justify-content-end align-items-center mb-2">
-                            <p className="m-0">Usuario</p> <RadioButton inputId="4" className={`${VerifyErrorsInForms(validations, 'role') ? 'p-invalid' : ''} ml-3`} value="user" onChange={(e) => setRole(e.value)} checked={role === 'user'} />
-                        </div>
-                    </div>
-                </div>{' '}
-                <div className="w-full flex justify-content-end mt-5">
-                    <Button label="Guardar" onClick={() => handleSubmit()} />
-                </div>
-            </div>
-           */}
-
-            {/*
-  onClick={() => {
+            {/*  <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />  */}
+            <div className="card">
+                <div className="w-full flex justify-content-between mb-3">
+                    <Button
+                        onClick={() => {
                             setOpenModal(true);
                             setUser(null);
                         }}
-*/}
-            <div className="grid">
-                <div className="col-12">
-                    <div className="w-full flex justify-content-between mb-5">
-                        <Button icon="pi pi-plus" className="mr-2" label="Usuario" />
-                        <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
-                    </div>
-
-                    <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
-                    <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
-                        <Column field="id" header="ID"></Column>
-                        <Column field="name" header="Nombre"></Column>
-                        <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                        <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
-                    </DataTable>
+                        icon="pi pi-plus"
+                        className="mr-2"
+                        label="Usuario"
+                    />
+                    <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                 </div>
+                <DataTable
+                    value={data?.data}
+                    lazy
+                    tableStyle={{ minWidth: '50rem' }}
+                    paginator={true}
+                    first={tableState?.first ?? 0}
+                    rows={data?.elementsByPage}
+                    onPage={(e) => handlePagination(e)}
+                    totalRecords={data?.elementsByPage * data?.totalPages}
+                >
+                    <Column field="_id" header="Id" body={(rowData: IUser) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="name" header="Nombre"></Column>
+                    <Column field="lastName" header="Apellido"></Column>
+                    <Column field="username" header="Usuario"></Column>
+                    <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
+                    <Column field="actions" body={(rowData: IUser) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
+                </DataTable>
             </div>
-        </section>
+        </div>
     );
-}
+};
+
+export default Users;

@@ -20,6 +20,7 @@ import { State } from '@enums/StateEnum';
 
 const RegisterPage: Page = () => {
     const [name, setName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -40,6 +41,7 @@ const RegisterPage: Page = () => {
         const validationFlow = ValidationFlow(
             RegisterValidation({
                 name,
+                lastName,
                 username,
                 password,
                 confirmPassword,
@@ -57,6 +59,7 @@ const RegisterPage: Page = () => {
         // Call the API
         const res = await registerUser({
             name,
+            lastName,
             username,
             password,
             state: State.ACTIVE
@@ -88,6 +91,18 @@ const RegisterPage: Page = () => {
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-user"></i>
                                 <InputText id="name" value={name} onChange={(e) => setName(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />
+                            </span>
+
+                            <span className="p-input-icon-left w-full">
+                                <i className="pi pi-user"></i>
+                                <InputText
+                                    id="name"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    type="text"
+                                    className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'lastName') ? 'p-invalid' : ''} `}
+                                    placeholder="Apellido"
+                                />
                             </span>
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-envelope"></i>

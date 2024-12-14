@@ -12,8 +12,6 @@ import { Password } from 'primereact/password';
 import styles from './UserModal.module.css';
 import { PickList, PickListEvent } from 'primereact/picklist';
 import { Dropdown } from 'primereact/dropdown';
-import { IAccountResponse } from '@interfaces/IAccount';
-import { findAll } from '@api/accounts';
 import { findAll as findAllRoles } from '@api/roles';
 import { create, findByUsername, update as updateUser } from '@api/users';
 
@@ -26,7 +24,7 @@ import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 
-export default function UserModal({ state, setState, update, data }: IModalCreate) {
+export default function UserModalAccount({ state, setState, update, data, account }: IModalCreate) {
     const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
@@ -36,9 +34,7 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [stateUser, setStateUser] = useState<any>(states[0]);
-
-    const [accountId, setAccountId] = useState<any>('');
-    const [accounts, setAccounts] = useState<IAccountResponse>();
+    const [accountId, setAccountId] = useState<any>(account);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
     const [source, setSource] = useState<Array<IRol>>([]);
     const [target, setTarget] = useState([]);
@@ -63,7 +59,7 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
             setName('');
             setLastName('');
             setUsername('');
-            setAccountId('');
+            setAccountId(account);
             setStateUser(states[0]);
             setTarget([]);
         }
@@ -83,9 +79,6 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
     );
 
     const getData = async (page: number = 1, size: number = 100, state: string = State.ACTIVE) => {
-        const res = await findAll({ page, size, state });
-        setAccounts(res);
-
         let resRoles = { data: allRoles };
         if (!allRoles || allRoles.length === 0) {
             resRoles = await findAllRoles({ page, size, applyToAccount: true });
@@ -152,7 +145,6 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                     lastName,
                     username,
                     state: stateUser.code,
-                    accountId,
                     roles: newTarget
                 }),
                 toast
@@ -166,7 +158,6 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                     password,
                     state: stateUser.code,
                     confirmPassword,
-                    accountId,
                     roles: newTarget
                 }),
                 toast
@@ -272,26 +263,25 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                     </div>
 
                     <div className="col-12 sm:col-6">
-                        <label htmlFor="account">
-                            Cuenta <span className="text-red-500">*</span>
+                        <label htmlFor="state">
+                            Estado <span className="text-red-500">*</span>
                         </label>
                         <Dropdown
-                            value={accountId}
-                            onChange={(e) => setAccountId(e.value)}
-                            options={accounts?.data}
-                            id="account"
+                            value={stateUser}
+                            onChange={(e: any) => setStateUser(e.value)}
+                            options={states}
+                            id="state"
                             optionLabel="name"
-                            optionValue="_id"
-                            placeholder="Cuenta"
-                            className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'accountId') ? 'p-invalid' : ''} `}
-                        />
+                            placeholder="Estado"
+                            className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'state') ? 'p-invalid' : ''} `}
+                        />{' '}
                     </div>
                 </div>
 
                 <div className="grid">
                     {!data ? (
                         <>
-                            <div className="col-12 sm:col-4">
+                            <div className="col-12 sm:col-6">
                                 {' '}
                                 <label htmlFor="email">
                                     Contraseña <span className="text-red-500">*</span>
@@ -307,7 +297,7 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                                 />
                             </div>
 
-                            <div className="col-12 sm:col-4">
+                            <div className="col-12 sm:col-6">
                                 <label htmlFor="email">
                                     Confirmar contraseña <span className="text-red-500">*</span>
                                 </label>
@@ -327,21 +317,6 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                     ) : (
                         ''
                     )}
-
-                    <div className="col-12 sm:col-4">
-                        <label htmlFor="state">
-                            Estado <span className="text-red-500">*</span>
-                        </label>
-                        <Dropdown
-                            value={stateUser}
-                            onChange={(e: any) => setStateUser(e.value)}
-                            options={states}
-                            id="state"
-                            optionLabel="name"
-                            placeholder="Estado"
-                            className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'state') ? 'p-invalid' : ''} `}
-                        />{' '}
-                    </div>
                 </div>
 
                 <div>

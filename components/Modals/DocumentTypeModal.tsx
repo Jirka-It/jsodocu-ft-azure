@@ -36,7 +36,7 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
             setCode('');
             setName('');
             setDescription('');
-            setStateType('');
+            setStateType(states[0]);
         }
     }, [data]);
 

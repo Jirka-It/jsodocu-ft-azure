@@ -69,6 +69,7 @@ const Documents = () => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setDocument(null);
+            setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
             setDocument(null);
@@ -83,7 +84,11 @@ const Documents = () => {
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Documento" />
-                    <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+
+                    <div className="flex align-items-center">
+                        <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                        <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
+                    </div>
                 </div>
 
                 <DataTable

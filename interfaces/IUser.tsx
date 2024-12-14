@@ -11,6 +11,11 @@ export interface IUser {
     creator?: string;
 }
 
+export interface IUserPassword {
+    password: string;
+    confirmPassword?: string;
+}
+
 import { IGeneralRequest } from './IRequest';
 
 export interface IUserPartial extends Partial<IUser> {}

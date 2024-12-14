@@ -35,7 +35,7 @@ const Documents = () => {
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const params = { page, size, state };
+        const params = { page, size: 1, state };
         if (searchParam) params['searchParam'] = searchParam;
         const res = await findAll(params);
         setData(res);
@@ -44,6 +44,7 @@ const Documents = () => {
     //Table actions
 
     const handleCheck = (check: boolean) => {
+        setTableState(null);
         setChecked(check);
     };
 
@@ -81,6 +82,7 @@ const Documents = () => {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setDocumentType(null);
             getData(page, data?.elementsByPage);
+            setTableState(null);
         } else {
             setDocumentType(null);
         }
@@ -99,7 +101,8 @@ const Documents = () => {
 
                         <div className="flex align-items-center">
                             <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
-                            <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                            <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />
+                            <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                         </div>
                     </div>
                 ) : (

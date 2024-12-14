@@ -13,22 +13,29 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { useRouter } from 'next/navigation';
+import { InputText } from 'primereact/inputtext';
+import useDebounce from '@hooks/debounceHook';
 
 const Users = () => {
     const toast = useRef(null);
     const router = useRouter();
     const [checked, setChecked] = useState(true);
+    const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 500);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [data, setData] = useState<IAccountResponse>();
 
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [checked]);
+    }, [checked, debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const res = await findAll({ page, size, state });
+        const params = { page, size, state };
+        if (searchParam) params['searchParam'] = searchParam;
+
+        const res = await findAll(params);
         setData(res);
     };
 
@@ -63,8 +70,10 @@ const Users = () => {
         <div className="layout-accounts">
             <Toast ref={toast} />
             <div className="card">
-                <div className="w-full flex justify-content-end mb-3">
-                    <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                <div className="w-full flex justify-content-end align-items-center mb-3">
+                    <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                    <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />
+                    <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => getData(1)}></i>
                 </div>
                 <DataTable
                     value={data?.data}

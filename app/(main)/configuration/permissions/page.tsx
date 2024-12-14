@@ -14,7 +14,7 @@ import { findAll, remove } from '@api/permissions';
 import { Badge } from 'primereact/badge';
 import { categories } from '@lib/data';
 import { InputText } from 'primereact/inputtext';
-import { useDebounce } from 'primereact/hooks';
+import useDebounce from '@hooks/debounceHook';
 
 const Permissions = () => {
     const toast = useRef(null);
@@ -62,6 +62,7 @@ const Permissions = () => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setPermission(null);
+            setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
             setPermission(null);
@@ -76,8 +77,10 @@ const Permissions = () => {
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Permiso" />
-
-                    <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" type="text" placeholder="Buscar" />
+                    <div className="flex align-items-center">
+                        <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} className="mr-3" id="searchParm" type="text" placeholder="Buscar" />
+                        <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
+                    </div>
                 </div>
                 <DataTable
                     value={data?.data}

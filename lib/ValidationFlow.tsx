@@ -24,7 +24,9 @@ export const ValidationFlow = (validation: any, toast: any): Array<IZodError> | 
     if (Array.isArray(validation)) {
         // Add toast message
 
-        const arrayValidation = validation.find((v) => v.code === 'too_small');
+        console.log('arrayValidation', validation);
+
+        const arrayValidation = validation.find((v) => v.code === 'too_small' && v.type === 'array');
 
         if (arrayValidation) {
             showError(toast, '', 'Verifique la información ingresada y si añadió permisos al rol.');

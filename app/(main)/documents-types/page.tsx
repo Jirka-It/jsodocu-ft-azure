@@ -45,6 +45,7 @@ const Documents = () => {
     //Table actions
 
     const handleCheck = (check: boolean) => {
+        setTableState(null);
         setChecked(check);
     };
 
@@ -81,6 +82,7 @@ const Documents = () => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
             setDocumentType(null);
+            setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
             setDocumentType(null);
@@ -98,7 +100,8 @@ const Documents = () => {
                         <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Tipo" />
                         <div className="flex align-items-center">
                             <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
-                            <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
+                            <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />
+                            <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                         </div>
                     </div>
                 ) : (

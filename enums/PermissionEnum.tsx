@@ -1,5 +1,9 @@
 export enum Configuration {
+    DOCUMENT = 'DOCUMENT',
     SECURITY = 'SECURITY',
     CONFIGURATION = 'CONFIGURATION',
-    SYSTEM = 'SYSTEM'
+    SYSTEM = 'SYSTEM',
+    TEMPLATE = 'TEMPLATE',
+    GENERAL = 'GENERAL',
+
 }

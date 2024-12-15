@@ -12,9 +12,12 @@ export const applyToAccounts = [
 ];
 
 export const categories = [
-    { name: 'Seguridad', code: Configuration.SECURITY },
     { name: 'Configuración', code: Configuration.CONFIGURATION },
-    { name: 'Sistema', code: Configuration.SYSTEM }
+    { name: 'Documentos', code: Configuration.DOCUMENT },
+    { name: 'General', code: Configuration.GENERAL },
+    { name: 'Seguridad', code: Configuration.SECURITY },
+    { name: 'Sistema', code: Configuration.SYSTEM },
+    { name: 'Plantillas', code: Configuration.TEMPLATE }
 ];
 
 export const treeNodes = [

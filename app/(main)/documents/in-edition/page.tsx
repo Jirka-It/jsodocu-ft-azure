@@ -17,6 +17,7 @@ import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
+import { State } from '@enums/DocumentEnum';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -35,7 +36,7 @@ const Documents = () => {
     }, [debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const params = { page, size };
+        const params = { page, size, step: State.EDITION };
         if (searchParam) params['searchParam'] = searchParam;
         const res = await findAll(params);
         setData(res);
@@ -44,7 +45,7 @@ const Documents = () => {
     //Table actions
 
     const handleView = (id: string) => {
-        router.push(`/documents/${id}`);
+        router.push(`/documents/in-edition/${id}`);
     };
     const handleCopy = (data: string) => {
         CopyToClipBoard(data, toast);

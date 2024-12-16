@@ -23,11 +23,33 @@ const AppMenu = () => {
                     label: 'Tipos de documentos',
                     icon: 'pi pi-file',
                     to: '/documents-types'
+                }
+            ]
+        },
+        { separator: true },
+        {
+            label: 'Documentos',
+            icon: 'pi pi-th-large',
+            items: [
+                {
+                    label: 'En edición',
+                    icon: 'pi pi-file',
+                    to: '/documents/in-edition'
                 },
                 {
-                    label: 'Documentos',
+                    label: 'En revisión',
                     icon: 'pi pi-file',
-                    to: '/documents'
+                    to: '/documents/in-review'
+                },
+                {
+                    label: 'Aprobados',
+                    icon: 'pi pi-file',
+                    to: '/documents/approved'
+                },
+                {
+                    label: 'Archivados',
+                    icon: 'pi pi-file',
+                    to: '/documents/archived'
                 }
             ]
         },

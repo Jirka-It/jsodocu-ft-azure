@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IChapterResponse> => {
         });
 };
 
-const findAllPreview = async (params: any): Promise<String> => {
+const findAllPreview = async (params: any): Promise<string> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/preview`, {
             params: params

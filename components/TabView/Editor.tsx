@@ -60,9 +60,7 @@ export default function Editor({ document }) {
                 } else {
                     var text = quill.current.unprivilegedEditor.getText(range.index, range.length);
                     //metaData.push({ range: range, comment: prompt });
-                    quill.current.editor.formatText(range.index, range.length, {
-                        background: '#fff72b'
-                    });
+                    quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
                     // drawComments(metaData);
                 }
             } else {
@@ -274,7 +272,7 @@ export default function Editor({ document }) {
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar />
-                        <ReactQuill theme="snow" ref={quill} value={content ?? nodeSelected.content} modules={modules} onChange={(e) => setContent(e)} />
+                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content ?? nodeSelected.content} modules={modules} onChange={(e) => setContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>

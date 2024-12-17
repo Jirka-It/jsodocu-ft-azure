@@ -15,21 +15,17 @@ import { update } from '@api/documents';
 import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
 
-const names = [
-    { name: 'Juan Hernandez', code: 'CUSTOMER_ADMIN' },
-    { name: 'Maria Cortez', code: 'CUSTOMER' }
-];
-
 export default function Revision() {
     const params = useParams();
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
+    const [length, setLength] = useState(1);
     const [content, setContent] = useState<string>('');
     const [page, setPage] = useState<number>(1);
     const [users, setUsers] = useState<Array<IUser>>([]);
 
     useEffect(() => {
-        getTitle();
+        getInitialContent();
         getUsers();
     }, []);
 
@@ -49,11 +45,12 @@ export default function Revision() {
         }
     };
 
-    const getTitle = async () => {
+    const getInitialContent = async () => {
         try {
             const res = await findDocument(params.id);
-            setContent(content + res.title);
-            getChapters();
+            const resChapter = await findAllPreview({ page: 1, size: 1 });
+
+            setContent(content + res.title + resChapter);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
@@ -62,7 +59,10 @@ export default function Revision() {
     const getChapters = async (page: number = 1, size: number = 1) => {
         const params = { page, size };
         const res = await findAllPreview(params);
-        setContent(content + res);
+        if (res) {
+            setLength(length + 1);
+            setContent(content + res);
+        }
     };
 
     //Get more data
@@ -117,7 +117,7 @@ export default function Revision() {
                     </div>
                 </div>
 
-                <InfiniteScroll dataLength={1} next={fetchMoreData} hasMore={true} loader="" height={700}>
+                <InfiniteScroll dataLength={length} next={fetchMoreData} hasMore={true} loader="" height={700} className="ql-editor">
                     <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: content }}></div>
                 </InfiniteScroll>
             </div>

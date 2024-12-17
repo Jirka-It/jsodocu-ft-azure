@@ -13,19 +13,25 @@ function addDivider() {
 }
 
 const Inline = Quill.import('blots/inline');
-class EmphBlot extends Inline {}
-EmphBlot.blotName = 'em';
-EmphBlot.tagName = 'em';
-EmphBlot.className = 'custom-em';
-Quill.register('formats/em', EmphBlot);
 
-// Add fonts to whitelist and register them
-const Font = Quill.import('formats/font');
-Font.whitelist = ['arial', 'comic-sans', 'courier-new', 'georgia', 'helvetica', 'lucida'];
-Quill.register(Font, true);
+class CustomSpan extends Inline {
+    static create(value) {
+        const node = super.create();
+        node.setAttribute('data-tooltip', value);
+        return node;
+    }
+
+    static formats(node) {
+        return node.getAttribute('data-tooltip');
+    }
+}
+
+CustomSpan.blotName = 'customTag';
+CustomSpan.tagName = 'comment';
+Quill.register(CustomSpan);
 
 // Formats objects for setting up the Quill editor
-export const formats = ['header', 'font', 'size', 'bold', 'italic', 'underline', 'align', 'strike', 'script', 'blockquote', 'background', 'list', 'bullet', 'indent', 'link', 'image', 'color', 'em', 'p', 'divider', 'hr', 'formats/em'];
+export const formats = ['header', 'font', 'size', 'bold', 'italic', 'underline', 'align', 'strike', 'script', 'blockquote', 'background', 'list', 'bullet', 'indent', 'link', 'image', 'color', 'em', 'p', 'divider', 'hr', 'customTag'];
 
 // Quill Toolbar component
 export const QuillToolbar = () => (

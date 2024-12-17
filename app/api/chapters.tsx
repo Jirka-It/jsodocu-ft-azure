@@ -21,6 +21,19 @@ const findAll = async (params: any): Promise<IChapterResponse> => {
         });
 };
 
+const findAllPreview = async (params: any): Promise<string> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/preview`, {
+            params: params
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
 const findById = async (id: string): Promise<IChapterResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/${id}`)
@@ -89,4 +102,4 @@ const remove = async (id: string): Promise<IChapterResponse> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findAllPreview, findById, create, update, remove };

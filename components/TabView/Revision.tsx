@@ -1,36 +1,112 @@
-import { useState } from 'react';
-import { Checkbox } from 'primereact/checkbox';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { Toast } from 'primereact/toast';
+
 import stylesRevision from './Revision.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { findByIdLight as findDocument } from '@api/documents';
+import { showError, showInfo, showWarn } from '@lib/ToastMessages';
+import { findAllPreview } from '@api/chapters';
+import { findAllByAccount } from '@api/users';
+import { update } from '@api/documents';
 
-const names = [
-    { name: 'Juan Hernandez', code: 'CUSTOMER_ADMIN' },
-    { name: 'Maria Cortez', code: 'CUSTOMER' }
-];
+import { IUser } from '@interfaces/IUser';
+import { State } from '@enums/DocumentEnum';
 
-const text = `<p>wdwad <span class="mention" data-index="0" data-denotation-char="@" data-id="1" data-value="variable_PH">﻿<span contenteditable="false">Partha</span>﻿</span>  <span style="color: rgb(230, 0, 0);"><span class="mention" data-index="1" data-denotation-char="@" data-id="2" data-value="date_contract">﻿<span contenteditable="false">Emma</span>﻿</span>   </span><span class="mention" data-index="1" data-denotation-char="@" data-id="2" data-value="date_contract">﻿<span contenteditable="false">Emma</span>﻿</span> </p><p><br></p><p><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p><br></p><p><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p><br></p><p><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p><br></p><p><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p><br></p><p><br></p><p><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p><br></p><p><strong style="color: rgb(0, 0, 0);"><span class="ql-cursor">﻿</span>Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>`;
 export default function Revision() {
-    const [name, setName] = useState<any>('');
-    const [checked, setChecked] = useState(false);
+    const params = useParams();
+    const toast = useRef(null);
+    const [user, setUser] = useState<any>('');
+    const [length, setLength] = useState(1);
+    const [content, setContent] = useState<string>('');
+    const [page, setPage] = useState<number>(1);
+    const [users, setUsers] = useState<Array<IUser>>([]);
 
-    const handleExport = () => {};
+    useEffect(() => {
+        getInitialContent();
+        getUsers();
+    }, []);
 
-    const handleSubmit = () => {};
+    // Users, title and chapters
+
+    const getUsers = async () => {
+        try {
+            const res = await findAllByAccount({ page: 1, size: 100 });
+
+            const newUsers = res.map((u) => {
+                return { ...u, fullName: `${u.name} ${u.lastName}` };
+            });
+
+            setUsers(newUsers);
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte.');
+        }
+    };
+
+    const getInitialContent = async () => {
+        try {
+            const res = await findDocument(params.id);
+            const resChapter = await findAllPreview({ page: 1, size: 1 });
+
+            setContent(content + res.title + resChapter);
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte.');
+        }
+    };
+
+    const getChapters = async (page: number = 1, size: number = 1) => {
+        const params = { page, size };
+        const res = await findAllPreview(params);
+        if (res) {
+            setLength(length + 1);
+            setContent(content + res);
+        }
+    };
+
+    //Get more data
+
+    const fetchMoreData = () => {
+        const newPage = page + 1;
+        getChapters(newPage);
+        setPage(newPage);
+    };
+
+    const handleSubmit = async () => {
+        if (!user) {
+            showError(toast, '', 'Debe asignar un usuario');
+            return;
+        }
+
+        try {
+            const res = await update(params.id, {
+                reviewer: user,
+                step: State.REVIEW
+            });
+            if (!res) {
+                showWarn(toast, '', 'YContacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento asignado');
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
+    };
 
     return (
         <section className="grid">
+            <Toast ref={toast} />
             <div className="col-12 md:col-4">
                 <h3 className="m-0 mb-1 text-blue-500 font-bold cursor-pointer">Revisión</h3>
 
                 <div>
                     <label htmlFor="name">Usuario asignado</label>
-                    <Dropdown value={name} onChange={(e) => setName(e.value)} options={names} id="name" optionLabel="name" placeholder="Usuario responsable" className="w-full mt-2" />
+                    <Dropdown value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
                 </div>
 
                 <div className="flex justify-content-center mt-5">
-                    <Button className="mr-3" label="Exportar" severity="danger" onClick={() => handleExport()} />
-                    <Button label="Enviar" onClick={() => handleSubmit()} />
+                    <Button label="Asignar" onClick={() => handleSubmit()} />
                 </div>
             </div>
             <div className="col-12 md:col-8">
@@ -39,19 +115,11 @@ export default function Revision() {
                         <h4 className="m-0">Conjunto Amatista</h4>
                         <h6 className="m-0 text-gray-500">Reglamento PH</h6>
                     </div>
-
-                    {/*
-                    <div className="header-editor__template">
-                        <div className="flex align-content-center">
-                            <h4 className="m-0 mr-3">CONVERTIR EN PLANTILLA</h4>
-                            <Checkbox onChange={(e) => setChecked(e.checked)} checked={checked}></Checkbox>
-                        </div>
-
-                        <p className="header-editor__template--alert">Este documento será la base para la elaboración de otros documentos</p>
-                    </div>
-                   */}
                 </div>
-                <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: text }}></div>
+
+                <InfiniteScroll dataLength={length} next={fetchMoreData} hasMore={true} loader="" height={700} className="ql-editor">
+                    <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: content }}></div>
+                </InfiniteScroll>
             </div>
         </section>
     );

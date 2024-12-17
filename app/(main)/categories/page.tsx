@@ -35,7 +35,7 @@ const Documents = () => {
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
-        const params = { page, size: 1, state };
+        const params = { page, size, state };
         if (searchParam) params['searchParam'] = searchParam;
         const res = await findAll(params);
         setData(res);

@@ -1,6 +1,5 @@
 .div-editor-html {
-    word-break: break-all;
-    min-height: 42.5rem;
+    height: 53rem;
 }
 
 .custom-label:hover {

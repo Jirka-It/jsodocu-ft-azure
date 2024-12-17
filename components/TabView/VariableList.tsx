@@ -154,7 +154,7 @@ export default function VariableList() {
                     <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="value" header="Valor" body={variableValue}></Column>
-                    <Column field="category.name" header="Categoría" body={(rowData) => <BasicStates state={rowData.category.name} />}></Column>
+                    <Column field="category.name" header="Categoría" body={(rowData) => <Badge value={rowData.category.name} severity="danger"></Badge>}></Column>
                     <Column field="type" header="Tipo" body={typeValue}></Column>
                     <Column field="actions" header="Acciones" body={(rowData: IVariable) => <VariableActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData._id)} />}></Column>
                 </DataTable>

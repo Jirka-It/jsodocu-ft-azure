@@ -16,6 +16,37 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
 @import './_responsive';
 @import './_breadcrumb';
 
+comment {
+    cursor: pointer;
+    background-color: rgb(34, 237, 7);
+}
+
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    /* put it on the top */
+    background-color: yellow;
+    padding: 5px;
+    width: max-content;
+    opacity: 0;
+    -webkit-transition: opacity 0.75s ease-in-out;
+}
+
+[data-tooltip]:hover:after {
+    opacity: 1;
+}
+
+div[data-tooltip]:after {
+    left: 5px !important;
+}
+
 
 .ql-mention-list {
     padding: 1rem;
@@ -37,9 +68,18 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
     width: 100%;
 }
 
+.ql-container {
+    .ql-editor {
+        min-height: 50rem;
+        max-height: 50rem;
+
+
+
+    }
+}
 
 .ql-editor {
-    min-height: 40rem;
+
 
     .mention {
         color: blue;
@@ -56,12 +96,14 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
     background: white;
 }
 
-.p-dialog-content::-webkit-scrollbar {
+.p-dialog-content::-webkit-scrollbar,
+.infinite-scroll-component::-webkit-scrollbar {
     display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.p-dialog-content {
+.p-dialog-content,
+.infinite-scroll-component::-webkit-scrollbar {
     -ms-overflow-style: none;
     /* IE and Edge */
     scrollbar-width: none;

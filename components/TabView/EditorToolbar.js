@@ -1,16 +1,10 @@
 import React from 'react';
 
 import { Quill } from 'react-quill';
+import 'quill-mention';
 
 // const BorderButton = () => <FaRegSquare />;
 const CommentButton = () => <i className="pi pi-comment"></i>;
-
-function addDivider() {
-    const range = this.quill.getSelection(true);
-    this.quill.insertText(range.index, '\n', Quill.sources.USER);
-    this.quill.insertEmbed(range.index + 1, 'divider', true, Quill.sources.USER);
-    this.quill.setSelection(range.index + 2, Quill.sources.SILENT);
-}
 
 const Inline = Quill.import('blots/inline');
 
@@ -31,7 +25,7 @@ CustomSpan.tagName = 'comment';
 Quill.register(CustomSpan);
 
 // Formats objects for setting up the Quill editor
-export const formats = ['header', 'font', 'size', 'bold', 'italic', 'underline', 'align', 'strike', 'script', 'blockquote', 'background', 'list', 'bullet', 'indent', 'link', 'image', 'color', 'em', 'p', 'divider', 'hr', 'customTag'];
+export const formats = ['header', 'font', 'size', 'bold', 'italic', 'underline', 'align', 'strike', 'script', 'blockquote', 'background', 'list', 'bullet', 'indent', 'link', 'image', 'color', 'em', 'p', 'divider', 'hr', 'customTag', 'mention'];
 
 // Quill Toolbar component
 export const QuillToolbar = () => (

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
-import 'quill-mention';
+
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
 import { IVariableLight } from '@interfaces/IVariable';
 import { replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent, renderHeader } from '@lib/Editor';
+import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -98,9 +98,16 @@ export default function Editor({ document }) {
             },
             mention: {
                 mentionDenotationChars: ['@'],
-                source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
+                source: (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
+                    let values = data;
                     // sample data set for displaying
-                    renderList(data, searchTerm);
+                    if (searchTerm.length === 0) {
+                        renderList(values, searchTerm);
+                    } else {
+                        const matches = [];
+                        for (let i = 0; i < values.length; i++) if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) matches.push(values[i]);
+                        renderList(matches, searchTerm);
+                    }
                 }
             },
             history: {

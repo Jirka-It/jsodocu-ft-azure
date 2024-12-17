@@ -1,35 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
-import { Editor as Quill } from 'primereact/editor';
+import ReactQuill from 'react-quill';
+import 'quill-mention';
+import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
-import Mention from 'quill-mention';
 import { INode, INodeGeneral } from '@interfaces/INode';
 import { IVariableLight } from '@interfaces/IVariable';
-
-import { findAllWithOutPagination } from '@api/variables';
-import { findAll as findAllChapters, create } from '@api/chapters';
-import { replaceText, replaceTextQuill } from '@lib/ReplaceText';
+import { replaceText } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, renderHeader } from '@lib/Editor';
-
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
+import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
+import EditorToolbar, { formats } from './EditorToolbar';
+
+import { findAllWithOutPagination } from '@api/variables';
+import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import { findByIdLight as findDocument, update as updateDocument } from '@api/documents';
 
-import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
-
 import styles from './Editor.module.css';
-import { Button } from 'primereact/button';
+import 'react-quill/dist/quill.snow.css';
 
 export default function Editor({ document }) {
     const toast = useRef(null);
+    const quill = useRef(null);
     const params = useParams();
-    const header = renderHeader();
     const [timer, setTimer] = useState(null);
     const [nodes, setNodes] = useState<Array<INode>>();
+    const [modules, setModules] = useState<any>(null);
+
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [content, setContent] = useState<string>(null);
@@ -40,10 +42,36 @@ export default function Editor({ document }) {
     useEffect(() => {
         getChapters();
         getVariables();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Endpoints
+    //Quill functions
 
+    const addComment = () => {
+        var prompt = window.prompt('Ingrese un comentario', '');
+        var txt;
+        if (prompt == null || prompt == '') {
+            txt = 'User cancelled the prompt.';
+        } else {
+            const range = quill.current.unprivilegedEditor.getSelection();
+            if (range) {
+                if (range.length == 0) {
+                    alert('Selecciona un texto');
+                } else {
+                    var text = quill.current.unprivilegedEditor.getText(range.index, range.length);
+                    //metaData.push({ range: range, comment: prompt });
+                    quill.current.editor.formatText(range.index, range.length, {
+                        background: '#fff72b'
+                    });
+                    // drawComments(metaData);
+                }
+            } else {
+                alert('Editor no seleccionado');
+            }
+        }
+    };
+
+    // Get data and quill's modules
     const getChapters = async () => {
         const res = await findAllChapters({ documentId: params.id });
         setNodes(res.data);
@@ -63,22 +91,31 @@ export default function Editor({ document }) {
             });
         }
 
+        setModules({
+            toolbar: {
+                container: '#toolbar',
+                handlers: {
+                    comment: addComment
+                }
+            },
+            mention: {
+                mentionDenotationChars: ['@'],
+                source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
+                    // sample data set for displaying
+                    renderList(data, searchTerm);
+                }
+            },
+            history: {
+                delay: 500,
+                maxStack: 100,
+                userOnly: true
+            }
+        });
+
         setVariables(data);
     };
 
-    // Events to load quill's information
-
-    const quillLoaded = (event) => {
-        const quillInstance = event;
-
-        new Mention(quillInstance, {
-            mentionDenotationChars: ['@'],
-            source: async (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
-                // sample data set for displaying
-                renderList(variables, searchTerm);
-            }
-        });
-    };
+    // Event to load tree
 
     const nodeTemplate = (node, options) => {
         let label = <b>{node.label}</b>;
@@ -138,7 +175,7 @@ export default function Editor({ document }) {
         return <span className={options.className}>{label}</span>;
     };
 
-    //Button events
+    //Button events tree
 
     const addChapter = async () => {
         const res = await create({
@@ -233,10 +270,11 @@ export default function Editor({ document }) {
                 </div>
             </div>
 
-            {nodeSelected ? (
+            {nodeSelected && modules ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
-                        <Quill value={content ?? nodeSelected.content} headerTemplate={header} onTextChange={(e) => setContent(replaceTextQuill(e.htmlValue, variables))} onLoad={quillLoaded} />
+                        <EditorToolbar />
+                        <ReactQuill theme="snow" ref={quill} value={content ?? nodeSelected.content} modules={modules} onChange={(e) => setContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>

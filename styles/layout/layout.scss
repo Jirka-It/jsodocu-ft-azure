@@ -37,9 +37,18 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
     width: 100%;
 }
 
+.ql-container {
+    .ql-editor {
+        min-height: 50rem;
+        max-height: 50rem;
+
+
+
+    }
+}
 
 .ql-editor {
-    min-height: 40rem;
+
 
     .mention {
         color: blue;
@@ -56,12 +65,14 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
     background: white;
 }
 
-.p-dialog-content::-webkit-scrollbar {
+.p-dialog-content::-webkit-scrollbar,
+.infinite-scroll-component::-webkit-scrollbar {
     display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.p-dialog-content {
+.p-dialog-content,
+.infinite-scroll-component::-webkit-scrollbar {
     -ms-overflow-style: none;
     /* IE and Edge */
     scrollbar-width: none;

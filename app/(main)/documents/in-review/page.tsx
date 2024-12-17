@@ -77,9 +77,7 @@ const Documents = () => {
             <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
-                <div className="w-full flex justify-content-between mb-3">
-                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Documento" />
-
+                <div className="w-full flex justify-content-end mb-3">
                     <div className="flex align-items-center">
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>

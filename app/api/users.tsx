@@ -21,6 +21,19 @@ const findAll = async (params: any): Promise<IUserResponse> => {
         });
 };
 
+const findAllByAccount = async (params: any): Promise<Array<IUser>> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/by-account`, {
+            params: params
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
 const findById = async (id: string): Promise<IUserResponse> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
@@ -105,4 +118,4 @@ const remove = async (id: string): Promise<IUserResponse> => {
         });
 };
 
-export { findAll, findById, findByUsername, create, update, remove };
+export { findAll, findById, findAllByAccount, findByUsername, create, update, remove };

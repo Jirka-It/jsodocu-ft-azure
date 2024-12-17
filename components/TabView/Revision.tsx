@@ -80,7 +80,7 @@ export default function Revision() {
         }
 
         try {
-            const res = await update(params.id, {
+            const res = await update(paramsUrl.id, {
                 reviewer: user,
                 step: State.REVIEW
             });

@@ -16,7 +16,7 @@ import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
 
 export default function Revision() {
-    const params = useParams();
+    const paramsUrl = useParams();
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
     const [length, setLength] = useState(1);
@@ -47,8 +47,8 @@ export default function Revision() {
 
     const getInitialContent = async () => {
         try {
-            const res = await findDocument(params.id);
-            const resChapter = await findAllPreview({ page: 1, size: 1 });
+            const res = await findDocument(paramsUrl.id);
+            const resChapter = await findAllPreview({ page: 1, size: 1, documentId: paramsUrl.id });
 
             setContent(content + res.title + resChapter);
         } catch (error) {
@@ -57,7 +57,7 @@ export default function Revision() {
     };
 
     const getChapters = async (page: number = 1, size: number = 1) => {
-        const params = { page, size };
+        const params = { page, size, documentId: paramsUrl.id };
         const res = await findAllPreview(params);
         if (res) {
             setLength(length + 1);

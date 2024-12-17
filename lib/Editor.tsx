@@ -160,39 +160,3 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     }
 };
 
-export const renderHeader = () => {
-    return (
-        <div>
-            <span className="ql-formats">
-                <button className="ql-header" value="1"></button>
-                <button className="ql-header" value="2"></button>
-                <select className="ql-size">
-                    <option value="small">Pequeña</option>
-                    <option value="">Normal</option>
-                    <option value="large">Grande</option>
-                    <option value="huge">Gigante</option>
-                </select>
-            </span>
-
-            <span className="ql-formats">
-                <button className="ql-bold" aria-label="Bold"></button>
-                <button className="ql-italic" aria-label="Italic"></button>
-                <button className="ql-underline" aria-label="Underline"></button>
-                <button className="ql-strike" aria-label="Strike"></button>
-                <button className="ql-blockquote" aria-label="Blockquote"></button>
-                <button className="ql-link" aria-label="Link"></button>
-            </span>
-
-            <span className="ql-formats">
-                <select title="Text Alignment" className="ql-align">
-                    <option value="center">Gauche</option>
-                    <option value="center" label="Centro"></option>
-                    <option value="right" label="Derecha"></option>
-                    <option value="justify" label="Justificado"></option>
-                </select>
-                <button type="button" className="ql-list" aria-label="List" value="ordered"></button>
-                <button type="button" className="ql-list" aria-label="Bullet" value="bullet"></button>
-            </span>
-        </div>
-    );
-};

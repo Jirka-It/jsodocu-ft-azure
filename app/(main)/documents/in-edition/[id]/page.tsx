@@ -31,7 +31,7 @@ const Document = () => {
                     <VariableList />
                 </TabPanel>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <Editor document={document} />
+                    <Editor doc={document} inReview={false} />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
                     <Revision />

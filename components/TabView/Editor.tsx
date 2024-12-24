@@ -268,20 +268,20 @@ export default function Editor({ doc, inReview }) {
         // Save in API when the user stops typing
         const delayDebounceFn = setTimeout(async () => {
             if (nodeSelected && content !== null) {
-                if (inReview) {
-                    console.log(count(content)); //Add comment's count
-                }
+                let countComment = count(content);
 
                 if (nodeSelected && nodeSelected.article) {
-                    await update(nodeSelected.key, { content });
+                    await update(nodeSelected.key, { content, count: countComment });
+                    return;
                 }
 
                 if (nodeSelected && nodeSelected.paragraph) {
-                    await updateParagraph(nodeSelected.key, { content });
+                    await updateParagraph(nodeSelected.key, { content, count: countComment });
+                    return;
                 }
 
                 if (nodeSelected && nodeSelected.document) {
-                    updateDocument(doc._id, { title: content });
+                    updateDocument(doc._id, { title: content, count: countComment });
                     return;
                 }
             }

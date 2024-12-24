@@ -4,6 +4,8 @@ export interface INodeParagraph {
     ownChapter: string;
     ownArticle: string;
     label: string;
+    count?: number;
+    approved?: boolean;
     content: string;
     paragraph: boolean;
 }
@@ -14,6 +16,8 @@ export interface INodeArticle {
     label: string;
     value: string;
     content: string;
+    count?: number;
+    approved?: boolean;
     ownChapter: string;
     article: boolean;
     children?: Array<INodeParagraph>;

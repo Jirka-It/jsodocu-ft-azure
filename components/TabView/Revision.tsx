@@ -8,7 +8,7 @@ import { Button } from 'primereact/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { findByIdLight as findDocument } from '@api/documents';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
-import { findAllPreview } from '@api/chapters';
+import { findAllPreview } from '@api/documents';
 import { findAllByAccount } from '@api/users';
 import { update } from '@api/documents';
 
@@ -27,6 +27,7 @@ export default function Revision() {
     useEffect(() => {
         getInitialContent();
         getUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Users, title and chapters
@@ -48,7 +49,7 @@ export default function Revision() {
     const getInitialContent = async () => {
         try {
             const res = await findDocument(paramsUrl.id);
-            const resChapter = await findAllPreview({ page: 1, size: 1, documentId: paramsUrl.id });
+            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 1 });
 
             setContent(content + res.title + resChapter);
         } catch (error) {
@@ -57,8 +58,8 @@ export default function Revision() {
     };
 
     const getChapters = async (page: number = 1, size: number = 1) => {
-        const params = { page, size, documentId: paramsUrl.id };
-        const res = await findAllPreview(params);
+        const params = { page, size };
+        const res = await findAllPreview(paramsUrl.id, params);
         if (res) {
             setLength(length + 1);
             setContent(content + res);
@@ -85,7 +86,7 @@ export default function Revision() {
                 step: State.REVIEW
             });
             if (!res) {
-                showWarn(toast, '', 'YContacte con soporte');
+                showWarn(toast, '', 'Contacte con soporte');
             } else {
                 showInfo(toast, '', 'Documento asignado');
             }

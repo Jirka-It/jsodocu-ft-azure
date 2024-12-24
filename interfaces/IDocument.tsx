@@ -12,6 +12,7 @@ export interface IDocument {
     state: string;
     template?: string;
     title?: string;
+    count?: number;
     createdAt?: string;
     updatedAt?: string;
 }

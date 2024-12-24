@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, createElement } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
+import { Badge } from 'primereact/badge';
 
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
@@ -9,7 +10,7 @@ import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
 import { IVariableLight } from '@interfaces/IVariable';
 import { count, replaceComment, replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
+import { addSection, deleteSection, handleChangeEvent, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -48,19 +49,21 @@ export default function Editor({ inReview }) {
     }, []);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            if (quill.current) {
-                const quillRef = quill.current.getEditor(); // Get the Quill instance
-                quillRef.root.addEventListener('click', handleEditorClick);
+        if (nodeSelected) {
+            if (typeof window !== 'undefined') {
+                if (quill.current) {
+                    const quillRef = quill.current.getEditor(); // Get the Quill instance
+                    quillRef.root.addEventListener('click', handleEditorClick);
 
-                return () => {
-                    quillRef.root.removeEventListener('click', handleEditorClick);
-                };
+                    return () => {
+                        quillRef.root.removeEventListener('click', handleEditorClick);
+                    };
+                }
             }
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [modules]);
+    }, [modules, nodeSelected]);
 
     const getDocument = async () => {
         const res = await findByIdLight(params.id);
@@ -82,6 +85,7 @@ export default function Editor({ inReview }) {
 
                 const newBody = replaceComment(quill.current.value, clickedElement.outerHTML, text);
                 setNodeSelected({ ...nodeSelected, content: newBody });
+                updateContent(newBody);
             }
         }
     };
@@ -110,7 +114,16 @@ export default function Editor({ inReview }) {
     // Get data and quill's modules
     const getChapters = async () => {
         const res = await findAllChapters({ documentId: params.id });
-        setNodes(res.data);
+        const keys: {} = {};
+
+        if (res && res.data) {
+            res.data.map((c) => {
+                keys[c.key] = true;
+            });
+
+            setExpandedKeys(keys);
+            setNodes(res.data);
+        }
     };
 
     const getVariables = async () => {
@@ -165,7 +178,9 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className="p-inputgroup flex-1 h-2rem">
+                <div className="p-inputgroup flex-1  h-2rem">
+                    {node.article ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
+
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
@@ -194,6 +209,7 @@ export default function Editor({ inReview }) {
             label = (
                 <div>
                     <div className="flex align-items-center justify-content-between h-2rem">
+                        <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge>
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
                         </h6>
@@ -269,13 +285,13 @@ export default function Editor({ inReview }) {
     //Events to quill
 
     const updateContent = async (content: string) => {
+        const countComment = count(content);
         setNodeSelected({ ...nodeSelected, content });
+        updateComments(nodeSelected, countComment, setNodes);
 
         clearTimeout(timer);
         const newTimer = setTimeout(async () => {
             if (nodeSelected) {
-                let countComment = count(nodeSelected.content);
-
                 if (nodeSelected && nodeSelected.article) {
                     await update(nodeSelected.key, { content, count: countComment });
                     return;
@@ -287,7 +303,8 @@ export default function Editor({ inReview }) {
                 }
 
                 if (nodeSelected && nodeSelected.document) {
-                    updateDocument(doc._id, { title: content, count: countComment });
+                    setDoc({ ...doc, count: countComment });
+                    await updateDocument(doc._id, { title: content, count: countComment });
                     return;
                 }
             }
@@ -303,7 +320,8 @@ export default function Editor({ inReview }) {
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge>
                     Título
                 </div>
 

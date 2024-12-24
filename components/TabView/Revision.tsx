@@ -66,15 +66,15 @@ export default function Revision({ inReview }) {
                 setUser(res.creator);
             }
 
-            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 1 });
+            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 5 });
 
-            setContent(content + res.title + resChapter);
+            setContent(content + res.title + '\n' + resChapter);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
     };
 
-    const getChapters = async (page: number = 1, size: number = 1) => {
+    const getChapters = async (page: number = 1, size: number = 5) => {
         const params = { page, size };
         const res = await findAllPreview(paramsUrl.id, params);
         if (res) {

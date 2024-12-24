@@ -41,6 +41,7 @@ export interface INodeGeneral {
     ownArticle?: string;
     label: string;
     content?: string;
+    count?: number;
     chapter?: boolean;
     article?: boolean;
     paragraph?: boolean;

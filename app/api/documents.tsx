@@ -123,7 +123,7 @@ const create = async (data: IDocument): Promise<IDocumentResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResponse> => {
+const update = async (id: string, data: IDocumentPartial): Promise<IDocument> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`, data)
         .then((res) => {

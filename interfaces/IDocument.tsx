@@ -13,6 +13,7 @@ export interface IDocument {
     template?: string;
     title?: string;
     count?: number;
+    approved?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

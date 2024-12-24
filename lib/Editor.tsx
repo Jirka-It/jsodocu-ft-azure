@@ -160,3 +160,40 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     }
 };
 
+export const updateComments = async (node: INodeGeneral, count, setNodes: Function) => {
+    if (node.article) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key == node.key) {
+                            a['count'] = count;
+                        }
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.paragraph) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        a.children.map((p) => {
+                            if (p.key == node.key) {
+                                p['count'] = count;
+                            }
+                        });
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};

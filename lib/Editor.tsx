@@ -6,16 +6,24 @@ import { create as createParagraph, remove as removeParagraph } from '@api/parag
 export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
     if (node.chapter) {
         const nodeToOpen = node.key;
-        let object = {};
-        object[nodeToOpen] = node.key;
-        setExpandedKeys(object);
+
+        setExpandedKeys((prevValue) => {
+            let object = prevValue;
+            object[nodeToOpen] = true;
+            return object;
+        });
+
+        //setExpandedKeys(object);
     }
 
     if (node.article) {
-        let object = {};
-        object[node.ownChapter] = node.key;
-        object[node.key] = node.key;
-        setExpandedKeys(object);
+        const nodeToOpen = node.key;
+
+        setExpandedKeys((prevValue) => {
+            let object = prevValue;
+            object[nodeToOpen] = true;
+            return object;
+        });
     }
 
     if (node.chapter) {

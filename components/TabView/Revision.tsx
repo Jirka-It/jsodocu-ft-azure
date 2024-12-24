@@ -8,17 +8,18 @@ import { Button } from 'primereact/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { findByIdLight as findDocument } from '@api/documents';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
-import { findAllPreview } from '@api/documents';
+import { findAllPreview, findAllComments } from '@api/documents';
 import { findAllByAccount } from '@api/users';
 import { update } from '@api/documents';
 
 import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
 
-export default function Revision() {
+export default function Revision({ doc, inReview }) {
     const paramsUrl = useParams();
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
+    const [comments, setComments] = useState<number>(0);
     const [length, setLength] = useState(1);
     const [content, setContent] = useState<string>('');
     const [page, setPage] = useState<number>(1);
@@ -27,6 +28,11 @@ export default function Revision() {
     useEffect(() => {
         getInitialContent();
         getUsers();
+        getComments();
+
+        if (inReview) {
+            setUser(doc.creator);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -44,6 +50,11 @@ export default function Revision() {
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
+    };
+
+    const getComments = async () => {
+        const res = await findAllComments(paramsUrl.id);
+        setComments(res);
     };
 
     const getInitialContent = async () => {
@@ -95,26 +106,64 @@ export default function Revision() {
         }
     };
 
+    const handleBack = async () => {
+        try {
+            const res = await update(paramsUrl.id, {
+                reviewer: user,
+                step: State.EDITION
+            });
+            if (!res) {
+                showWarn(toast, '', 'Contacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento devuelto');
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
+    };
+
+    const handleApprove = async () => {
+        try {
+            const res = await update(paramsUrl.id, {
+                reviewer: user,
+                step: State.APPROVED
+            });
+            if (!res) {
+                showWarn(toast, '', 'Contacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento aprobado');
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
+    };
+
     return (
         <section className="grid">
             <Toast ref={toast} />
             <div className="col-12 md:col-4">
                 <h3 className="m-0 mb-1 text-blue-500 font-bold cursor-pointer">Revisión</h3>
 
-                <div>
-                    <label htmlFor="name">Usuario asignado</label>
-                    <Dropdown value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
-                </div>
+                {inReview ? (
+                    <>
+                        <label htmlFor="name">Usuario asignado</label>
+                        <Dropdown disabled={true} value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
 
-                <div className="flex justify-content-center mt-5">
-                    <Button label="Asignar" onClick={() => handleSubmit()} />
-                </div>
+                        <div className="flex justify-content-center mt-5">{comments ? <Button label="Devolver" severity="warning" onClick={() => handleBack()} /> : <Button label="Aprobar" onClick={() => handleApprove()} />}</div>
+                    </>
+                ) : (
+                    <>
+                        <label htmlFor="name">Usuario asignado</label>
+                        <Dropdown value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
+
+                        <div className="flex justify-content-center mt-5">{comments ? <Button label="Tienes comentarios" severity="danger" /> : <Button label="Asignar" onClick={() => handleSubmit()} />}</div>
+                    </>
+                )}
             </div>
             <div className="col-12 md:col-8">
                 <div className={`${stylesRevision['header-editor']}`}>
                     <div className="header-editor__description">
-                        <h4 className="m-0">Conjunto Amatista</h4>
-                        <h6 className="m-0 text-gray-500">Reglamento PH</h6>
+                        <h5 className="m-0">{doc?.name}</h5>
                     </div>
                 </div>
 

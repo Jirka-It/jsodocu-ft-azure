@@ -34,6 +34,17 @@ const findAllPreview = async (id: string, params: any): Promise<string> => {
         });
 };
 
+const findAllComments = async (id: string): Promise<number> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/count-comments/${id}`)
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
 const findExport = async (id: string): Promise<any> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/export/${id}`)
@@ -146,4 +157,4 @@ const remove = async (id: string): Promise<IDocumentResponse> => {
         });
 };
 
-export { findAll, findById, findAllPreview, findExport, findByIdLight, findByName, create, update, remove };
+export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, update, remove };

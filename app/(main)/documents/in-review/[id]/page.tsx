@@ -31,7 +31,7 @@ const Document = () => {
                     <Editor doc={document} inReview={true} />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
-                    <Revision />
+                    <Revision doc={document} inReview={true} />
                 </TabPanel>
             </TabView>
         </section>

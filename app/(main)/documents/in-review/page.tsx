@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, remove } from '@api/documents';
+import { findAll } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';

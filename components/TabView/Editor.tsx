@@ -277,13 +277,32 @@ export default function Editor({ inReview }) {
         setOpenModalClose(!openModalClose);
     };
 
-    const handleApprove = async (nodeSelected: INodeGeneral) => {
-        const res = await update(nodeSelected.key, { approved: true });
-        setNodeSelected({ ...res, key: res._id });
+    const handleClickEvent = async (node: INodeGeneral) => {
+        setNodeSelected(null);
+        if (node && node.article) {
+            const res = await findById(node.key);
+            setNodeSelected({ ...res, key: res._id });
+            setContent(res.content);
+            return;
+        }
+
+        if (node && node.paragraph) {
+            const res = await findParagraph(node.key);
+            setNodeSelected({ ...res, key: res._id });
+            setContent(res.content);
+            return;
+        }
     };
 
-    const handleClickEvent = async (node: INodeGeneral) => {};
+    {
+        /*
+     const handleApprove = async (node: INodeGeneral) => {
 
+        const res = await updateParagraph(nodeSelected.key, { content, count: countComment });
+    };
+
+    */
+    }
     const selectTitle = async () => {
         setNodeSelected(null);
         const res = await findDocument(doc._id);
@@ -329,7 +348,9 @@ export default function Editor({ inReview }) {
         <section className="grid">
             <Toast ref={toast} />
 
-            {inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+            {/*
+            inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''
+            */}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">

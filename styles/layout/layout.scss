@@ -16,12 +16,25 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
 @import './_responsive';
 @import './_breadcrumb';
 
+
+// TREE
+
+.p-treenode-label:has(.custom-background) {
+    opacity: 0.5;
+}
+
+
+.p-treenode-label {
+    width: 100%;
+}
+
+
 comment {
     cursor: pointer;
     background-color: rgb(34, 237, 7);
 }
 
-
+// COMMENTS
 [data-tooltip] {
     position: relative;
 }
@@ -30,7 +43,7 @@ comment {
     content: attr(data-tooltip);
     position: absolute;
     left: 50%;
-    bottom: 100%;
+    bottom: 0%;
     /* put it on the top */
     background-color: yellow;
     padding: 5px;
@@ -41,12 +54,14 @@ comment {
 
 [data-tooltip]:hover:after {
     opacity: 1;
+
 }
 
 div[data-tooltip]:after {
     left: 5px !important;
 }
 
+// MENTIONS
 
 .ql-mention-list {
     padding: 1rem;
@@ -64,9 +79,14 @@ div[data-tooltip]:after {
     }
 }
 
-.p-treenode-label {
-    width: 100%;
+
+
+.ql-mention-list-container.ql-mention-list-container-bottom {
+    background: white;
 }
+
+
+// EDITOR
 
 .ql-container {
     .ql-editor {
@@ -77,6 +97,7 @@ div[data-tooltip]:after {
 
     }
 }
+
 
 .ql-editor {
 
@@ -92,18 +113,17 @@ div[data-tooltip]:after {
     padding: 0.5rem !important;
 }
 
-.ql-mention-list-container.ql-mention-list-container-bottom {
-    background: white;
-}
 
 .p-dialog-content::-webkit-scrollbar,
-.infinite-scroll-component::-webkit-scrollbar {
+.infinite-scroll-component::-webkit-scrollbar,
+.ql-editor::-webkit-scrollbar {
     display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .p-dialog-content,
-.infinite-scroll-component::-webkit-scrollbar {
+.infinite-scroll-component::-webkit-scrollbar,
+.ql-editor::-webkit-scrollbar {
     -ms-overflow-style: none;
     /* IE and Edge */
     scrollbar-width: none;

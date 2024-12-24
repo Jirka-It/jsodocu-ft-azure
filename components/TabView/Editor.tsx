@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, createElement } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
+import { Badge } from 'primereact/badge';
 
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
+import { IDocument } from '@interfaces/IDocument';
+
 import { IVariableLight } from '@interfaces/IVariable';
-import { replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent } from '@lib/Editor';
+import { count, replaceComment, replaceText } from '@lib/ReplaceText';
+import { addSection, deleteSection, handleChangeEvent, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -19,31 +22,88 @@ import EditorToolbar, { formats } from './EditorToolbar';
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
-import { findByIdLight as findDocument, update as updateDocument } from '@api/documents';
+import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
 
-export default function Editor({ document }) {
+export default function Editor({ inReview }) {
     const toast = useRef(null);
     const quill = useRef(null);
     const params = useParams();
     const [timer, setTimer] = useState(null);
+    const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
-    const [content, setContent] = useState<string>(null);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
+    const [content, setContent] = useState<string>(null);
+
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
 
     useEffect(() => {
         getChapters();
         getVariables();
+        getDocument();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (nodeSelected) {
+            if (typeof window !== 'undefined') {
+                if (quill.current) {
+                    const quillRef = quill.current.getEditor(); // Get the Quill instance
+                    quillRef.root.addEventListener('click', handleEditorClick);
+
+                    return () => {
+                        quillRef.root.removeEventListener('click', handleEditorClick);
+                    };
+                }
+            }
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modules, nodeSelected]);
+
+    const getDocument = async () => {
+        const res = await findByIdLight(params.id);
+        setDoc(res);
+    };
+
+    const handleEditorClick = (e) => {
+        const quillRef = quill.current.getEditor(); // Get Quill instance
+        const clickedElement = e.target; // Element clicked on
+        const quillRoot = quillRef.root; // Quill's root DOM node
+
+        if (quillRoot.contains(clickedElement)) {
+            // Check if the clicked element is an image, link, or custom element
+            if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+                var body = '';
+                var elementSelected = '';
+                if (clickedElement.tagName === 'COMMENT') {
+                    body = clickedElement.innerHTML;
+                    elementSelected = clickedElement.outerHTML;
+                }
+
+                if (clickedElement.parentNode.tagName === 'COMMENT') {
+                    body = clickedElement.parentNode.innerHTML;
+                    elementSelected = clickedElement.parentNode.outerHTML;
+                }
+
+                if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+                    body = clickedElement.parentNode.parentNode.innerHTML;
+                    elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+                }
+
+                // Replace the <img> with a <div> or any other tag you need
+                const newBody = replaceComment(quill.current.value, elementSelected, body);
+                updateContent(newBody);
+            }
+        }
+    };
 
     //Quill functions
 
@@ -54,14 +114,12 @@ export default function Editor({ document }) {
             txt = 'User cancelled the prompt.';
         } else {
             const range = quill.current.unprivilegedEditor.getSelection();
+
             if (range) {
                 if (range.length == 0) {
                     alert('Selecciona un texto');
                 } else {
-                    var text = quill.current.unprivilegedEditor.getText(range.index, range.length);
-                    //metaData.push({ range: range, comment: prompt });
                     quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
-                    // drawComments(metaData);
                 }
             } else {
                 alert('Editor no seleccionado');
@@ -72,7 +130,16 @@ export default function Editor({ document }) {
     // Get data and quill's modules
     const getChapters = async () => {
         const res = await findAllChapters({ documentId: params.id });
-        setNodes(res.data);
+        const keys: {} = {};
+
+        if (res && res.data) {
+            res.data.map((c) => {
+                keys[c.key] = true;
+            });
+
+            setExpandedKeys(keys);
+            setNodes(res.data);
+        }
     };
 
     const getVariables = async () => {
@@ -127,7 +194,9 @@ export default function Editor({ document }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className="p-inputgroup flex-1 h-2rem">
+                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approve ? '' : 'custom-background') : ''}`}>
+                    {node.article ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
+
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
@@ -155,7 +224,8 @@ export default function Editor({ document }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className="flex align-items-center justify-content-between h-2rem">
+                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approve ? '' : 'custom-background'}`}>
+                        <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge>
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
                         </h6>
@@ -202,67 +272,71 @@ export default function Editor({ document }) {
     };
 
     const deleteNode = async () => {
-        //node, setNodes
         await deleteSection(nodeSelectedToDelete, setNodes);
         setNodeSelectedToDelete(null);
         setOpenModalClose(!openModalClose);
     };
 
-    const handleClickEvent = async (node: INodeGeneral) => {
-        setContent(null);
-        setNodeSelected(null);
-        if (node && node.article) {
-            const res = await findById(node.key);
-            setNodeSelected({ ...res, key: res._id });
-            return;
-        }
-
-        if (node && node.paragraph) {
-            const res = await findParagraph(node.key);
-            setNodeSelected({ ...res, key: res._id });
-            return;
-        }
+    const handleApprove = async (nodeSelected: INodeGeneral) => {
+        const res = await update(nodeSelected.key, { approved: true });
+        setNodeSelected({ ...res, key: res._id });
     };
 
+    const handleClickEvent = async (node: INodeGeneral) => {};
+
     const selectTitle = async () => {
-        setContent(null);
         setNodeSelected(null);
-        const res = await findDocument(document._id);
+        const res = await findDocument(doc._id);
         setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
+        setContent(res.title);
     };
 
     //Events to quill
 
-    useEffect(() => {
-        // Save in API when the user stops typing
-        const delayDebounceFn = setTimeout(async () => {
-            if (nodeSelected && content !== null) {
+    const updateContent = async (content: string) => {
+        const countComment = count(content);
+        setContent(content);
+        updateComments(nodeSelected, countComment, setNodes);
+
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            if (nodeSelected) {
                 if (nodeSelected && nodeSelected.article) {
-                    await update(nodeSelected.key, { content });
+                    const res = await update(nodeSelected.key, { content, count: countComment });
+                    setNodeSelected({ ...res, key: res._id });
+                    return;
                 }
 
                 if (nodeSelected && nodeSelected.paragraph) {
-                    await updateParagraph(nodeSelected.key, { content });
+                    const res = await updateParagraph(nodeSelected.key, { content, count: countComment });
+                    setNodeSelected({ ...res, key: res._id });
+                    return;
                 }
 
                 if (nodeSelected && nodeSelected.document) {
-                    updateDocument(document._id, { title: content });
+                    setDoc({ ...doc, count: countComment });
+                    const res = await updateDocument(doc._id, { title: content, count: countComment });
+                    setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
                     return;
                 }
             }
-        }, 800);
+        }, 1000);
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [content]);
+        setTimer(newTimer);
+    };
 
     return (
         <section className="grid">
             <Toast ref={toast} />
+
+            {inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
-                <h5 className="m-0">{document?.name}</h5>
+                <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge>
                     Título
                 </div>
 
@@ -275,14 +349,14 @@ export default function Editor({ document }) {
                 </div>
             </div>
 
-            {nodeSelected && modules ? (
+            {modules && nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
-                        <EditorToolbar />
-                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content ?? nodeSelected.content} modules={modules} onChange={(e) => setContent(e)} />
+                        <EditorToolbar inReview={inReview} />
+                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content} modules={modules} onChange={(e) => updateContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected.content, variables) }}></div>
+                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(nodeSelected?.content, variables) }}></div>
                     </div>
                 </div>
             ) : (

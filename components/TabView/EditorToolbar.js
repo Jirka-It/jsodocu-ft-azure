@@ -28,7 +28,7 @@ Quill.register(CustomSpan);
 export const formats = ['header', 'font', 'size', 'bold', 'italic', 'underline', 'align', 'strike', 'script', 'blockquote', 'background', 'list', 'bullet', 'indent', 'link', 'image', 'color', 'em', 'p', 'divider', 'hr', 'customTag', 'mention'];
 
 // Quill Toolbar component
-export const QuillToolbar = () => (
+export const QuillToolbar = ({ inReview }) => (
     <div id="toolbar">
         <span className="ql-formats">
             <select className="ql-header" defaultValue="6">
@@ -50,9 +50,14 @@ export const QuillToolbar = () => (
 
         <span className="ql-formats">
             <button className="ql-blockquote" />
-            <button className="ql-comment">
-                <CommentButton />
-            </button>
+
+            {inReview ? (
+                <button className="ql-comment">
+                    <CommentButton />
+                </button>
+            ) : (
+                ''
+            )}
         </span>
         <span className="ql-formats">
             <button className="ql-list" value="ordered" />

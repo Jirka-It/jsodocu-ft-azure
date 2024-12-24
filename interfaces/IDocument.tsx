@@ -12,6 +12,8 @@ export interface IDocument {
     state: string;
     template?: string;
     title?: string;
+    count?: number;
+    approved?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

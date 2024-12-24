@@ -6,16 +6,24 @@ import { create as createParagraph, remove as removeParagraph } from '@api/parag
 export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
     if (node.chapter) {
         const nodeToOpen = node.key;
-        let object = {};
-        object[nodeToOpen] = node.key;
-        setExpandedKeys(object);
+
+        setExpandedKeys((prevValue) => {
+            let object = prevValue;
+            object[nodeToOpen] = true;
+            return object;
+        });
+
+        //setExpandedKeys(object);
     }
 
     if (node.article) {
-        let object = {};
-        object[node.ownChapter] = node.key;
-        object[node.key] = node.key;
-        setExpandedKeys(object);
+        const nodeToOpen = node.key;
+
+        setExpandedKeys((prevValue) => {
+            let object = prevValue;
+            object[nodeToOpen] = true;
+            return object;
+        });
     }
 
     if (node.chapter) {
@@ -160,3 +168,40 @@ export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     }
 };
 
+export const updateComments = async (node: INodeGeneral, count, setNodes: Function) => {
+    if (node.article) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key == node.key) {
+                            a['count'] = count;
+                        }
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.paragraph) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        a.children.map((p) => {
+                            if (p.key == node.key) {
+                                p['count'] = count;
+                            }
+                        });
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};

@@ -55,7 +55,7 @@ const create = async (data: IParagraph): Promise<IParagraphResponseCreate> => {
         });
 };
 
-const update = async (id: string, data: IParagraphPartial): Promise<IParagraphResponse> => {
+const update = async (id: string, data: IParagraphPartial): Promise<IParagraph> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/${id}`, data)
         .then((res) => {

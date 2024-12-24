@@ -21,6 +21,41 @@ const findAll = async (params: any): Promise<IDocumentResponse> => {
         });
 };
 
+const findAllPreview = async (id: string, params: any): Promise<string> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/preview/${id}`, {
+            params: params
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
+const findAllComments = async (id: string): Promise<number> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/count-comments/${id}`)
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
+const findExport = async (id: string): Promise<any> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/export/${id}`)
+        .then((res) => {
+            return res;
+        })
+        .catch((error) => {
+            return error;
+        });
+};
+
 const findById = async (id: string): Promise<IDocument> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
@@ -88,7 +123,7 @@ const create = async (data: IDocument): Promise<IDocumentResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResponse> => {
+const update = async (id: string, data: IDocumentPartial): Promise<IDocument> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`, data)
         .then((res) => {
@@ -122,4 +157,4 @@ const remove = async (id: string): Promise<IDocumentResponse> => {
         });
 };
 
-export { findAll, findById, findByIdLight, findByName, create, update, remove };
+export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, update, remove };

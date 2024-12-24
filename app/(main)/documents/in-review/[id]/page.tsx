@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 
 import styles from './DocumentEdit.module.css';
-import VariableList from '@components/TabView/VariableList';
 import Editor from '@components/TabView/Editor';
 import Revision from '@components/TabView/Revision';
 import { findByIdLight } from '@api/documents';
@@ -28,10 +27,10 @@ const Document = () => {
         <section className={styles['layout-tab-view']}>
             <TabView>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <Editor document={document} />
+                    <Editor inReview={true} />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
-                    <Revision />
+                    <Revision inReview={true} />
                 </TabPanel>
             </TabView>
         </section>

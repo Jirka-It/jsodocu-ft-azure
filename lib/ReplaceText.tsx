@@ -1,5 +1,22 @@
 import { IVariableLight } from '@interfaces/IVariable';
 
+export const count = (str) => {
+    const re = new RegExp('comment data-tooltip', 'g');
+    return ((str || '').match(re) || []).length;
+};
+
+export const replaceComment = (str, searchParam, body) => {
+    let newString = '';
+
+    console.log('str1', str);
+    console.log('searchParam', searchParam);
+
+    newString = str.replace(searchParam, body);
+    console.log('str2', newString);
+
+    return newString;
+};
+
 export const replaceTextQuill = (text: string, variables: Array<IVariableLight>) => {
     if (!text || !variables) {
         return '';

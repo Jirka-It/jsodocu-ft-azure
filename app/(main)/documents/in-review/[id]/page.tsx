@@ -28,10 +28,10 @@ const Document = () => {
         <section className={styles['layout-tab-view']}>
             <TabView>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <Editor doc={document} inReview={true} />
+                    <Editor inReview={true} />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
-                    <Revision doc={document} inReview={true} />
+                    <Revision inReview={true} />
                 </TabPanel>
             </TabView>
         </section>

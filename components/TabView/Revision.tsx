@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 
 import stylesRevision from './Revision.module.css';
@@ -14,25 +14,25 @@ import { update } from '@api/documents';
 
 import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
+import { IDocument } from '@interfaces/IDocument';
 
-export default function Revision({ doc, inReview }) {
+export default function Revision({ inReview }) {
     const paramsUrl = useParams();
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
+    const [doc, setDoc] = useState<IDocument>(null);
     const [comments, setComments] = useState<number>(0);
     const [length, setLength] = useState(1);
     const [content, setContent] = useState<string>('');
     const [page, setPage] = useState<number>(1);
     const [users, setUsers] = useState<Array<IUser>>([]);
+    const router = useRouter();
 
     useEffect(() => {
         getInitialContent();
         getUsers();
         getComments();
 
-        if (inReview) {
-            setUser(doc.creator);
-        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -60,6 +60,12 @@ export default function Revision({ doc, inReview }) {
     const getInitialContent = async () => {
         try {
             const res = await findDocument(paramsUrl.id);
+            setDoc(res);
+
+            if (res) {
+                setUser(res.creator);
+            }
+
             const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 1 });
 
             setContent(content + res.title + resChapter);
@@ -100,6 +106,9 @@ export default function Revision({ doc, inReview }) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {
                 showInfo(toast, '', 'Documento asignado');
+                setTimeout(() => {
+                    router.push('/documents/in-edition');
+                }, 1000);
             }
         } catch (error) {
             showError(toast, '', 'Contacte con soporte');
@@ -116,6 +125,9 @@ export default function Revision({ doc, inReview }) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {
                 showInfo(toast, '', 'Documento devuelto');
+                setTimeout(() => {
+                    router.push('/documents/in-review');
+                }, 1000);
             }
         } catch (error) {
             showError(toast, '', 'Contacte con soporte');
@@ -132,6 +144,9 @@ export default function Revision({ doc, inReview }) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {
                 showInfo(toast, '', 'Documento aprobado');
+                setTimeout(() => {
+                    router.push('/documents/in-review');
+                }, 1000);
             }
         } catch (error) {
             showError(toast, '', 'Contacte con soporte');

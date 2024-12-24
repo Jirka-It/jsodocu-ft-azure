@@ -19,22 +19,23 @@ import EditorToolbar, { formats } from './EditorToolbar';
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
-import { findByIdLight as findDocument, update as updateDocument } from '@api/documents';
+import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import { IDocument } from '@interfaces/IDocument';
 
-export default function Editor({ doc, inReview }) {
+export default function Editor({ inReview }) {
     const toast = useRef(null);
     const quill = useRef(null);
     const params = useParams();
     const [timer, setTimer] = useState(null);
+    const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
-    const [content, setContent] = useState<string>(null);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
@@ -42,6 +43,7 @@ export default function Editor({ doc, inReview }) {
     useEffect(() => {
         getChapters();
         getVariables();
+        getDocument();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -60,6 +62,11 @@ export default function Editor({ doc, inReview }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [modules]);
 
+    const getDocument = async () => {
+        const res = await findByIdLight(params.id);
+        setDoc(res);
+    };
+
     const handleEditorClick = (e) => {
         const quillRef = quill.current.getEditor(); // Get Quill instance
         const clickedElement = e.target; // Element clicked on
@@ -74,7 +81,7 @@ export default function Editor({ doc, inReview }) {
                 newElement.innerHTML = `<p>${text}</p>`; // Customize content
 
                 const newBody = replaceComment(quill.current.value, clickedElement.outerHTML, text);
-                setContent(newBody);
+                setNodeSelected({ ...nodeSelected, content: newBody });
             }
         }
     };
@@ -233,14 +240,12 @@ export default function Editor({ doc, inReview }) {
     };
 
     const deleteNode = async () => {
-        //node, setNodes
         await deleteSection(nodeSelectedToDelete, setNodes);
         setNodeSelectedToDelete(null);
         setOpenModalClose(!openModalClose);
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
-        setContent(null);
         setNodeSelected(null);
         if (node && node.article) {
             const res = await findById(node.key);
@@ -256,7 +261,6 @@ export default function Editor({ doc, inReview }) {
     };
 
     const selectTitle = async () => {
-        setContent(null);
         setNodeSelected(null);
         const res = await findDocument(doc._id);
         setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
@@ -264,11 +268,13 @@ export default function Editor({ doc, inReview }) {
 
     //Events to quill
 
-    useEffect(() => {
-        // Save in API when the user stops typing
-        const delayDebounceFn = setTimeout(async () => {
-            if (nodeSelected && content !== null) {
-                let countComment = count(content);
+    const updateContent = async (content: string) => {
+        setNodeSelected({ ...nodeSelected, content });
+
+        clearTimeout(timer);
+        const newTimer = setTimeout(async () => {
+            if (nodeSelected) {
+                let countComment = count(nodeSelected.content);
 
                 if (nodeSelected && nodeSelected.article) {
                     await update(nodeSelected.key, { content, count: countComment });
@@ -287,8 +293,8 @@ export default function Editor({ doc, inReview }) {
             }
         }, 1000);
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [content]);
+        setTimer(newTimer);
+    };
 
     return (
         <section className="grid">
@@ -310,14 +316,14 @@ export default function Editor({ doc, inReview }) {
                 </div>
             </div>
 
-            {modules ? (
+            {modules && nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content ?? nodeSelected?.content} modules={modules} onChange={(e) => setContent(e)} />
+                        <ReactQuill theme="snow" formats={formats} ref={quill} value={nodeSelected?.content} modules={modules} onChange={(e) => updateContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content ?? nodeSelected?.content, variables) }}></div>
+                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(nodeSelected?.content, variables) }}></div>
                     </div>
                 </div>
             ) : (

@@ -5,9 +5,15 @@ export const count = (str) => {
     return ((str || '').match(re) || []).length;
 };
 
-export const replaceComment = (str, searchParam, text) => {
+export const replaceComment = (str, searchParam, body) => {
     let newString = '';
-    newString = str.replace(searchParam, text);
+
+    console.log('str1', str);
+    console.log('searchParam', searchParam);
+
+    newString = str.replace(searchParam, body);
+    console.log('str2', newString);
+
     return newString;
 };
 

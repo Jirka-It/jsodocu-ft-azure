@@ -39,6 +39,8 @@ export default function Editor({ inReview }) {
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
+    const [content, setContent] = useState<string>(null);
+
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
 
@@ -98,7 +100,6 @@ export default function Editor({ inReview }) {
 
                 // Replace the <img> with a <div> or any other tag you need
                 const newBody = replaceComment(quill.current.value, elementSelected, body);
-                setNodeSelected({ ...nodeSelected, content: newBody });
                 updateContent(newBody);
             }
         }
@@ -113,8 +114,6 @@ export default function Editor({ inReview }) {
             txt = 'User cancelled the prompt.';
         } else {
             const range = quill.current.unprivilegedEditor.getSelection();
-
-            console.log('range', range);
 
             if (range) {
                 if (range.length == 0) {
@@ -195,7 +194,7 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className="p-inputgroup flex-1  h-2rem">
+                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approve ? '' : 'custom-background') : ''}`}>
                     {node.article ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
 
                     <InputText
@@ -225,7 +224,7 @@ export default function Editor({ inReview }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className="flex align-items-center justify-content-between h-2rem">
+                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approve ? '' : 'custom-background'}`}>
                         <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge>
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
@@ -278,50 +277,46 @@ export default function Editor({ inReview }) {
         setOpenModalClose(!openModalClose);
     };
 
-    const handleClickEvent = async (node: INodeGeneral) => {
-        setNodeSelected(null);
-        if (node && node.article) {
-            const res = await findById(node.key);
-            setNodeSelected({ ...res, key: res._id });
-            return;
-        }
-
-        if (node && node.paragraph) {
-            const res = await findParagraph(node.key);
-            setNodeSelected({ ...res, key: res._id });
-            return;
-        }
+    const handleApprove = async (nodeSelected: INodeGeneral) => {
+        const res = await update(nodeSelected.key, { approved: true });
+        setNodeSelected({ ...res, key: res._id });
     };
+
+    const handleClickEvent = async (node: INodeGeneral) => {};
 
     const selectTitle = async () => {
         setNodeSelected(null);
         const res = await findDocument(doc._id);
         setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
+        setContent(res.title);
     };
 
     //Events to quill
 
     const updateContent = async (content: string) => {
         const countComment = count(content);
-        setNodeSelected({ ...nodeSelected, content });
+        setContent(content);
         updateComments(nodeSelected, countComment, setNodes);
 
         clearTimeout(timer);
         const newTimer = setTimeout(async () => {
             if (nodeSelected) {
                 if (nodeSelected && nodeSelected.article) {
-                    await update(nodeSelected.key, { content, count: countComment });
+                    const res = await update(nodeSelected.key, { content, count: countComment });
+                    setNodeSelected({ ...res, key: res._id });
                     return;
                 }
 
                 if (nodeSelected && nodeSelected.paragraph) {
-                    await updateParagraph(nodeSelected.key, { content, count: countComment });
+                    const res = await updateParagraph(nodeSelected.key, { content, count: countComment });
+                    setNodeSelected({ ...res, key: res._id });
                     return;
                 }
 
                 if (nodeSelected && nodeSelected.document) {
                     setDoc({ ...doc, count: countComment });
-                    await updateDocument(doc._id, { title: content, count: countComment });
+                    const res = await updateDocument(doc._id, { title: content, count: countComment });
+                    setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
                     return;
                 }
             }
@@ -334,7 +329,7 @@ export default function Editor({ inReview }) {
         <section className="grid">
             <Toast ref={toast} />
 
-            {inReview && nodeSelected ? <Button label="Aprobar" className={`${styles['button-approve']}`} severity="help" /> : ''}
+            {inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
@@ -358,7 +353,7 @@ export default function Editor({ inReview }) {
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill theme="snow" formats={formats} ref={quill} value={nodeSelected?.content} modules={modules} onChange={(e) => updateContent(e)} />
+                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content} modules={modules} onChange={(e) => updateContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(nodeSelected?.content, variables) }}></div>

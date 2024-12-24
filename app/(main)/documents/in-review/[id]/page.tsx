@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 
 import styles from './DocumentEdit.module.css';
-import VariableList from '@components/TabView/VariableList';
 import Editor from '@components/TabView/Editor';
 import Revision from '@components/TabView/Revision';
 import { findByIdLight } from '@api/documents';

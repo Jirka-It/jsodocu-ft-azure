@@ -7,9 +7,7 @@ export const count = (str) => {
 
 export const replaceComment = (str, searchParam, text) => {
     let newString = '';
-    const regex = new RegExp(`${searchParam}`, 'g');
-    newString = str.replaceAll(regex, text);
-
+    newString = str.replace(searchParam, text);
     return newString;
 };
 

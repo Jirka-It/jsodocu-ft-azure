@@ -8,6 +8,8 @@ import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
+import { IDocument } from '@interfaces/IDocument';
+
 import { IVariableLight } from '@interfaces/IVariable';
 import { count, replaceComment, replaceText } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, updateComments } from '@lib/Editor';
@@ -24,7 +26,6 @@ import { findByIdLight, findByIdLight as findDocument, update as updateDocument 
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
-import { IDocument } from '@interfaces/IDocument';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -77,13 +78,26 @@ export default function Editor({ inReview }) {
 
         if (quillRoot.contains(clickedElement)) {
             // Check if the clicked element is an image, link, or custom element
-            if (clickedElement.tagName === 'COMMENT') {
-                var text = clickedElement.innerText || clickedElement.textContent;
-                // Replace the <img> with a <div> or any other tag you need
-                const newElement = document.createElement('div');
-                newElement.innerHTML = `<p>${text}</p>`; // Customize content
+            if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+                var body = '';
+                var elementSelected = '';
+                if (clickedElement.tagName === 'COMMENT') {
+                    body = clickedElement.innerHTML;
+                    elementSelected = clickedElement.outerHTML;
+                }
 
-                const newBody = replaceComment(quill.current.value, clickedElement.outerHTML, text);
+                if (clickedElement.parentNode.tagName === 'COMMENT') {
+                    body = clickedElement.parentNode.innerHTML;
+                    elementSelected = clickedElement.parentNode.outerHTML;
+                }
+
+                if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+                    body = clickedElement.parentNode.parentNode.innerHTML;
+                    elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+                }
+
+                // Replace the <img> with a <div> or any other tag you need
+                const newBody = replaceComment(quill.current.value, elementSelected, body);
                 setNodeSelected({ ...nodeSelected, content: newBody });
                 updateContent(newBody);
             }
@@ -99,6 +113,9 @@ export default function Editor({ inReview }) {
             txt = 'User cancelled the prompt.';
         } else {
             const range = quill.current.unprivilegedEditor.getSelection();
+
+            console.log('range', range);
+
             if (range) {
                 if (range.length == 0) {
                     alert('Selecciona un texto');
@@ -316,6 +333,9 @@ export default function Editor({ inReview }) {
     return (
         <section className="grid">
             <Toast ref={toast} />
+
+            {inReview && nodeSelected ? <Button label="Aprobar" className={`${styles['button-approve']}`} severity="help" /> : ''}
+
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>

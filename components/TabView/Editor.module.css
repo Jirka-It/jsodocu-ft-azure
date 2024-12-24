@@ -20,3 +20,10 @@
     font-weight: lighter !important;
     opacity: 0.5;
 }
+
+.button-approve {
+    position: fixed;
+    bottom: 2%;
+    right: 50%;
+    z-index: 9999;
+}

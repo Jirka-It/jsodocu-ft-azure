@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, createElement } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
 import { Badge } from 'primereact/badge';
+import { Tooltip } from 'primereact/tooltip';
 
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
@@ -101,7 +102,8 @@ export default function Editor({ inReview }) {
 
                 // Replace the <img> with a <div> or any other tag you need
                 const newBody = replaceComment(quill.current.value, elementSelected, body);
-                setContent(newBody);
+
+                updateContent(newBody, true);
             }
         }
     };
@@ -195,8 +197,30 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approved || !inReview ? '' : 'custom-background') : ''}`}>
-                    {node.article && node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
+                <div className="p-inputgroup flex h-2rem">
+                    {node.article && inReview ? (
+                        <>
+                            {node.count > 0 && !node.approved ? (
+                                <>
+                                    {' '}
+                                    <Tooltip target=".count-badge-article" />
+                                    <Badge
+                                        className="mr-1 cursor-pointer border-circle count-badge-article"
+                                        value=""
+                                        data-pr-tooltip={`${node.count}`}
+                                        data-pr-position="right"
+                                        data-pr-at="right+5 top"
+                                        data-pr-my="left center-2"
+                                        severity="danger"
+                                    ></Badge>
+                                </>
+                            ) : (
+                                <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                            )}
+                        </>
+                    ) : (
+                        ''
+                    )}
 
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
@@ -225,11 +249,36 @@ export default function Editor({ inReview }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approved || !inReview ? '' : 'custom-background'}`}>
-                        {node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
-                        <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
-                            {node.label}
-                        </h6>
+                    <div className="flex align-items-center justify-content-between h-2rem">
+                        <span className="flex">
+                            {inReview ? (
+                                <>
+                                    {node.count > 0 && !node.approved ? (
+                                        <>
+                                            <Tooltip target=".count-badge-paragraph" />
+                                            <Badge
+                                                className="mr-1 cursor-pointer border-circle count-badge-paragraph"
+                                                value=""
+                                                data-pr-tooltip={`${node.count}`}
+                                                data-pr-position="right"
+                                                data-pr-at="right+5 top"
+                                                data-pr-my="left center-2"
+                                                severity="danger"
+                                            ></Badge>
+                                        </>
+                                    ) : (
+                                        <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                                    )}
+                                </>
+                            ) : (
+                                ''
+                            )}
+
+                            <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
+                                {node.label}
+                            </h6>
+                        </span>
+
                         <div>
                             <Button
                                 size="small"
@@ -296,21 +345,6 @@ export default function Editor({ inReview }) {
         }
     };
 
-    const handleApprove = async (nodeSelected: INodeGeneral) => {
-        if (nodeSelected && nodeSelected.article) {
-            updateApprove(nodeSelected, setNodes);
-            await update(nodeSelected.key, { approved: true });
-        }
-        if (nodeSelected && nodeSelected.paragraph) {
-            updateApprove(nodeSelected, setNodes);
-            await updateParagraph(nodeSelected.key, { approved: true });
-        }
-        if (nodeSelected && nodeSelected.document) {
-            setDoc({ ...doc, approved: true });
-            await updateDocument(doc._id, { approved: true });
-        }
-    };
-
     const selectTitle = async () => {
         setInputClicked(true);
         setNodeSelected(null);
@@ -319,16 +353,41 @@ export default function Editor({ inReview }) {
         setContent(res.title);
     };
 
+    const handleApprove = async (nodeSelected: INodeGeneral, state: boolean) => {
+        if (state) {
+            const countComment = count(content);
+
+            if (countComment > 0) {
+                showError(toast, '', 'Tienes comentarios');
+                return;
+            }
+        }
+        if (nodeSelected && nodeSelected.article) {
+            updateApprove(nodeSelected, setNodes, state);
+            await update(nodeSelected.key, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+        if (nodeSelected && nodeSelected.paragraph) {
+            updateApprove(nodeSelected, setNodes, state);
+            await updateParagraph(nodeSelected.key, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+        if (nodeSelected && nodeSelected.document) {
+            setDoc({ ...doc, approved: state });
+            await updateDocument(doc._id, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+    };
+
     //Events to quill
 
-    const updateContent = async (content: string) => {
+    const updateContent = async (content: string, permit: boolean = false) => {
         const countComment = count(content);
-        setContent(content);
         updateComments(nodeSelected, countComment, setNodes);
-
+        setContent(content);
         clearTimeout(timer);
         const newTimer = setTimeout(async () => {
-            if (nodeSelected && !inputClicked) {
+            if (nodeSelected && (!inputClicked || permit)) {
                 if (nodeSelected && nodeSelected.article) {
                     const res = await update(nodeSelected.key, { content, count: countComment });
                     setNodeSelected({ ...res, key: res._id });
@@ -348,7 +407,7 @@ export default function Editor({ inReview }) {
                     return;
                 }
             }
-        }, 1500);
+        }, 1000);
 
         setTimer(newTimer);
     };
@@ -356,15 +415,29 @@ export default function Editor({ inReview }) {
     return (
         <section className="grid">
             <Toast ref={toast} />
+            {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
-            {inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']}`} severity="warning" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
                 <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    {doc?.count ? <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge> : ''}
+                    {inReview ? (
+                        <>
+                            {doc?.count > 0 && !doc?.approved ? (
+                                <>
+                                    <Tooltip target=".count-badge-title" />
+                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count}`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
+                                </>
+                            ) : (
+                                <>{doc?.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                            )}
+                        </>
+                    ) : (
+                        ''
+                    )}
                     Título
                 </div>
 
@@ -383,12 +456,13 @@ export default function Editor({ inReview }) {
                         <EditorToolbar inReview={inReview} />
                         <ReactQuill
                             theme="snow"
+                            onFocus={() => setInputClicked(false)}
                             formats={formats}
                             ref={quill}
                             value={content}
                             modules={modules}
+                            readOnly={nodeSelected.approved}
                             onChange={(e) => {
-                                setInputClicked(false);
                                 updateContent(e);
                             }}
                         />

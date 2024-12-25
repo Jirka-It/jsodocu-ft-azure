@@ -206,14 +206,14 @@ export const updateComments = async (node: INodeGeneral, count, setNodes: Functi
     }
 };
 
-export const updateApprove = async (node: INodeGeneral, setNodes: Function) => {
+export const updateApprove = async (node: INodeGeneral, setNodes: Function, state: boolean) => {
     if (node.article) {
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key == node.key) {
-                            a['approved'] = true;
+                            a['approved'] = state;
                         }
                     });
                 }
@@ -231,7 +231,7 @@ export const updateApprove = async (node: INodeGeneral, setNodes: Function) => {
                     c.children.map((a) => {
                         a.children.map((p) => {
                             if (p.key == node.key) {
-                                p['approved'] = true;
+                                p['approved'] = state;
                             }
                         });
                     });

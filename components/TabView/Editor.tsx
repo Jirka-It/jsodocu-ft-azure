@@ -12,8 +12,8 @@ import { INode, INodeGeneral } from '@interfaces/INode';
 import { IDocument } from '@interfaces/IDocument';
 
 import { IVariableLight } from '@interfaces/IVariable';
-import { count, replaceComment, replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent, updateApprove, updateComments } from '@lib/Editor';
+import { count, replaceText } from '@lib/ReplaceText';
+import { addComment, addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -58,10 +58,10 @@ export default function Editor({ inReview }) {
             if (typeof window !== 'undefined') {
                 if (quill.current) {
                     const quillRef = quill.current.getEditor(); // Get the Quill instance
-                    quillRef.root.addEventListener('click', handleEditorClick);
+                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
 
                     return () => {
-                        quillRef.root.removeEventListener('click', handleEditorClick);
+                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
                     };
                 }
             }
@@ -75,60 +75,7 @@ export default function Editor({ inReview }) {
         setDoc(res);
     };
 
-    const handleEditorClick = (e) => {
-        const quillRef = quill.current.getEditor(); // Get Quill instance
-        const clickedElement = e.target; // Element clicked on
-        const quillRoot = quillRef.root; // Quill's root DOM node
-
-        if (quillRoot.contains(clickedElement)) {
-            // Check if the clicked element is an image, link, or custom element
-            if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
-                var body = '';
-                var elementSelected = '';
-                if (clickedElement.tagName === 'COMMENT') {
-                    body = clickedElement.innerHTML;
-                    elementSelected = clickedElement.outerHTML;
-                }
-
-                if (clickedElement.parentNode.tagName === 'COMMENT') {
-                    body = clickedElement.parentNode.innerHTML;
-                    elementSelected = clickedElement.parentNode.outerHTML;
-                }
-
-                if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
-                    body = clickedElement.parentNode.parentNode.innerHTML;
-                    elementSelected = clickedElement.parentNode.parentNode.outerHTML;
-                }
-
-                // Replace the <img> with a <div> or any other tag you need
-                const newBody = replaceComment(quill.current.value, elementSelected, body);
-
-                updateContent(newBody, true);
-            }
-        }
-    };
-
     //Quill functions
-
-    const addComment = () => {
-        var prompt = window.prompt('Ingrese un comentario', '');
-        var txt;
-        if (prompt == null || prompt == '') {
-            txt = 'User cancelled the prompt.';
-        } else {
-            const range = quill.current.unprivilegedEditor.getSelection();
-
-            if (range) {
-                if (range.length == 0) {
-                    alert('Selecciona un texto');
-                } else {
-                    quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
-                }
-            } else {
-                alert('Editor no seleccionado');
-            }
-        }
-    };
 
     // Get data and quill's modules
     const getChapters = async () => {
@@ -163,7 +110,7 @@ export default function Editor({ inReview }) {
             toolbar: {
                 container: '#toolbar',
                 handlers: {
-                    comment: addComment
+                    comment: () => addComment(quill)
                 }
             },
             mention: {
@@ -386,6 +333,7 @@ export default function Editor({ inReview }) {
         updateComments(nodeSelected, countComment, setNodes);
         setContent(content);
         clearTimeout(timer);
+
         const newTimer = setTimeout(async () => {
             if (nodeSelected && (!inputClicked || permit)) {
                 if (nodeSelected && nodeSelected.article) {
@@ -454,18 +402,7 @@ export default function Editor({ inReview }) {
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill
-                            theme="snow"
-                            onFocus={() => setInputClicked(false)}
-                            formats={formats}
-                            ref={quill}
-                            value={content}
-                            modules={modules}
-                            readOnly={nodeSelected.approved}
-                            onChange={(e) => {
-                                updateContent(e);
-                            }}
-                        />
+                        <ReactQuill theme="snow" onFocus={() => setInputClicked(false)} formats={formats} ref={quill} value={content} modules={modules} readOnly={nodeSelected.approved} onChange={(e) => updateContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>

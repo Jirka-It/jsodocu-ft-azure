@@ -12,7 +12,7 @@ import { IDocument } from '@interfaces/IDocument';
 
 import { IVariableLight } from '@interfaces/IVariable';
 import { count, replaceComment, replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent, updateComments } from '@lib/Editor';
+import { addSection, deleteSection, handleChangeEvent, updateApprove, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -194,8 +194,8 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approve ? '' : 'custom-background') : ''}`}>
-                    {node.article ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
+                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approved ? '' : 'custom-background') : ''}`}>
+                    {node.article && node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
 
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
@@ -224,8 +224,8 @@ export default function Editor({ inReview }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approve ? '' : 'custom-background'}`}>
-                        <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge>
+                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approved ? '' : 'custom-background'}`}>
+                        {node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
                         </h6>
@@ -294,15 +294,21 @@ export default function Editor({ inReview }) {
         }
     };
 
-    {
-        /*
-     const handleApprove = async (node: INodeGeneral) => {
-
-        const res = await updateParagraph(nodeSelected.key, { content, count: countComment });
+    const handleApprove = async (nodeSelected: INodeGeneral) => {
+        if (nodeSelected && nodeSelected.article) {
+            updateApprove(nodeSelected, setNodes);
+            await update(nodeSelected.key, { approved: true });
+        }
+        if (nodeSelected && nodeSelected.paragraph) {
+            updateApprove(nodeSelected, setNodes);
+            await updateParagraph(nodeSelected.key, { approved: true });
+        }
+        if (nodeSelected && nodeSelected.document) {
+            setDoc({ ...doc, approved: true });
+            await updateDocument(doc._id, { approved: true });
+        }
     };
 
-    */
-    }
     const selectTitle = async () => {
         setNodeSelected(null);
         const res = await findDocument(doc._id);
@@ -348,16 +354,14 @@ export default function Editor({ inReview }) {
         <section className="grid">
             <Toast ref={toast} />
 
-            {/*
-            inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''
-            */}
+            {inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
                 <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge>
+                    {doc?.count ? <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge> : ''}
                     Título
                 </div>
 

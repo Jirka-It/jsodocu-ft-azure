@@ -9,13 +9,14 @@ import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, remove } from '@api/documents';
+import { findAll, remove, update } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
+import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -45,14 +46,20 @@ const Documents = () => {
         CopyToClipBoard(data, toast);
     };
 
-    const handleEdit = (data: IDocument) => {
-        setDocument(data);
-        setOpenModal(true);
-    };
-
-    const handleModalDelete = (data: IDocument) => {
-        setDocument(data);
-        setOpenModalClose(true);
+    const handleActive = async (data: IDocument) => {
+        try {
+            const res = await update(data._id, {
+                step: State.EDITION
+            });
+            if (!res) {
+                showWarn(toast, '', 'Contacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento en edición');
+                getData();
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handlePagination = (e: DataTableStateEvent) => {
@@ -100,7 +107,15 @@ const Documents = () => {
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
+                    <Column
+                        field="actions"
+                        body={(rowData) => (
+                            <>
+                                <Button onClick={() => handleActive(rowData)} icon="pi pi-folder" severity="help" tooltip="Activar documento" />
+                            </>
+                        )}
+                        header="Acciones"
+                    ></Column>
                 </DataTable>
             </div>
         </div>

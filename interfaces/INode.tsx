@@ -43,6 +43,7 @@ export interface INodeGeneral {
     content?: string;
     count?: number;
     chapter?: boolean;
+    approved?: boolean;
     article?: boolean;
     paragraph?: boolean;
     document?: boolean;

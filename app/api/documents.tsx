@@ -47,7 +47,7 @@ const findAllComments = async (id: string): Promise<number> => {
 
 const findExport = async (id: string): Promise<any> => {
     return await axiosInstance
-        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/export/${id}`)
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/export/${id}`, { responseType: 'blob' })
         .then((res) => {
             return res;
         })

@@ -7,13 +7,14 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll } from '@api/documents';
+import { findAll, update } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
+import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -44,6 +45,22 @@ const Documents = () => {
 
     const handleCopy = (data: string) => {
         CopyToClipBoard(data, toast);
+    };
+
+    const handleArchive = async (data: IDocument) => {
+        try {
+            const res = await update(data._id, {
+                step: State.ARCHIVED
+            });
+            if (!res) {
+                showWarn(toast, '', 'Contacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento archivado');
+                getData();
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handlePagination = (e: DataTableStateEvent) => {
@@ -89,7 +106,16 @@ const Documents = () => {
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <Button onClick={() => handleView(rowData._id)} icon="pi pi-file-import" className="mr-2" tooltip="Revisar" />} header="Acciones"></Column>
+                    <Column
+                        field="actions"
+                        body={(rowData) => (
+                            <>
+                                <Button onClick={() => handleView(rowData._id)} icon="pi pi-file-import" className="mr-2" tooltip="Revisar" />
+                                <Button onClick={() => handleArchive(rowData)} icon="pi pi-folder" severity="help" tooltip="Archivar" />
+                            </>
+                        )}
+                        header="Acciones"
+                    ></Column>
                 </DataTable>
             </div>
         </div>

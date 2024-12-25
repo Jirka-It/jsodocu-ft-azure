@@ -205,3 +205,41 @@ export const updateComments = async (node: INodeGeneral, count, setNodes: Functi
         });
     }
 };
+
+export const updateApprove = async (node: INodeGeneral, setNodes: Function) => {
+    if (node.article) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key == node.key) {
+                            a['approved'] = true;
+                        }
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.paragraph) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        a.children.map((p) => {
+                            if (p.key == node.key) {
+                                p['approved'] = true;
+                            }
+                        });
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};

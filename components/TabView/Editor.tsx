@@ -40,6 +40,7 @@ export default function Editor({ inReview }) {
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
+    const [inputClicked, setInputClicked] = useState<boolean>(false);
 
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
@@ -100,7 +101,7 @@ export default function Editor({ inReview }) {
 
                 // Replace the <img> with a <div> or any other tag you need
                 const newBody = replaceComment(quill.current.value, elementSelected, body);
-                updateContent(newBody);
+                setContent(newBody);
             }
         }
     };
@@ -194,7 +195,7 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approved ? '' : 'custom-background') : ''}`}>
+                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approved || !inReview ? '' : 'custom-background') : ''}`}>
                     {node.article && node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
 
                     <InputText
@@ -224,7 +225,7 @@ export default function Editor({ inReview }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approved ? '' : 'custom-background'}`}>
+                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approved || !inReview ? '' : 'custom-background'}`}>
                         {node.count ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
                         <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
                             {node.label}
@@ -278,6 +279,7 @@ export default function Editor({ inReview }) {
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
+        setInputClicked(true);
         setNodeSelected(null);
         if (node && node.article) {
             const res = await findById(node.key);
@@ -310,6 +312,7 @@ export default function Editor({ inReview }) {
     };
 
     const selectTitle = async () => {
+        setInputClicked(true);
         setNodeSelected(null);
         const res = await findDocument(doc._id);
         setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
@@ -325,7 +328,7 @@ export default function Editor({ inReview }) {
 
         clearTimeout(timer);
         const newTimer = setTimeout(async () => {
-            if (nodeSelected) {
+            if (nodeSelected && !inputClicked) {
                 if (nodeSelected && nodeSelected.article) {
                     const res = await update(nodeSelected.key, { content, count: countComment });
                     setNodeSelected({ ...res, key: res._id });
@@ -345,7 +348,7 @@ export default function Editor({ inReview }) {
                     return;
                 }
             }
-        }, 1000);
+        }, 1500);
 
         setTimer(newTimer);
     };
@@ -378,10 +381,20 @@ export default function Editor({ inReview }) {
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content} modules={modules} onChange={(e) => updateContent(e)} />
+                        <ReactQuill
+                            theme="snow"
+                            formats={formats}
+                            ref={quill}
+                            value={content}
+                            modules={modules}
+                            onChange={(e) => {
+                                setInputClicked(false);
+                                updateContent(e);
+                            }}
+                        />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(nodeSelected?.content, variables) }}></div>
+                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
                 </div>
             ) : (

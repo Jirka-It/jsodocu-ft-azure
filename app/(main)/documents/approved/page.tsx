@@ -7,7 +7,6 @@ import { Button } from 'primereact/button';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
-import BasicActions from '@components/TableExtensions/BasicActions';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { findAll, findExport, remove } from '@api/documents';
@@ -17,7 +16,7 @@ import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
-import { showError, showInfo, showWarn } from '@lib/ToastMessages';
+import { showError, showInfo } from '@lib/ToastMessages';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -49,6 +48,7 @@ const Documents = () => {
 
     const handleExport = async (data: IDocument) => {
         try {
+            showInfo(toast, '', 'Exportando...');
             const res = await findExport(data._id);
 
             var file = new Blob([res.data], {
@@ -63,7 +63,9 @@ const Documents = () => {
             anchorElement.click();
             anchorElement.remove();
             URL.revokeObjectURL(reportXlsxUrl);
-        } catch (error) {}
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handlePagination = (e: DataTableStateEvent) => {

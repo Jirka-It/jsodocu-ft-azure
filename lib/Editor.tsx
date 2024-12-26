@@ -246,7 +246,6 @@ export const updateApprove = async (node: INodeGeneral, setNodes: Function, stat
 };
 
 export const handleEditorClick = (quill, setContent: Function, updateContent: Function, e, nodeSelected) => {
-    console.log('nodeSelected', nodeSelected);
     const quillRef = quill.current.getEditor(); // Get Quill instance
     const clickedElement = e.target; // Element clicked on
     const quillRoot = quillRef.root; // Quill's root DOM node
@@ -274,11 +273,7 @@ export const handleEditorClick = (quill, setContent: Function, updateContent: Fu
             // Replace the <img> with a <div> or any other tag you need
             const newBody = replaceComment(quill.current.value, elementSelected, body);
 
-            if (nodeSelected.document) {
-                updateContent(newBody, true);
-            } else {
-                setContent(newBody);
-            }
+            updateContent(newBody, true);
         }
     }
 };

@@ -145,7 +145,7 @@ export default function Editor({ inReview }) {
         if (node.chapter || node.article) {
             label = (
                 <div className="p-inputgroup flex h-2rem">
-                    {node.article && inReview ? (
+                    {(node.article && inReview) || node.count > 0 ? (
                         <>
                             {node.count > 0 && !node.approved ? (
                                 <>
@@ -198,7 +198,7 @@ export default function Editor({ inReview }) {
                 <div>
                     <div className="flex align-items-center justify-content-between h-2rem">
                         <span className="flex">
-                            {inReview ? (
+                            {inReview || node.count > 0 ? (
                                 <>
                                     {node.count > 0 && !node.approved ? (
                                         <>
@@ -365,14 +365,14 @@ export default function Editor({ inReview }) {
             <Toast ref={toast} />
             {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
-            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']}`} severity="warning" /> : ''}
+            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
                 <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    {inReview ? (
+                    {inReview || doc?.count > 0 ? (
                         <>
                             {doc?.count > 0 && !doc?.approved ? (
                                 <>

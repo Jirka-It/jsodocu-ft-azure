@@ -66,7 +66,7 @@ export default function Revision({ inReview }) {
                 setUser(res.creator);
             }
 
-            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 30 });
+            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 5 });
 
             setContent(content + res.title + '\n' + resChapter);
         } catch (error) {
@@ -74,7 +74,7 @@ export default function Revision({ inReview }) {
         }
     };
 
-    const getChapters = async (page: number = 1, size: number = 30) => {
+    const getChapters = async (page: number = 1, size: number = 5) => {
         const params = { page, size };
         const res = await findAllPreview(paramsUrl.id, params);
         if (res) {
@@ -164,14 +164,16 @@ export default function Revision({ inReview }) {
                         <label htmlFor="name">Usuario asignado</label>
                         <Dropdown disabled={true} value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
 
-                        <div className="flex justify-content-center mt-5">{comments ? <Button label="Devolver" severity="warning" onClick={() => handleBack()} /> : <Button label="Aprobar" onClick={() => handleApprove()} />}</div>
+                        <div className="flex justify-content-center mt-5">
+                            {comments ? <Button className="text-white" label="Corregir documento" severity="warning" onClick={() => handleBack()} /> : <Button label="Aprobar documento" onClick={() => handleApprove()} />}
+                        </div>
                     </>
                 ) : (
                     <>
                         <label htmlFor="name">Usuario asignado</label>
                         <Dropdown value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
 
-                        <div className="flex justify-content-center mt-5">{comments && comments > 0 ? <Button label="Tienes comentarios" severity="danger" /> : <Button label="Asignar" onClick={() => handleSubmit()} />}</div>
+                        <div className="flex justify-content-center mt-5">{comments && comments > 0 ? <Button label={`Tienes ${comments} comentarios`} severity="danger" /> : <Button label="Asignar documento" onClick={() => handleSubmit()} />}</div>
                     </>
                 )}
             </div>

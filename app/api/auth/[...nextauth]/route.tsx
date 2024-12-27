@@ -18,18 +18,17 @@ const handler = NextAuth({
             },
 
             async authorize(credentials, req) {
-                const res = await axios.post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/login`, { username: credentials.email, password: credentials.password });
+                try {
+                    const res = await axios.post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/login`, { username: credentials.email, password: credentials.password });
+                    const user = res.data;
 
-                if (res.status === HttpStatus.UNAUTHORIZED) {
-                    return { status: res?.status };
-                }
-
-                const user = res.data;
-
-                if (user) {
-                    return user;
-                } else {
-                    return null;
+                    if (user) {
+                        return user;
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    throw new Error(error.status);
                 }
             }
         })

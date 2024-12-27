@@ -7,12 +7,7 @@ export const count = (str) => {
 
 export const replaceComment = (str, searchParam, body) => {
     let newString = '';
-
-    console.log('str1', str);
-    console.log('searchParam', searchParam);
-
     newString = str.replace(searchParam, body);
-    console.log('str2', newString);
 
     return newString;
 };

@@ -2,6 +2,7 @@ import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
+import { replaceComment } from './ReplaceText';
 
 export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
     if (node.chapter) {
@@ -203,5 +204,96 @@ export const updateComments = async (node: INodeGeneral, count, setNodes: Functi
             });
             return [...modifiedNodes];
         });
+    }
+};
+
+export const updateApprove = async (node: INodeGeneral, setNodes: Function, state: boolean) => {
+    if (node.article) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        if (a.key == node.key) {
+                            a['approved'] = state;
+                        }
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+
+    if (node.paragraph) {
+        setNodes((prevArray) => {
+            const modifiedNodes = prevArray.map((c) => {
+                if (c.key === node.ownChapter) {
+                    c.children.map((a) => {
+                        a.children.map((p) => {
+                            if (p.key == node.key) {
+                                p['approved'] = state;
+                            }
+                        });
+                    });
+                }
+
+                return c;
+            });
+            return [...modifiedNodes];
+        });
+    }
+};
+
+export const handleEditorClick = (quill, setContent: Function, updateContent: Function, e, nodeSelected) => {
+    const quillRef = quill.current.getEditor(); // Get Quill instance
+    const clickedElement = e.target; // Element clicked on
+    const quillRoot = quillRef.root; // Quill's root DOM node
+
+    if (quillRoot.contains(clickedElement)) {
+        // Check if the clicked element is an image, link, or custom element
+        if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+            var body = '';
+            var elementSelected = '';
+            if (clickedElement.tagName === 'COMMENT') {
+                body = clickedElement.innerHTML;
+                elementSelected = clickedElement.outerHTML;
+            }
+
+            if (clickedElement.parentNode.tagName === 'COMMENT') {
+                body = clickedElement.parentNode.innerHTML;
+                elementSelected = clickedElement.parentNode.outerHTML;
+            }
+
+            if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
+                body = clickedElement.parentNode.parentNode.innerHTML;
+                elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+            }
+
+            // Replace the <img> with a <div> or any other tag you need
+            const newBody = replaceComment(quill.current.value, elementSelected, body);
+
+            updateContent(newBody, true);
+        }
+    }
+};
+
+export const addComment = (quill) => {
+    var prompt = window.prompt('Ingrese un comentario', '');
+    var txt;
+    if (prompt == null || prompt == '') {
+        txt = 'User cancelled the prompt.';
+    } else {
+        const range = quill.current.unprivilegedEditor.getSelection();
+
+        if (range) {
+            if (range.length == 0) {
+                alert('Selecciona un texto');
+            } else {
+                quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
+            }
+        } else {
+            alert('Editor no seleccionado');
+        }
     }
 };

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, createElement } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
 import { Badge } from 'primereact/badge';
+import { Tooltip } from 'primereact/tooltip';
 
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
@@ -11,8 +12,8 @@ import { INode, INodeGeneral } from '@interfaces/INode';
 import { IDocument } from '@interfaces/IDocument';
 
 import { IVariableLight } from '@interfaces/IVariable';
-import { count, replaceComment, replaceText } from '@lib/ReplaceText';
-import { addSection, deleteSection, handleChangeEvent, updateComments } from '@lib/Editor';
+import { count, replaceText } from '@lib/ReplaceText';
+import { addComment, addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { findById, update } from '@api/articles';
@@ -40,6 +41,7 @@ export default function Editor({ inReview }) {
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
+    const [inputClicked, setInputClicked] = useState<boolean>(false);
 
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
@@ -56,10 +58,10 @@ export default function Editor({ inReview }) {
             if (typeof window !== 'undefined') {
                 if (quill.current) {
                     const quillRef = quill.current.getEditor(); // Get the Quill instance
-                    quillRef.root.addEventListener('click', handleEditorClick);
+                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
 
                     return () => {
-                        quillRef.root.removeEventListener('click', handleEditorClick);
+                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
                     };
                 }
             }
@@ -73,59 +75,7 @@ export default function Editor({ inReview }) {
         setDoc(res);
     };
 
-    const handleEditorClick = (e) => {
-        const quillRef = quill.current.getEditor(); // Get Quill instance
-        const clickedElement = e.target; // Element clicked on
-        const quillRoot = quillRef.root; // Quill's root DOM node
-
-        if (quillRoot.contains(clickedElement)) {
-            // Check if the clicked element is an image, link, or custom element
-            if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
-                var body = '';
-                var elementSelected = '';
-                if (clickedElement.tagName === 'COMMENT') {
-                    body = clickedElement.innerHTML;
-                    elementSelected = clickedElement.outerHTML;
-                }
-
-                if (clickedElement.parentNode.tagName === 'COMMENT') {
-                    body = clickedElement.parentNode.innerHTML;
-                    elementSelected = clickedElement.parentNode.outerHTML;
-                }
-
-                if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
-                    body = clickedElement.parentNode.parentNode.innerHTML;
-                    elementSelected = clickedElement.parentNode.parentNode.outerHTML;
-                }
-
-                // Replace the <img> with a <div> or any other tag you need
-                const newBody = replaceComment(quill.current.value, elementSelected, body);
-                updateContent(newBody);
-            }
-        }
-    };
-
     //Quill functions
-
-    const addComment = () => {
-        var prompt = window.prompt('Ingrese un comentario', '');
-        var txt;
-        if (prompt == null || prompt == '') {
-            txt = 'User cancelled the prompt.';
-        } else {
-            const range = quill.current.unprivilegedEditor.getSelection();
-
-            if (range) {
-                if (range.length == 0) {
-                    alert('Selecciona un texto');
-                } else {
-                    quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
-                }
-            } else {
-                alert('Editor no seleccionado');
-            }
-        }
-    };
 
     // Get data and quill's modules
     const getChapters = async () => {
@@ -160,7 +110,7 @@ export default function Editor({ inReview }) {
             toolbar: {
                 container: '#toolbar',
                 handlers: {
-                    comment: addComment
+                    comment: () => addComment(quill)
                 }
             },
             mention: {
@@ -194,8 +144,30 @@ export default function Editor({ inReview }) {
 
         if (node.chapter || node.article) {
             label = (
-                <div className={`p-inputgroup flex-1 h-2rem ${node.article ? (node.approve ? '' : 'custom-background') : ''}`}>
-                    {node.article ? <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge> : ''}
+                <div className="p-inputgroup flex h-2rem">
+                    {(node.article && inReview) || node.count > 0 ? (
+                        <>
+                            {node.count > 0 && !node.approved ? (
+                                <>
+                                    {' '}
+                                    <Tooltip target=".count-badge-article" />
+                                    <Badge
+                                        className="mr-1 cursor-pointer border-circle count-badge-article"
+                                        value=""
+                                        data-pr-tooltip={`${node.count}`}
+                                        data-pr-position="right"
+                                        data-pr-at="right+5 top"
+                                        data-pr-my="left center-2"
+                                        severity="danger"
+                                    ></Badge>
+                                </>
+                            ) : (
+                                <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                            )}
+                        </>
+                    ) : (
+                        ''
+                    )}
 
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
@@ -224,11 +196,36 @@ export default function Editor({ inReview }) {
         if (node.paragraph) {
             label = (
                 <div>
-                    <div className={`flex align-items-center justify-content-between h-2rem ${node.approve ? '' : 'custom-background'}`}>
-                        <Badge className="mr-1 cursor-pointer border-circle" value={node.count ?? 0} severity="danger"></Badge>
-                        <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
-                            {node.label}
-                        </h6>
+                    <div className="flex align-items-center justify-content-between h-2rem">
+                        <span className="flex">
+                            {inReview || node.count > 0 ? (
+                                <>
+                                    {node.count > 0 && !node.approved ? (
+                                        <>
+                                            <Tooltip target=".count-badge-paragraph" />
+                                            <Badge
+                                                className="mr-1 cursor-pointer border-circle count-badge-paragraph"
+                                                value=""
+                                                data-pr-tooltip={`${node.count}`}
+                                                data-pr-position="right"
+                                                data-pr-at="right+5 top"
+                                                data-pr-my="left center-2"
+                                                severity="danger"
+                                            ></Badge>
+                                        </>
+                                    ) : (
+                                        <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                                    )}
+                                </>
+                            ) : (
+                                ''
+                            )}
+
+                            <h6 className={`m-0 cursor-pointer ${styles['custom-label']}`} onClick={() => handleClickEvent(node)}>
+                                {node.label}
+                            </h6>
+                        </span>
+
                         <div>
                             <Button
                                 size="small"
@@ -278,6 +275,7 @@ export default function Editor({ inReview }) {
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
+        setInputClicked(true);
         setNodeSelected(null);
         if (node && node.article) {
             const res = await findById(node.key);
@@ -294,32 +292,50 @@ export default function Editor({ inReview }) {
         }
     };
 
-    {
-        /*
-     const handleApprove = async (node: INodeGeneral) => {
-
-        const res = await updateParagraph(nodeSelected.key, { content, count: countComment });
-    };
-
-    */
-    }
     const selectTitle = async () => {
+        setInputClicked(true);
         setNodeSelected(null);
         const res = await findDocument(doc._id);
         setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
         setContent(res.title);
     };
 
+    const handleApprove = async (nodeSelected: INodeGeneral, state: boolean) => {
+        if (state) {
+            const countComment = count(content);
+
+            if (countComment > 0) {
+                showError(toast, '', 'Tienes comentarios');
+                return;
+            }
+        }
+        if (nodeSelected && nodeSelected.article) {
+            updateApprove(nodeSelected, setNodes, state);
+            await update(nodeSelected.key, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+        if (nodeSelected && nodeSelected.paragraph) {
+            updateApprove(nodeSelected, setNodes, state);
+            await updateParagraph(nodeSelected.key, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+        if (nodeSelected && nodeSelected.document) {
+            setDoc({ ...doc, approved: state });
+            await updateDocument(doc._id, { approved: state });
+            setNodeSelected({ ...nodeSelected, approved: state });
+        }
+    };
+
     //Events to quill
 
-    const updateContent = async (content: string) => {
+    const updateContent = async (content: string, permit: boolean = false) => {
         const countComment = count(content);
-        setContent(content);
         updateComments(nodeSelected, countComment, setNodes);
-
+        setContent(content);
         clearTimeout(timer);
+
         const newTimer = setTimeout(async () => {
-            if (nodeSelected) {
+            if (nodeSelected && (!inputClicked || permit)) {
                 if (nodeSelected && nodeSelected.article) {
                     const res = await update(nodeSelected.key, { content, count: countComment });
                     setNodeSelected({ ...res, key: res._id });
@@ -347,17 +363,29 @@ export default function Editor({ inReview }) {
     return (
         <section className="grid">
             <Toast ref={toast} />
+            {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
-            {/*
-            inReview && nodeSelected ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected)} className={`${styles['button-approve']}`} severity="help" /> : ''
-            */}
+            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
                 <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    <Badge className="mr-1 cursor-pointer" value={doc?.count ?? 0} severity="danger"></Badge>
+                    {inReview || doc?.count > 0 ? (
+                        <>
+                            {doc?.count > 0 && !doc?.approved ? (
+                                <>
+                                    <Tooltip target=".count-badge-title" />
+                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count}`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
+                                </>
+                            ) : (
+                                <>{doc?.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                            )}
+                        </>
+                    ) : (
+                        ''
+                    )}
                     Título
                 </div>
 
@@ -374,10 +402,10 @@ export default function Editor({ inReview }) {
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill theme="snow" formats={formats} ref={quill} value={content} modules={modules} onChange={(e) => updateContent(e)} />
+                        <ReactQuill theme="snow" onFocus={() => setInputClicked(false)} formats={formats} ref={quill} value={content} modules={modules} readOnly={nodeSelected.approved} onChange={(e) => updateContent(e)} />
                     </div>
                     <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(nodeSelected?.content, variables) }}></div>
+                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
                 </div>
             ) : (

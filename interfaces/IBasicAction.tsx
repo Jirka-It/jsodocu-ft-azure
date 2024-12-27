@@ -5,6 +5,7 @@ export interface IBasicAction {
 
 export interface IDocumentAction extends IBasicAction {
     handleView: Function;
+    children: any;
 }
 
 export interface ICustomAction extends IBasicAction {

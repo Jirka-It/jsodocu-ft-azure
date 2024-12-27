@@ -11,13 +11,14 @@ import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
-import { findAll, remove } from '@api/documents';
+import { findAll, remove, update } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
+import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -49,6 +50,22 @@ const Documents = () => {
     };
     const handleCopy = (data: string) => {
         CopyToClipBoard(data, toast);
+    };
+
+    const handleArchive = async (data: IDocument) => {
+        try {
+            const res = await update(data._id, {
+                step: State.ARCHIVED
+            });
+            if (!res) {
+                showWarn(toast, '', 'Contacte con soporte');
+            } else {
+                showInfo(toast, '', 'Documento archivado');
+                getData();
+            }
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handleEdit = (data: IDocument) => {
@@ -108,7 +125,15 @@ const Documents = () => {
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <DocumentActions handleView={() => handleView(rowData._id)} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
+                    <Column
+                        field="actions"
+                        body={(rowData) => (
+                            <DocumentActions handleView={() => handleView(rowData._id)} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)}>
+                                <Button onClick={() => handleArchive(rowData)} icon="pi pi-folder" className="ml-2" severity="help" tooltip="Archivar" />
+                            </DocumentActions>
+                        )}
+                        header="Acciones"
+                    ></Column>
                 </DataTable>
             </div>
         </div>

@@ -7,16 +7,16 @@ import { Button } from 'primereact/button';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
-import BasicActions from '@components/TableExtensions/BasicActions';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
-import { findAll, remove } from '@api/documents';
+import { findAll, findExport, remove } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
+import { showError, showInfo } from '@lib/ToastMessages';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -25,7 +25,7 @@ const Documents = () => {
     const [searchParam, setSearchParam] = useState<string>('');
     const debouncedSearchParam = useDebounce(searchParam, 500);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
-    const [document, setDocument] = useState<IDocument>(null);
+    const [doc, setDoc] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
 
     useEffect(() => {
@@ -46,14 +46,26 @@ const Documents = () => {
         CopyToClipBoard(data, toast);
     };
 
-    const handleEdit = (data: IDocument) => {
-        setDocument(data);
-        setOpenModal(true);
-    };
+    const handleExport = async (data: IDocument) => {
+        try {
+            showInfo(toast, '', 'Exportando...');
+            const res = await findExport(data._id);
 
-    const handleModalDelete = (data: IDocument) => {
-        setDocument(data);
-        setOpenModalClose(true);
+            var file = new Blob([res.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const reportXlsxUrl = URL.createObjectURL(file);
+            const anchorElement = document.createElement('a');
+            anchorElement.href = reportXlsxUrl;
+            anchorElement.download = `${data.name}.docx`;
+            anchorElement.target = '_blank';
+
+            anchorElement.click();
+            anchorElement.remove();
+            URL.revokeObjectURL(reportXlsxUrl);
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte');
+        }
     };
 
     const handlePagination = (e: DataTableStateEvent) => {
@@ -64,11 +76,11 @@ const Documents = () => {
     const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
-            setDocument(null);
+            setDoc(null);
             setTableState(null);
             getData(page, data?.elementsByPage);
         } else {
-            setDocument(null);
+            setDoc(null);
         }
     };
 
@@ -76,7 +88,7 @@ const Documents = () => {
         <div className="layout-documents">
             <Toast ref={toast} />
             <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
+            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(doc._id)} update={() => handleUpdate()} />
             <div className="card">
                 <div className="w-full flex justify-content-end mb-3">
                     <div className="flex align-items-center">
@@ -101,7 +113,15 @@ const Documents = () => {
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
+                    <Column
+                        field="actions"
+                        body={(rowData) => (
+                            <>
+                                <Button onClick={() => handleExport(rowData)} icon="pi pi-file-import" className="mr-2" tooltip="Exportar" />
+                            </>
+                        )}
+                        header="Acciones"
+                    ></Column>
                 </DataTable>
             </div>
         </div>

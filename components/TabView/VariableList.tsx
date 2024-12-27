@@ -12,7 +12,6 @@ import { Calendar } from 'primereact/calendar';
 import { Toast } from 'primereact/toast';
 
 import VariableModal from '@components/Modals/VariableModal';
-import BasicStates from '@components/TableExtensions/BasicStates';
 import { VariableType } from '@enums/DocumentEnum';
 import VariableActions from '@components/TableExtensions/VariableActions';
 import { IVariable } from '@interfaces/IVariable';
@@ -22,6 +21,7 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { departments } from '@lib/data';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { Badge } from 'primereact/badge';
+import { CutText } from '@lib/CutText';
 
 const types = [
     { name: 'Texto', value: VariableType.TEXT },
@@ -152,7 +152,7 @@ export default function VariableList() {
                 <VariableModal state={openModal} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} />
                 <DataTable value={variables} emptyMessage=" ">
                     <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
-                    <Column field="name" header="Nombre"></Column>
+                    <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData.name)}`}></Column>
                     <Column field="value" header="Valor" body={variableValue}></Column>
                     <Column field="category.name" header="Categoría" body={(rowData) => <Badge value={rowData.category.name} severity="danger"></Badge>}></Column>
                     <Column field="type" header="Tipo" body={typeValue}></Column>

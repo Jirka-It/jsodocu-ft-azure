@@ -1,12 +1,12 @@
 .layout-footer {
     background: var(--surface-card);
-    height: 4rem;
+    height: 3rem;
     border-top: 1px solid var(--surface-border);
     border-bottom: 1px solid var(--surface-border);
     padding: 0 2rem;
     display: flex;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: center;
 
     .footer-logo-container {
         display: flex;
@@ -16,7 +16,7 @@
             width: 1.5rem;
             height: 1.5rem;
         }
-    
+
         .footer-app-name {
             font-size: 1rem;
             font-weight: 600;
@@ -24,7 +24,7 @@
             margin-left: .5rem;
         }
     }
-    
+
     .footer-copyright {
         font-size: .875rem;
         color: var(--text-color-secondary);

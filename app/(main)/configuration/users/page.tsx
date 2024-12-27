@@ -207,9 +207,9 @@ const Users = () => {
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
                     <Column field="_id" header="Id" body={(rowData: IUser) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
-                    <Column field="name" header="Nombre"></Column>
-                    <Column field="lastName" header="Apellido"></Column>
+                    <Column field="name" header="Nombre" body={(rowData) => `${rowData.name} ${rowData.lastName}`}></Column>
                     <Column field="username" header="Usuario"></Column>
+                    <Column field="accountId" header="Cuenta" body={(rowData) => `${rowData.accountId ? rowData.accountId.name : ''}`}></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column
                         field="actions"

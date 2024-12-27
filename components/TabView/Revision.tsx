@@ -68,7 +68,7 @@ export default function Revision({ inReview }) {
 
             const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 5 });
 
-            setContent(content + res.title + '\n' + resChapter);
+            setContent(content + (res.title ?? '') + '\n' + resChapter);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }

@@ -127,21 +127,6 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
     const handleChange = async (name: string) => {
         const newName = CleanText(name);
         setName(newName);
-        clearTimeout(timer);
-        const newTimer = setTimeout(async () => {
-            try {
-                const res = await findByName(newName);
-                if (!res) {
-                    showWarn(toast, '', 'Ya existe un documento con este nombre');
-                } else {
-                    showInfo(toast, '', 'Nombre disponible');
-                }
-            } catch (error) {
-                showError(toast, '', 'Contacte con soporte');
-            }
-        }, 1000);
-
-        setTimer(newTimer);
     };
 
     return (

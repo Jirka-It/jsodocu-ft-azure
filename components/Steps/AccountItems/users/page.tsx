@@ -5,7 +5,6 @@ import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
-import BasicStates from '@components/TableExtensions/BasicStates';
 import { InputSwitch } from 'primereact/inputswitch';
 import { IUser, IUserResponse } from '@interfaces/IUser';
 import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
@@ -108,7 +107,6 @@ const Users = () => {
                     <Column field="name" header="Nombre"></Column>
                     <Column field="lastName" header="Apellido"></Column>
                     <Column field="username" header="Usuario"></Column>
-                    <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column field="actions" body={(rowData: IUser) => <CustomTypeActions handleEdit={() => handleEdit(rowData)} data={rowData.state} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>

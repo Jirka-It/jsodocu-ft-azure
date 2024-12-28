@@ -27,6 +27,7 @@ import { findByIdLight, findByIdLight as findDocument, update as updateDocument 
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import { State } from '@enums/DocumentEnum';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -386,9 +387,13 @@ export default function Editor({ inReview }) {
                     Título
                 </div>
 
-                <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
-                    <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
-                </div>
+                {doc?.state === State.EDITION ? (
+                    <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                        <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
+                    </div>
+                ) : (
+                    ''
+                )}
 
                 <div>
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />

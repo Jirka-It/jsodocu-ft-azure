@@ -47,11 +47,15 @@ const Users = () => {
     const [data, setData] = useState<IUserResponse>();
 
     useEffect(() => {
-        getDataAccounts();
+        if (accountFilter !== null) {
+            getDataAccounts();
+        }
     }, [debouncedAccountFilter]);
 
     useEffect(() => {
-        getDataRoles();
+        if (rolFilter !== null) {
+            getDataRoles();
+        }
     }, [debouncedAccountRol]);
 
     useEffect(() => {
@@ -75,6 +79,7 @@ const Users = () => {
     const getDataAccounts = async (page: number = 1, size: number = 5, state: string = State.ACTIVE) => {
         const params = { page, size, state };
         if (accountFilter) params['searchParam'] = accountFilter;
+        setAccountFilter(null);
         const res = await findAllAccounts(params);
         setAccounts(res.data);
     };
@@ -84,7 +89,7 @@ const Users = () => {
         const params = { page, size, state };
         if (rolFilter) params['searchParam'] = rolFilter;
         const res = await findAllRoles(params);
-
+        setRolFilter(null);
         if (res && res.data.length > 0) {
             const newData = res.data.sort((a, b) => a.name.localeCompare(b.name));
             setRoles(newData);
@@ -156,8 +161,9 @@ const Users = () => {
                     />
                     <div className="flex align-items-center">
                         <AutoComplete
-                            forceSelection={true}
                             delay={800}
+                            showEmptyMessage={true}
+                            autoHighlight={true}
                             className="w-15rem"
                             field="name"
                             placeholder="Cuenta"
@@ -168,7 +174,19 @@ const Users = () => {
                             onClear={() => setAccount('')}
                         />
 
-                        <AutoComplete delay={800} className="w-15rem" field="code" placeholder="Rol" value={rol} suggestions={roles} completeMethod={(e) => setRolFilter(e.query)} onSelect={(e) => setRol(e.value)} onClear={() => setRol('')} />
+                        <AutoComplete
+                            delay={800}
+                            showEmptyMessage={true}
+                            autoHighlight={true}
+                            className="w-15rem"
+                            field="code"
+                            placeholder="Rol"
+                            value={rol}
+                            suggestions={roles}
+                            completeMethod={(e) => setRolFilter(e.query)}
+                            onSelect={(e) => setRol(e.value)}
+                            onClear={() => setRol('')}
+                        />
 
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <InputSwitch checked={checked} className="mr-3" onChange={(e) => handleCheck(e.value)} />

@@ -154,7 +154,7 @@ export default function Editor({ inReview }) {
                                     <Badge
                                         className="mr-1 cursor-pointer border-circle count-badge-article"
                                         value=""
-                                        data-pr-tooltip={`${node.count}`}
+                                        data-pr-tooltip={`${node.count} comentarios`}
                                         data-pr-position="right"
                                         data-pr-at="right+5 top"
                                         data-pr-my="left center-2"
@@ -206,7 +206,7 @@ export default function Editor({ inReview }) {
                                             <Badge
                                                 className="mr-1 cursor-pointer border-circle count-badge-paragraph"
                                                 value=""
-                                                data-pr-tooltip={`${node.count}`}
+                                                data-pr-tooltip={`${node.count} comentarios`}
                                                 data-pr-position="right"
                                                 data-pr-at="right+5 top"
                                                 data-pr-my="left center-2"
@@ -363,9 +363,6 @@ export default function Editor({ inReview }) {
     return (
         <section className="grid">
             <Toast ref={toast} />
-            {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
-
-            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
@@ -377,7 +374,7 @@ export default function Editor({ inReview }) {
                             {doc?.count > 0 && !doc?.approved ? (
                                 <>
                                     <Tooltip target=".count-badge-title" />
-                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count}`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
+                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count} comentarios`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
                                 </>
                             ) : (
                                 <>{doc?.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
@@ -407,6 +404,10 @@ export default function Editor({ inReview }) {
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
+
+                    {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+
+                    {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
                 </div>
             ) : (
                 ''

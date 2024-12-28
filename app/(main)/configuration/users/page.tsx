@@ -163,6 +163,7 @@ const Users = () => {
                         <AutoComplete
                             delay={800}
                             showEmptyMessage={true}
+                            emptyMessage="Sin resultados"
                             autoHighlight={true}
                             className="w-15rem"
                             field="name"
@@ -177,6 +178,7 @@ const Users = () => {
                         <AutoComplete
                             delay={800}
                             showEmptyMessage={true}
+                            emptyMessage="Sin resultados"
                             autoHighlight={true}
                             className="w-15rem"
                             field="code"

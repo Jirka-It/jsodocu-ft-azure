@@ -5,7 +5,6 @@ import { InputText } from 'primereact/inputtext';
 import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
-import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { UserValidation } from '@validations/UserValidation';
 import { Password } from 'primereact/password';
@@ -26,8 +25,7 @@ import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 
-export default function UserModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function UserModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const { data: session } = useSession(); //data:session
@@ -206,10 +204,8 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Usuario creado');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -243,8 +239,6 @@ export default function UserModal({ state, setState, update, data }: IModalCreat
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div className="grid">
                     <div className="col-12 sm:col-6">

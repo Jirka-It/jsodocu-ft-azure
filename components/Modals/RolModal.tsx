@@ -3,7 +3,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { Dropdown } from 'primereact/dropdown';
 import { IModalCreate } from '@interfaces/IModal';
@@ -22,8 +21,7 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { ISession } from '@interfaces/ISession';
 import { useSession } from 'next-auth/react';
 
-export default function RolModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function RolModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
     const { data: session } = useSession(); //data:session
     const [code, setCode] = useState<string>('');
@@ -180,10 +178,8 @@ export default function RolModal({ state, setState, update, data }: IModalCreate
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Rol creado');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -214,8 +210,6 @@ export default function RolModal({ state, setState, update, data }: IModalCreate
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div className="grid">
                     <div className="col-12 sm:col-6">

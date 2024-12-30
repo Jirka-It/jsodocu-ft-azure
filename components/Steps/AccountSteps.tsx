@@ -4,7 +4,6 @@ import { Steps } from 'primereact/steps';
 import StepInfo from './AccountItems/info/page';
 import StepUsers from './AccountItems/users/page';
 import StepPayment from './AccountItems/payment/page';
-import styles from './AccountSteps.module.css';
 
 export default function AccountSteps() {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -26,14 +25,5 @@ export default function AccountSteps() {
         }
     }, [activeIndex]);
 
-    return (
-        <Card className={`${styles.card}`}>
-            {/*
-            <Steps model={items} activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={false} />
-            {renderContent()}
-            */}
-
-            <StepUsers />
-        </Card>
-    );
+    return <StepUsers />;
 }

@@ -22,8 +22,8 @@
 }
 
 .button-approve {
-    position: fixed;
+    position: sticky;
     bottom: 2%;
-    right: 50%;
+    margin-left: 47%;
     z-index: 9999;
 }

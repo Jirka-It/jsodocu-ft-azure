@@ -27,6 +27,7 @@ import { findByIdLight, findByIdLight as findDocument, update as updateDocument 
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import { State } from '@enums/DocumentEnum';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -154,7 +155,7 @@ export default function Editor({ inReview }) {
                                     <Badge
                                         className="mr-1 cursor-pointer border-circle count-badge-article"
                                         value=""
-                                        data-pr-tooltip={`${node.count}`}
+                                        data-pr-tooltip={`${node.count} comentarios`}
                                         data-pr-position="right"
                                         data-pr-at="right+5 top"
                                         data-pr-my="left center-2"
@@ -206,7 +207,7 @@ export default function Editor({ inReview }) {
                                             <Badge
                                                 className="mr-1 cursor-pointer border-circle count-badge-paragraph"
                                                 value=""
-                                                data-pr-tooltip={`${node.count}`}
+                                                data-pr-tooltip={`${node.count} comentarios`}
                                                 data-pr-position="right"
                                                 data-pr-at="right+5 top"
                                                 data-pr-my="left center-2"
@@ -363,9 +364,6 @@ export default function Editor({ inReview }) {
     return (
         <section className="grid">
             <Toast ref={toast} />
-            {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
-
-            {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
@@ -377,7 +375,7 @@ export default function Editor({ inReview }) {
                             {doc?.count > 0 && !doc?.approved ? (
                                 <>
                                     <Tooltip target=".count-badge-title" />
-                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count}`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
+                                    <Badge className="mr-1 cursor-pointer count-badge-title" data-pr-tooltip={`${doc?.count} comentarios`} data-pr-position="right" data-pr-at="right+5 top" data-pr-my="left center-2" severity="danger"></Badge>
                                 </>
                             ) : (
                                 <>{doc?.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
@@ -389,9 +387,13 @@ export default function Editor({ inReview }) {
                     Título
                 </div>
 
-                <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
-                    <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
-                </div>
+                {doc?.state === State.EDITION ? (
+                    <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
+                        <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
+                    </div>
+                ) : (
+                    ''
+                )}
 
                 <div>
                     <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
@@ -407,6 +409,10 @@ export default function Editor({ inReview }) {
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
+
+                    {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+
+                    {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
                 </div>
             ) : (
                 ''

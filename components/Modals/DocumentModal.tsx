@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 import { Button } from 'primereact/button';
@@ -8,22 +8,19 @@ import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { Dropdown } from 'primereact/dropdown';
-import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
 import { findAll } from '@api/types';
-import { create, findByName, update as updateDoc } from '@api/documents';
+import { create, update as updateDoc } from '@api/documents';
 import { IDocTypeResponse } from '@interfaces/IDocType';
 import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
-import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
+import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { CleanText } from '@lib/CleanText';
 
-export default function DocumentModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
-    const [timer, setTimer] = useState(null);
+export default function DocumentModal({ state, setState, update, data, toast }: IModalCreate) {
     const { data: session } = useSession(); //data:session
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
@@ -104,10 +101,8 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Documento creado');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -127,21 +122,6 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
     const handleChange = async (name: string) => {
         const newName = CleanText(name);
         setName(newName);
-        clearTimeout(timer);
-        const newTimer = setTimeout(async () => {
-            try {
-                const res = await findByName(newName);
-                if (!res) {
-                    showWarn(toast, '', 'Ya existe un documento con este nombre');
-                } else {
-                    showInfo(toast, '', 'Nombre disponible');
-                }
-            } catch (error) {
-                showError(toast, '', 'Contacte con soporte');
-            }
-        }, 1000);
-
-        setTimer(newTimer);
     };
 
     return (
@@ -157,8 +137,6 @@ export default function DocumentModal({ state, setState, update, data }: IModalC
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">

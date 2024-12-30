@@ -1,16 +1,13 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { IModalDelete } from '@interfaces/IModal';
 
-import { Toast } from 'primereact/toast';
 import { showSuccess, showError } from '@lib/ToastMessages';
 import { IDocumentResponse } from '@interfaces/IDocument';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 
-export default function DeleteModal({ state, setState, api, update }: IModalDelete) {
-    const toast = useRef(null);
-
+export default function DeleteModal({ state, setState, api, update, toast }: IModalDelete) {
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
             <span className="font-bold white-space-nowrap">Eliminar</span>
@@ -29,10 +26,8 @@ export default function DeleteModal({ state, setState, api, update }: IModalDele
 
         if (res.status === HttpStatus.OK) {
             showSuccess(toast, '', 'Registro eliminado.');
-            setTimeout(() => {
-                setState(!state);
-                update();
-            }, 500);
+            setState(!state);
+            update();
         } else {
             showError(toast, '', 'Contacte con soporte');
         }
@@ -57,7 +52,6 @@ export default function DeleteModal({ state, setState, api, update }: IModalDele
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
             <p>¿Estás seguro de eliminar este registro?</p>
         </Dialog>
     );

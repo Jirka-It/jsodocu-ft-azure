@@ -66,8 +66,10 @@ const LoginPage: Page = () => {
 
         if (res.status === HttpStatus.OK) {
             router.push('/');
-        } else if (res.status === HttpStatus.UNAUTHORIZED) {
+        } else if (parseInt(res.error) === HttpStatus.UNAUTHORIZED) {
             showError(toast, '', 'Credenciales incorrectas.');
+        } else if (parseInt(res.error) === HttpStatus.FORBIDDEN) {
+            showError(toast, '', 'Su cuenta ha sido inactivada y debe contactar al administrador.');
         } else {
             showError(toast, '', 'Contacte con soporte.');
         }
@@ -77,7 +79,7 @@ const LoginPage: Page = () => {
         <>
             <Toast ref={toast} />
             <div className="flex h-screen">
-                <form className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-center" onSubmit={handleLogin}>
+                <form className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-between" onSubmit={handleLogin}>
                     <img src={`/layout/images/logo-dark.svg`} className="h-4rem mt-4 mb-4" alt="diamond-layout" />
 
                     <div className="flex flex-column align-items-center gap-4">
@@ -143,6 +145,13 @@ const LoginPage: Page = () => {
                             </Link>{' '}
                         </div>
                     </div>
+
+                    <p>
+                        2024 - Desarrollado por{' '}
+                        <Link href="https://www.jirka.co/" target="_blank" className="text-primary hover:underline cursor-pointer font-medium">
+                            Jirka
+                        </Link>
+                    </p>
                 </form>
                 <div className="w-8 hidden lg:flex flex-column justify-content-between align-items-center px-6 py-6 bg-cover bg-norepeat" style={{ backgroundImage: "url('/demo/images/auth/bg-login.jpg')" }}>
                     {/*

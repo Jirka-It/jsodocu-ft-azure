@@ -9,7 +9,6 @@ import BasicStates from '@components/TableExtensions/BasicStates';
 import UserModal from '@components/Modals/UserModal';
 import { InputSwitch } from 'primereact/inputswitch';
 import { IUser, IUserResponse } from '@interfaces/IUser';
-import CustomTypeActions from '@components/TableExtensions/CustomTypeActions';
 import { findAll, update } from '@api/users';
 import { findAll as findAllAccounts } from '@api/accounts';
 import { findAll as findAllRoles } from '@api/roles';
@@ -18,10 +17,11 @@ import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
-import { IAccountResponse } from '@interfaces/IAccount';
+import { AutoComplete } from 'primereact/autocomplete';
+
+import { IAccount } from '@interfaces/IAccount';
 import useDebounce from '@hooks/debounceHook';
-import { IRolResponse } from '@interfaces/IRol';
+import { IRol } from '@interfaces/IRol';
 import UserPasswordModal from '@components/Modals/UserPasswordModal';
 import CustomUserTypeActions from '@components/TableExtensions/CustomUserTypeActions';
 
@@ -30,16 +30,16 @@ const Users = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openPasswordModal, setOpenPasswordModal] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
-    const debouncedSearchParam = useDebounce(searchParam, 500);
-    const [accounts, setAccounts] = useState<IAccountResponse>();
-    const [accountId, setAccountId] = useState<any>();
+    const debouncedSearchParam = useDebounce(searchParam, 800);
+    const [accounts, setAccounts] = useState<Array<IAccount>>();
+    const [account, setAccount] = useState<any>();
     const [accountFilter, setAccountFilter] = useState<any>();
-    const debouncedAccountFilter = useDebounce(accountFilter, 500);
+    const debouncedAccountFilter = useDebounce(accountFilter, 800);
 
-    const [roles, setRoles] = useState<IRolResponse>();
-    const [rolId, setRolId] = useState<any>();
+    const [roles, setRoles] = useState<Array<IRol>>();
+    const [rol, setRol] = useState<any>();
     const [rolFilter, setRolFilter] = useState<any>();
-    const debouncedAccountRol = useDebounce(rolFilter, 500);
+    const debouncedAccountRol = useDebounce(rolFilter, 800);
 
     const [checked, setChecked] = useState(true);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
@@ -47,24 +47,28 @@ const Users = () => {
     const [data, setData] = useState<IUserResponse>();
 
     useEffect(() => {
-        getDataAccounts();
+        if (accountFilter !== null) {
+            getDataAccounts();
+        }
     }, [debouncedAccountFilter]);
 
     useEffect(() => {
-        getDataRoles();
+        if (rolFilter !== null) {
+            getDataRoles();
+        }
     }, [debouncedAccountRol]);
 
     useEffect(() => {
         getData();
-    }, [checked, debouncedSearchParam, accountId, rolId]);
+    }, [checked, debouncedSearchParam, account, rol]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? State.ACTIVE : State.INACTIVE;
 
         const params = { page, size, state };
         if (searchParam) params['searchParam'] = searchParam;
-        if (accountId) params['accountId'] = accountId;
-        if (rolId) params['rolId'] = rolId;
+        if (account) params['accountId'] = account._id;
+        if (rol) params['rolId'] = rol._id;
 
         const res = await findAll(params);
         setData(res);
@@ -75,9 +79,9 @@ const Users = () => {
     const getDataAccounts = async (page: number = 1, size: number = 5, state: string = State.ACTIVE) => {
         const params = { page, size, state };
         if (accountFilter) params['searchParam'] = accountFilter;
-
+        setAccountFilter(null);
         const res = await findAllAccounts(params);
-        setAccounts(res);
+        setAccounts(res.data);
     };
 
     //Roles
@@ -85,7 +89,13 @@ const Users = () => {
         const params = { page, size, state };
         if (rolFilter) params['searchParam'] = rolFilter;
         const res = await findAllRoles(params);
-        setRoles(res);
+        setRolFilter(null);
+        if (res && res.data.length > 0) {
+            const newData = res.data.sort((a, b) => a.name.localeCompare(b.name));
+            setRoles(newData);
+        } else {
+            setRoles(res.data);
+        }
     };
 
     //Table actions
@@ -108,13 +118,6 @@ const Users = () => {
         setUser(data);
         setOpenPasswordModal(true);
     };
-
-    /*
-    const handleModalDelete = (data: IDocType) => {
-        setDocumentType(data);
-        setOpenModalClose(true);
-    };
-   */
 
     const handleDelete = async (user: IUser) => {
         const state = user.state === State.ACTIVE ? State.INACTIVE : State.ACTIVE;
@@ -143,8 +146,8 @@ const Users = () => {
     return (
         <div className="layout-users">
             <Toast ref={toast} />
-            <UserModal state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <UserPasswordModal state={openPasswordModal} data={user} setState={(e) => setOpenPasswordModal(e)} />
+            <UserModal state={openModal} toast={toast} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <UserPasswordModal state={openPasswordModal} toast={toast} data={user} setState={(e) => setOpenPasswordModal(e)} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button
@@ -157,38 +160,34 @@ const Users = () => {
                         label="Usuario"
                     />
                     <div className="flex align-items-center">
-                        <Dropdown
-                            value={accountId}
-                            onChange={(e) => setAccountId(e.value)}
-                            onFilter={(e) => setAccountFilter(e.filter)}
-                            options={accounts?.data}
-                            filter
-                            showClear={true}
-                            clearIcon="pi pi-times"
+                        <AutoComplete
+                            delay={800}
+                            showEmptyMessage={true}
                             emptyMessage="Sin resultados"
-                            emptyFilterMessage="Sin resultados"
-                            id="account"
-                            optionLabel="name"
-                            optionValue="_id"
+                            autoHighlight={true}
+                            className="w-15rem"
+                            field="name"
                             placeholder="Cuenta"
-                            className="w-15rem mr-3"
+                            value={account}
+                            suggestions={accounts}
+                            completeMethod={(e) => setAccountFilter(e.query)}
+                            onSelect={(e) => setAccount(e.value)}
+                            onClear={() => setAccount('')}
                         />
 
-                        <Dropdown
-                            value={rolId}
-                            onChange={(e) => setRolId(e.value)}
-                            onFilter={(e) => setRolFilter(e.filter)}
-                            options={roles?.data}
-                            filter
-                            showClear={true}
-                            clearIcon="pi pi-times"
+                        <AutoComplete
+                            delay={800}
+                            showEmptyMessage={true}
                             emptyMessage="Sin resultados"
-                            emptyFilterMessage="Sin resultados"
-                            id="rol"
-                            optionLabel="name"
-                            optionValue="_id"
+                            autoHighlight={true}
+                            className="w-15rem"
+                            field="code"
                             placeholder="Rol"
-                            className="w-15rem mr-3"
+                            value={rol}
+                            suggestions={roles}
+                            completeMethod={(e) => setRolFilter(e.query)}
+                            onSelect={(e) => setRol(e.value)}
+                            onClear={() => setRol('')}
                         />
 
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
@@ -207,9 +206,9 @@ const Users = () => {
                     totalRecords={data?.elementsByPage * data?.totalPages}
                 >
                     <Column field="_id" header="Id" body={(rowData: IUser) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
-                    <Column field="name" header="Nombre"></Column>
-                    <Column field="lastName" header="Apellido"></Column>
+                    <Column field="name" header="Nombre" body={(rowData) => `${rowData.name} ${rowData.lastName}`}></Column>
                     <Column field="username" header="Usuario"></Column>
+                    <Column field="accountId" header="Cuenta" body={(rowData) => `${rowData.accountId ? rowData.accountId.name : ''}`}></Column>
                     <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
                     <Column
                         field="actions"

@@ -387,7 +387,7 @@ export default function Editor({ inReview }) {
                     Título
                 </div>
 
-                {doc?.state === State.EDITION ? (
+                {doc?.step === State.EDITION ? (
                     <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                         <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
                     </div>

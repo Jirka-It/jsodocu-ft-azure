@@ -118,12 +118,6 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         setState(!state);
     };
 
-    // Inputs events
-    const handleChange = async (name: string) => {
-        const newName = CleanText(name);
-        setName(newName);
-    };
-
     return (
         <Dialog
             visible={state}
@@ -143,7 +137,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                         Nombre del documento <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => handleChange(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del documento" />
+                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del documento" />
                 </div>
 
                 <div>

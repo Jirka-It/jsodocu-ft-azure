@@ -5,7 +5,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
-import { Toast } from 'primereact/toast';
 import { create, findByCode, update as updateDoc } from '@api/types';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
@@ -16,8 +15,7 @@ import { DocumentTypeValidation } from '@validations/DocumentTypeValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { CleanText } from '@lib/CleanText';
 
-export default function DocumentTypeModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function DocumentTypeModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
     const [code, setCode] = useState<string>('');
     const [name, setName] = useState<string>('');
@@ -90,10 +88,8 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Tipo de documento creado');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -145,8 +141,6 @@ export default function DocumentTypeModal({ state, setState, update, data }: IMo
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">

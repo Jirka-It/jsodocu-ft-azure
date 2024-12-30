@@ -5,7 +5,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
-import { Toast } from 'primereact/toast';
 import { create, findByName, update as updateDoc } from '@api/categories';
 import { IZodError } from '@interfaces/IAuth';
 import { IModalCreate } from '@interfaces/IModal';
@@ -16,8 +15,7 @@ import { CategoryValidation } from '@validations/CategoryValidation';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { CleanText } from '@lib/CleanText';
 
-export default function CategoryModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function CategoryModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -84,10 +82,8 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Categoría creada');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -138,8 +134,6 @@ export default function CategoryModal({ state, setState, update, data }: IModalC
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">

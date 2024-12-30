@@ -146,8 +146,8 @@ const Users = () => {
     return (
         <div className="layout-users">
             <Toast ref={toast} />
-            <UserModal state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <UserPasswordModal state={openPasswordModal} data={user} setState={(e) => setOpenPasswordModal(e)} />
+            <UserModal state={openModal} toast={toast} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <UserPasswordModal state={openPasswordModal} toast={toast} data={user} setState={(e) => setOpenPasswordModal(e)} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button

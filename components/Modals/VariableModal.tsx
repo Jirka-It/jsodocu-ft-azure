@@ -3,7 +3,6 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 
 import { IVariableModal } from '@interfaces/IModal';
@@ -21,9 +20,8 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { CleanText } from '@lib/CleanText';
 
-export default function VariableModal({ state, setState, addData }: IVariableModal) {
+export default function VariableModal({ state, setState, addData, toast }: IVariableModal) {
     const params = useParams();
-    const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const [name, setName] = useState<string>('');
     const [category, setCategory] = useState<any>('');
@@ -84,10 +82,8 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Variable creada');
-            setTimeout(() => {
-                addData(res);
-                handleClose();
-            }, 500);
+            addData(res);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -140,8 +136,6 @@ export default function VariableModal({ state, setState, addData }: IVariableMod
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">

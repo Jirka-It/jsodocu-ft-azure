@@ -97,8 +97,8 @@ const Documents = () => {
     return (
         <div className="layout-documents">
             <Toast ref={toast} />
-            <DocumentModal state={openModal} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
+            <DocumentModal state={openModal} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Documento" />

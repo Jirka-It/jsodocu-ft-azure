@@ -72,8 +72,8 @@ const Permissions = () => {
     return (
         <div className="layout-permissions">
             <Toast ref={toast} />
-            <PermissionModal state={openModal} data={permission} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(permission._id)} update={() => handleUpdate()} />
+            <PermissionModal state={openModal} toast={toast} data={permission} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => remove(permission._id)} update={() => handleUpdate()} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Permiso" />

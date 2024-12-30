@@ -4,7 +4,6 @@ import { Dialog } from 'primereact/dialog';
 import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
-import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { Password } from 'primereact/password';
 import styles from './UserModal.module.css';
@@ -15,8 +14,7 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { PasswordValidation } from '@validations/PasswordValidation';
 
-export default function UserPasswordModal({ state, setState, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function UserPasswordModal({ state, setState, data, toast }: IModalCreate) {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
@@ -57,9 +55,7 @@ export default function UserPasswordModal({ state, setState, data }: IModalCreat
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Contraseña actualizada');
-            setTimeout(() => {
-                handleClose();
-            }, 1000);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -87,8 +83,6 @@ export default function UserPasswordModal({ state, setState, data }: IModalCreat
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="grid">
                 <div className="col-12">
                     {' '}

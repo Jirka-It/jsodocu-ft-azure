@@ -77,7 +77,7 @@ const Users = () => {
     return (
         <div className="layout-users">
             <Toast ref={toast} />
-            <UserModalAccount state={openModal} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} account={params.id} />
+            <UserModalAccount state={openModal} toast={toast} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} account={params.id} />
 
             {/*  <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />  */}
             <div className="card">

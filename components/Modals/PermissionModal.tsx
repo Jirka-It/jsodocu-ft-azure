@@ -7,7 +7,6 @@ import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
-import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { PermissionValidation } from '@validations/PermissionValidation';
 import { CleanText } from '@lib/CleanText';
@@ -18,8 +17,7 @@ import { ISession } from '@interfaces/ISession';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { categories } from '@lib/data';
 
-export default function PermissionModal({ state, setState, update, data }: IModalCreate) {
-    const toast = useRef(null);
+export default function PermissionModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
     const { data: session } = useSession(); //data:session
     const [code, setCode] = useState<string>('');
@@ -117,10 +115,8 @@ export default function PermissionModal({ state, setState, update, data }: IModa
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
             showSuccess(toast, '', 'Permiso creado');
-            setTimeout(() => {
-                update(!data ? 1 : null);
-                handleClose();
-            }, 1000);
+            update(!data ? 1 : null);
+            handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
         } else {
@@ -150,8 +146,6 @@ export default function PermissionModal({ state, setState, update, data }: IModa
                 setState(false);
             }}
         >
-            <Toast ref={toast} />
-
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="code">

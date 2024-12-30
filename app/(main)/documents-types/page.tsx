@@ -92,8 +92,8 @@ const Documents = () => {
     return (
         <div className="layout-permissions">
             <Toast ref={toast} />
-            <DocumentTypeModal state={openModal} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
-            <DeleteModal state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
+            <DocumentTypeModal state={openModal} toast={toast} data={documentType} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+            <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => remove(documentType._id)} update={() => handleUpdate()} />
             <div className="card">
                 {data ? (
                     <div className="w-full flex justify-content-between mb-3">

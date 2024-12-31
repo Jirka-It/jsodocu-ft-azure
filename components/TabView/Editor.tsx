@@ -89,6 +89,7 @@ export default function Editor({ inReview }) {
             });
 
             setExpandedKeys(keys);
+
             setNodes(res.data);
         }
     };
@@ -260,7 +261,7 @@ export default function Editor({ inReview }) {
         });
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
-            setNodes((prevArray) => [...prevArray, { ...res.data, key: res.data._id }]);
+            setNodes((prevArray) => [...prevArray, { ...res, key: res._id }]);
             showSuccess(toast, '', 'Capítulo creado');
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
@@ -395,9 +396,13 @@ export default function Editor({ inReview }) {
                     ''
                 )}
 
-                <div>
-                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
-                </div>
+                {nodes && nodes.length > 0 ? (
+                    <div>
+                        <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
 
             {modules && nodeSelected ? (

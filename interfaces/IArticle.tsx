@@ -10,8 +10,7 @@ export interface IArticleResponse {
     status: number;
 }
 
-export interface IArticleResponseCreate {
-    data?: IArticle;
+export interface IArticleResponseObject extends IArticle {
     code?: number;
     status: number;
 }

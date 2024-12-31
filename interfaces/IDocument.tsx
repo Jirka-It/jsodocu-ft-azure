@@ -23,3 +23,8 @@ export interface IDocumentPartial extends Partial<IDocument> {}
 export interface IDocumentResponse extends IGeneralRequest {
     data: Array<IDocument>;
 }
+
+export interface IDocumentResponseObject extends IDocument {
+    code?: number;
+    status: number;
+}

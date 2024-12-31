@@ -23,3 +23,8 @@ export interface IUserPartial extends Partial<IUser> {}
 export interface IUserResponse extends IGeneralRequest {
     data: Array<IUser>;
 }
+
+export interface IUserResponseObject extends IUser {
+    code?: number;
+    status: number;
+}

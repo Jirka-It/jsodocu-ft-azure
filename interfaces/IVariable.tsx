@@ -40,6 +40,11 @@ export interface IVariableResponse extends IGeneralRequest {
     data: Array<IVariable>;
 }
 
+export interface IVariableResponseObject extends IVariable {
+    code?: number;
+    status: number;
+}
+
 export interface IVariableLightResponse {
     data?: Array<IVariableLight>;
     code?: number;

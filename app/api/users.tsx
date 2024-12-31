@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IUser, IUserPartial, IUserResponse } from '@interfaces/IUser';
+import { IUser, IUserPartial, IUserResponse, IUserResponseObject } from '@interfaces/IUser';
 
 const findAll = async (params: any): Promise<IUserResponse> => {
     return await axiosInstance
@@ -34,7 +34,7 @@ const findAllByAccount = async (params: any): Promise<Array<IUser>> => {
         });
 };
 
-const findById = async (id: string): Promise<IUserResponse> => {
+const findById = async (id: string): Promise<IUserResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
         .then((res) => {
@@ -67,7 +67,7 @@ const findByUsername = async (username: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: IUser): Promise<IUserResponse> => {
+const create = async (data: IUser): Promise<IUserResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users`, data)
         .then((res) => {
@@ -84,7 +84,7 @@ const create = async (data: IUser): Promise<IUserResponse> => {
         });
 };
 
-const update = async (id: string, data: IUserPartial): Promise<IUserResponse> => {
+const update = async (id: string, data: IUserPartial): Promise<IUserResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`, data)
         .then((res) => {
@@ -101,7 +101,7 @@ const update = async (id: string, data: IUserPartial): Promise<IUserResponse> =>
         });
 };
 
-const remove = async (id: string): Promise<IUserResponse> => {
+const remove = async (id: string): Promise<IUserResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
         .then((res) => {

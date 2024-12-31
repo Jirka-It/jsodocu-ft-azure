@@ -14,3 +14,7 @@ export interface IPermissionPartial extends Partial<IPermission> {}
 export interface IPermissionResponse extends IGeneralRequest {
     data: Array<IPermission>;
 }
+
+export interface IPermissionResponseObject extends IPermission {
+    status: number;
+}

@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IDocument, IDocumentPartial, IDocumentResponse } from '@interfaces/IDocument';
+import { IDocument, IDocumentPartial, IDocumentResponse, IDocumentResponseObject } from '@interfaces/IDocument';
 
 const findAll = async (params: any): Promise<IDocumentResponse> => {
     return await axiosInstance
@@ -56,7 +56,7 @@ const findExport = async (id: string): Promise<any> => {
         });
 };
 
-const findById = async (id: string): Promise<IDocument> => {
+const findById = async (id: string): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
         .then((res) => {
@@ -73,7 +73,7 @@ const findById = async (id: string): Promise<IDocument> => {
         });
 };
 
-const findByIdLight = async (id: string): Promise<IDocument> => {
+const findByIdLight = async (id: string): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/light/${id}`)
         .then((res) => {
@@ -106,7 +106,7 @@ const findByName = async (name: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: IDocument): Promise<IDocumentResponse> => {
+const create = async (data: IDocument): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents`, data)
         .then((res) => {
@@ -123,7 +123,7 @@ const create = async (data: IDocument): Promise<IDocumentResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocumentPartial): Promise<IDocument> => {
+const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`, data)
         .then((res) => {
@@ -140,7 +140,7 @@ const update = async (id: string, data: IDocumentPartial): Promise<IDocument> =>
         });
 };
 
-const remove = async (id: string): Promise<IDocumentResponse> => {
+const remove = async (id: string): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
         .then((res) => {

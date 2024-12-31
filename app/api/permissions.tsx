@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IPermission, IPermissionPartial, IPermissionResponse } from '@interfaces/IPermission';
+import { IPermission, IPermissionPartial, IPermissionResponse, IPermissionResponseObject } from '@interfaces/IPermission';
 
 const findAll = async (params: any): Promise<IPermissionResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IPermissionResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IPermissionResponse> => {
+const findById = async (id: string): Promise<IPermissionResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/permissions/${id}`)
         .then((res) => {
@@ -54,7 +54,7 @@ const findByCode = async (name: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: IPermission): Promise<IPermissionResponse> => {
+const create = async (data: IPermission): Promise<IPermissionResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/permissions`, data)
         .then((res) => {
@@ -71,7 +71,7 @@ const create = async (data: IPermission): Promise<IPermissionResponse> => {
         });
 };
 
-const update = async (id: string, data: IPermissionPartial): Promise<IPermissionResponse> => {
+const update = async (id: string, data: IPermissionPartial): Promise<IPermissionResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/permissions/${id}`, data)
         .then((res) => {
@@ -88,7 +88,7 @@ const update = async (id: string, data: IPermissionPartial): Promise<IPermission
         });
 };
 
-const remove = async (id: string): Promise<IPermissionResponse> => {
+const remove = async (id: string): Promise<IPermissionResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/permissions/${id}`)
         .then((res) => {

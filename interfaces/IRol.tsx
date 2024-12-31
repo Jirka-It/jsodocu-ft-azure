@@ -16,3 +16,9 @@ export interface IRolPartial extends Partial<IRol> {}
 export interface IRolResponse extends IGeneralRequest {
     data: Array<IRol>;
 }
+
+export interface IRolResponseObject {
+    code?: string;
+    status: number;
+    data: IRol;
+}

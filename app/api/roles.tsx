@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IRol, IRolPartial, IRolResponse } from '@interfaces/IRol';
+import { IRol, IRolPartial, IRolResponse, IRolResponseObject } from '@interfaces/IRol';
 
 const findAll = async (params: any): Promise<IRolResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IRolResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IRolResponse> => {
+const findById = async (id: string): Promise<IRolResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/roles/${id}`)
         .then((res) => {
@@ -54,7 +54,7 @@ const findByCode = async (code: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: IRol): Promise<IRolResponse> => {
+const create = async (data: IRol): Promise<IRolResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/roles`, data)
         .then((res) => {
@@ -71,7 +71,7 @@ const create = async (data: IRol): Promise<IRolResponse> => {
         });
 };
 
-const update = async (id: string, data: IRolPartial): Promise<IRolResponse> => {
+const update = async (id: string, data: IRolPartial): Promise<IRolResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/roles/${id}`, data)
         .then((res) => {
@@ -88,7 +88,7 @@ const update = async (id: string, data: IRolPartial): Promise<IRolResponse> => {
         });
 };
 
-const remove = async (id: string): Promise<IRolResponse> => {
+const remove = async (id: string): Promise<IRolResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/roles/${id}`)
         .then((res) => {

@@ -41,7 +41,7 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.key) {
-                    c.children.push({ ...res.data, key: res.data._id });
+                    c.children.push({ ...res, key: res._id });
                 }
 
                 return c;
@@ -65,7 +65,7 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
                 if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key === node.key) {
-                            a.children.push({ ...res.data, key: res.data._id });
+                            a.children.push({ ...res, key: res._id });
                         }
                         return a;
                     });

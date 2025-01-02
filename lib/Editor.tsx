@@ -245,7 +245,7 @@ export const updateApprove = async (node: INodeGeneral, setNodes: Function, stat
     }
 };
 
-export const handleEditorClick = (quill, setContent: Function, updateContent: Function, e, nodeSelected) => {
+export const handleEditorClick = (quill, openComment: Function, e) => {
     const quillRef = quill.current.getEditor(); // Get Quill instance
     const clickedElement = e.target; // Element clicked on
     const quillRoot = quillRef.root; // Quill's root DOM node
@@ -255,45 +255,29 @@ export const handleEditorClick = (quill, setContent: Function, updateContent: Fu
         if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
             var body = '';
             var elementSelected = '';
+            var tooltipValue = '';
             if (clickedElement.tagName === 'COMMENT') {
                 body = clickedElement.innerHTML;
                 elementSelected = clickedElement.outerHTML;
+                tooltipValue = clickedElement.getAttribute('data-tooltip');
             }
 
             if (clickedElement.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.outerHTML;
+                tooltipValue = clickedElement.parentNode.getAttribute('data-tooltip');
             }
 
             if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+                tooltipValue = clickedElement.parentNode.parentNode.getAttribute('data-tooltip');
             }
-
             // Replace the <img> with a <div> or any other tag you need
             const newBody = replaceComment(quill.current.value, elementSelected, body);
+            openComment(tooltipValue, newBody);
 
-            updateContent(newBody, true);
-        }
-    }
-};
-
-export const addComment = (quill) => {
-    var prompt = window.prompt('Ingrese un comentario', '');
-    var txt;
-    if (prompt == null || prompt == '') {
-        txt = 'User cancelled the prompt.';
-    } else {
-        const range = quill.current.unprivilegedEditor.getSelection();
-
-        if (range) {
-            if (range.length == 0) {
-                alert('Selecciona un texto');
-            } else {
-                quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
-            }
-        } else {
-            alert('Editor no seleccionado');
+            //updateContent(newBody, true);
         }
     }
 };

@@ -12,22 +12,25 @@ import { INode, INodeGeneral } from '@interfaces/INode';
 import { IDocument } from '@interfaces/IDocument';
 
 import { IVariableLight } from '@interfaces/IVariable';
-import { count, replaceText } from '@lib/ReplaceText';
-import { addComment, addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { showError, showSuccess } from '@lib/ToastMessages';
-import { findById, update } from '@api/articles';
+import { State } from '@enums/DocumentEnum';
 import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
-import EditorToolbar, { formats } from './EditorToolbar';
+import CommentModal from '@components/Modals/CommentModal';
 
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
 
+import { count, replaceText } from '@lib/ReplaceText';
+import { addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
+import { showError, showSuccess } from '@lib/ToastMessages';
+import { findById, update } from '@api/articles';
+
+import EditorToolbar, { formats } from './EditorToolbar';
+
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
-import { State } from '@enums/DocumentEnum';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -39,6 +42,11 @@ export default function Editor({ inReview }) {
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [comment, setComment] = useState<string>('');
+    const [newBody, setNewBody] = useState<string>('');
+
+    const [openModalComment, setOpenModalComment] = useState<boolean>(false);
+
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
@@ -59,10 +67,10 @@ export default function Editor({ inReview }) {
             if (typeof window !== 'undefined') {
                 if (quill.current) {
                     const quillRef = quill.current.getEditor(); // Get the Quill instance
-                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
+                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, openComment, e));
 
                     return () => {
-                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
+                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, openComment, e));
                     };
                 }
             }
@@ -112,7 +120,9 @@ export default function Editor({ inReview }) {
             toolbar: {
                 container: '#toolbar',
                 handlers: {
-                    comment: () => addComment(quill)
+                    comment: () => {
+                        setOpenModalComment(true);
+                    }
                 }
             },
             mention: {
@@ -362,9 +372,33 @@ export default function Editor({ inReview }) {
         setTimer(newTimer);
     };
 
+    //Events to add comments
+
+    const openComment = async (comment: string, newBody: string) => {
+        setComment(comment);
+        setNewBody(newBody);
+        setOpenModalComment(true);
+    };
+
     return (
         <section className="grid">
             <Toast ref={toast} />
+            {quill ? (
+                <CommentModal
+                    state={openModalComment}
+                    setState={(e) => setOpenModalComment(e)}
+                    toast={toast}
+                    quill={quill}
+                    comment={comment}
+                    setComment={(e) => setComment(e)}
+                    updateContent={() => {
+                        setComment(null);
+                        updateContent(newBody);
+                    }}
+                />
+            ) : (
+                ''
+            )}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
@@ -408,6 +442,7 @@ export default function Editor({ inReview }) {
             {modules && nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
+                        <Tooltip target=".quill>.ql-container.ql-editor>p>.comment" />
                         <EditorToolbar inReview={inReview} />
                         <ReactQuill theme="snow" onFocus={() => setInputClicked(false)} formats={formats} ref={quill} value={content} modules={modules} readOnly={nodeSelected.approved} onChange={(e) => updateContent(e)} />
                     </div>

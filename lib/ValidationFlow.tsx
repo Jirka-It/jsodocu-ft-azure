@@ -24,8 +24,6 @@ export const ValidationFlow = (validation: any, toast: any): Array<IZodError> | 
     if (Array.isArray(validation)) {
         // Add toast message
 
-        console.log('arrayValidation', validation);
-
         const arrayValidation = validation.find((v) => v.code === 'too_small' && v.type === 'array');
 
         if (arrayValidation) {

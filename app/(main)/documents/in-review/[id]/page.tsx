@@ -1,5 +1,5 @@
 'use client';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import React, { useEffect, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
@@ -7,31 +7,29 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import styles from './DocumentEdit.module.css';
 import Editor from '@components/TabView/Editor';
 import Revision from '@components/TabView/Revision';
-import { findByIdLight } from '@api/documents';
-import { IDocument } from '@interfaces/IDocument';
 
 const Document = () => {
-    const params = useParams();
-    const [document, setDocument] = useState<IDocument>();
+    const searchParams = useSearchParams();
+    const [readOnly, setReadOnly] = useState(null);
 
     useEffect(() => {
-        getData();
+        setReadOnly(searchParams.get('read-only'));
     }, []);
-
-    const getData = async () => {
-        const res = await findByIdLight(params.id);
-        setDocument(res);
-    };
 
     return (
         <section className={styles['layout-tab-view']}>
             <TabView>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <Editor inReview={true} />
+                    <Editor inReview={true} readOnly={readOnly} />
                 </TabPanel>
-                <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
-                    <Revision inReview={true} />
-                </TabPanel>
+
+                {!readOnly ? (
+                    <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
+                        <Revision inReview={true} />
+                    </TabPanel>
+                ) : (
+                    ''
+                )}
             </TabView>
         </section>
     );

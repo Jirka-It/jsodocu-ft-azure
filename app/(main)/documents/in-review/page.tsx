@@ -22,7 +22,6 @@ const Documents = () => {
     const [searchParam, setSearchParam] = useState<string>('');
     const debouncedSearchParam = useDebounce(searchParam, 500);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
-    const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
 
     useEffect(() => {
@@ -71,11 +70,8 @@ const Documents = () => {
     const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
-            setDocument(null);
             setTableState(null);
             getData(page, data?.elementsByPage);
-        } else {
-            setDocument(null);
         }
     };
 

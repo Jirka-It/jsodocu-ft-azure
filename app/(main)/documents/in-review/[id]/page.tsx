@@ -19,7 +19,7 @@ const Document = () => {
     return (
         <section className={styles['layout-tab-view']}>
             <TabView>
-                <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
+                <TabPanel header={readOnly ? 'Revisión' : 'Editor'} leftIcon="pi pi-file-edit mr-2">
                     <Editor inReview={true} readOnly={readOnly} />
                 </TabPanel>
 

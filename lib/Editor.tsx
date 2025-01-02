@@ -3,6 +3,8 @@ import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
 import { replaceComment } from './ReplaceText';
+import { State } from '@enums/DocumentEnum';
+import { IDocument } from '@interfaces/IDocument';
 
 export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
     if (node.chapter) {
@@ -78,7 +80,10 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
     }
 };
 
-export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any) => {
+export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any, doc: IDocument) => {
+    if (doc && doc.step === State.APPROVED) {
+        return;
+    }
     if (node.chapter) {
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {

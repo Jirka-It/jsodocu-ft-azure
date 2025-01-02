@@ -185,7 +185,7 @@ export default function Editor({ inReview, readOnly }) {
                         readOnly={readOnly ? true : false}
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
-                        onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)}
+                        onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer, doc)}
                         className={`${styles['input-node']} w-full`}
                         type="text"
                         placeholder={node.chapter ? 'Capítulo' : 'Artículo'}
@@ -358,6 +358,9 @@ export default function Editor({ inReview, readOnly }) {
         updateComments(nodeSelected, countComment, setNodes);
         setContent(content);
         clearTimeout(timer);
+        if (doc && doc.step === State.APPROVED) {
+            return;
+        }
 
         const newTimer = setTimeout(async () => {
             if (nodeSelected && (!inputClicked || permit)) {
@@ -459,7 +462,16 @@ export default function Editor({ inReview, readOnly }) {
                             <Tooltip target=".quill>.ql-container.ql-editor>p>.comment" />
 
                             <EditorToolbar inReview={inReview} />
-                            <ReactQuill theme="snow" onFocus={() => setInputClicked(false)} formats={formats} ref={quill} value={content} modules={modules} readOnly={nodeSelected.approved} onChange={(e) => updateContent(e)} />
+                            <ReactQuill
+                                theme="snow"
+                                onFocus={() => setInputClicked(false)}
+                                formats={formats}
+                                ref={quill}
+                                value={content}
+                                modules={modules}
+                                readOnly={nodeSelected.approved || doc.step === State.APPROVED}
+                                onChange={(e) => updateContent(e)}
+                            />
                         </div>
                     ) : (
                         ''
@@ -469,9 +481,17 @@ export default function Editor({ inReview, readOnly }) {
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
 
-                    {inReview && nodeSelected && !nodeSelected.approved && !readOnly ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+                    {inReview && nodeSelected && !nodeSelected.approved && !readOnly && doc.step !== State.APPROVED ? (
+                        <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" />
+                    ) : (
+                        ''
+                    )}
 
-                    {inReview && nodeSelected && nodeSelected.approved && !readOnly ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
+                    {inReview && nodeSelected && nodeSelected.approved && !readOnly && doc.step !== State.APPROVED ? (
+                        <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
+                    ) : (
+                        ''
+                    )}
                 </div>
             ) : (
                 ''

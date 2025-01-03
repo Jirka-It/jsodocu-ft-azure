@@ -20,6 +20,7 @@ import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { CutText } from '@lib/CutText';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -58,6 +59,12 @@ const Documents = () => {
             const res = await updateWithState(data._id, {
                 step: State.ARCHIVED
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué archivado');
+                return;
+            }
+
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {

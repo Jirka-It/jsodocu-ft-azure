@@ -11,33 +11,26 @@ import { IVariableLight } from '@interfaces/IVariable';
 
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters } from '@api/chapters';
-import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
-import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
+import { findById as findParagraph } from '@api/paragraphs';
+import { findByIdLight } from '@api/documents';
 
-import { count, replaceText } from '@lib/ReplaceText';
-import { deleteSection, handleChangeEvent, updateApprove } from '@lib/Editor';
-import { showError } from '@lib/ToastMessages';
-import { findById, update } from '@api/articles';
+import { replaceText } from '@lib/ReplaceText';
+import { handleChangeEvent } from '@lib/Editor';
+import { findById } from '@api/articles';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
 
 export default function Review() {
-    const toast = useRef(null);
-    const quill = useRef(null);
     const params = useParams();
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
-    const [modules, setModules] = useState<any>(null);
-
-    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
 
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
 
-    const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
 
     useEffect(() => {
@@ -84,34 +77,6 @@ export default function Review() {
             });
         }
 
-        setModules({
-            toolbar: {
-                container: '#toolbar',
-                handlers: {
-                    comment: () => {}
-                }
-            },
-            mention: {
-                mentionDenotationChars: ['@'],
-                source: (searchTerm: string, renderList: (data: any, searchText: string) => void, mentionChar: string) => {
-                    let values = data;
-                    // sample data set for displaying
-                    if (searchTerm.length === 0) {
-                        renderList(values, searchTerm);
-                    } else {
-                        const matches = [];
-                        for (let i = 0; i < values.length; i++) if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) matches.push(values[i]);
-                        renderList(matches, searchTerm);
-                    }
-                }
-            },
-            history: {
-                delay: 500,
-                maxStack: 100,
-                userOnly: true
-            }
-        });
-
         setVariables(data);
     };
 
@@ -155,12 +120,6 @@ export default function Review() {
 
     //Button events tree
 
-    const deleteNode = async () => {
-        await deleteSection(nodeSelectedToDelete, setNodes);
-        setNodeSelectedToDelete(null);
-        setOpenModalClose(!openModalClose);
-    };
-
     const handleClickEvent = async (node: INodeGeneral) => {
         setNodeSelected(null);
         if (node && node.article) {
@@ -178,51 +137,12 @@ export default function Review() {
         }
     };
 
-    const selectTitle = async () => {
-        setNodeSelected(null);
-        const res = await findDocument(doc._id);
-        setNodeSelected({ key: res._id, label: res.name, document: true, content: res.title });
-        setContent(res.title);
-    };
-
-    const handleApprove = async (nodeSelected: INodeGeneral, state: boolean) => {
-        if (state) {
-            const countComment = count(content);
-
-            if (countComment > 0) {
-                showError(toast, '', 'Tienes comentarios');
-                return;
-            }
-        }
-        if (nodeSelected && nodeSelected.article) {
-            updateApprove(nodeSelected, setNodes, state);
-            await update(nodeSelected.key, { approved: state });
-            setNodeSelected({ ...nodeSelected, approved: state });
-        }
-        if (nodeSelected && nodeSelected.paragraph) {
-            updateApprove(nodeSelected, setNodes, state);
-            await updateParagraph(nodeSelected.key, { approved: state });
-            setNodeSelected({ ...nodeSelected, approved: state });
-        }
-        if (nodeSelected && nodeSelected.document) {
-            setDoc({ ...doc, approved: state });
-            await updateDocument(doc._id, { approved: state });
-            setNodeSelected({ ...nodeSelected, approved: state });
-        }
-    };
-
-    //Events to quill
-
-    //Events to add comments
-
     return (
         <section className="grid">
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
-                    Título
-                </div>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold">Título</div>
 
                 {nodes && nodes.length > 0 ? (
                     <div>
@@ -233,7 +153,7 @@ export default function Review() {
                 )}
             </div>
 
-            {modules && nodeSelected ? (
+            {nodeSelected ? (
                 <div className="col-12 lg:col-9 ql-editor">
                     <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                 </div>

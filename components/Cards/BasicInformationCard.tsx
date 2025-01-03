@@ -18,6 +18,8 @@ import { useParams } from 'next/navigation';
 import { IAccount } from '@interfaces/IAccount';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
+import { Badge } from 'primereact/badge';
+import BasicStates from '@components/TableExtensions/BasicStates';
 
 export default function BasicInformationForm() {
     const params = useParams();
@@ -106,6 +108,8 @@ export default function BasicInformationForm() {
             <Toast ref={toast} />
             <ReactImageCropModal state={openModal} setState={(e) => setOpenModal(e)} /> {/* This code is, if the people wants crop the image */}
             <Card>
+                <div className="flex justify-content-end">{account ? <BasicStates state={account?.state} /> : ''}</div>
+
                 <div className="mb-5">
                     <div className={`${styles['avatar-background']} flex justify-content-center`}>
                         <div className="avatar-background-div-input relative">

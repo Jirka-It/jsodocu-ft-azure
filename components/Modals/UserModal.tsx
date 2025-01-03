@@ -359,7 +359,7 @@ export default function UserModal({ state, setState, update, data, toast }: IMod
                         onSourceFilterChange={onSourceFilterChange}
                         onTargetFilterChange={onTargetFilterChange}
                         filter
-                        filterBy="name"
+                        filterBy="name,code"
                         sourceFilterValue={sourceFilterValue}
                         targetFilterValue={targetFilterValue}
                         sourceFilterPlaceholder="Buscar por nombre"

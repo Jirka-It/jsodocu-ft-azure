@@ -100,6 +100,7 @@ const Documents = () => {
                     <Column field="type.name" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
+                    <Column field="reviewer" header="Revisor" body={(rowData) => `${rowData.reviewer?.name} ${rowData.reviewer?.lastName}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
                     <Column

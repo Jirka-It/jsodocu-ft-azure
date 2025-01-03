@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IAccount, IAccountPartial, IAccountResponse } from '@interfaces/IAccount';
+import { IAccount, IAccountPartial, IAccountResponse, IAccountResponseObject } from '@interfaces/IAccount';
 
 const findAll = async (params: any): Promise<IAccountResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IAccountResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IAccount> => {
+const findById = async (id: string): Promise<IAccountResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/accounts/${id}`)
         .then((res) => {
@@ -38,7 +38,7 @@ const findById = async (id: string): Promise<IAccount> => {
         });
 };
 
-const create = async (data: IAccount): Promise<IAccountResponse> => {
+const create = async (data: IAccount): Promise<IAccountResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/accounts`, data)
         .then((res) => {

@@ -10,8 +10,7 @@ export interface IChapterResponse {
     status: number;
 }
 
-export interface IChapterResponseCreate {
-    data?: IChapter;
+export interface IChapterResponseObject extends IChapter {
     code?: number;
     status: number;
 }

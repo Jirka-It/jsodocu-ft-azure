@@ -22,7 +22,6 @@ const Documents = () => {
     const [searchParam, setSearchParam] = useState<string>('');
     const debouncedSearchParam = useDebounce(searchParam, 500);
     const [tableState, setTableState] = useState<DataTableStateEvent>();
-    const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
 
     useEffect(() => {
@@ -71,11 +70,8 @@ const Documents = () => {
     const handleUpdate = (pageNumber: number = null, update: boolean = true) => {
         if (update) {
             const page = pageNumber ? pageNumber : tableState ? tableState?.page + 1 : 1;
-            setDocument(null);
             setTableState(null);
             getData(page, data?.elementsByPage);
-        } else {
-            setDocument(null);
         }
     };
 
@@ -104,6 +100,7 @@ const Documents = () => {
                     <Column field="type.name" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
+                    <Column field="reviewer" header="Revisor" body={(rowData) => `${rowData.reviewer?.name} ${rowData.reviewer?.lastName}`}></Column>
                     <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
                     <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
                     <Column

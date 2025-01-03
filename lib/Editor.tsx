@@ -1,8 +1,10 @@
+import Quill from 'quill';
 import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
-import { replaceComment } from './ReplaceText';
+import { State } from '@enums/DocumentEnum';
+import { IDocument } from '@interfaces/IDocument';
 
 export const addSection = async (node: INodeGeneral, setNodes: Function, setExpandedKeys: Function) => {
     if (node.chapter) {
@@ -41,7 +43,7 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
                 if (c.key === node.key) {
-                    c.children.push({ ...res.data, key: res.data._id });
+                    c.children.push({ ...res, key: res._id });
                 }
 
                 return c;
@@ -65,7 +67,7 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
                 if (c.key === node.ownChapter) {
                     c.children.map((a) => {
                         if (a.key === node.key) {
-                            a.children.push({ ...res.data, key: res.data._id });
+                            a.children.push({ ...res, key: res._id });
                         }
                         return a;
                     });
@@ -78,7 +80,10 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
     }
 };
 
-export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any) => {
+export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any, doc: IDocument) => {
+    if (doc && doc.step === State.APPROVED) {
+        return;
+    }
     if (node.chapter) {
         setNodes((prevArray) => {
             const modifiedNodes = prevArray.map((c) => {
@@ -245,7 +250,7 @@ export const updateApprove = async (node: INodeGeneral, setNodes: Function, stat
     }
 };
 
-export const handleEditorClick = (quill, setContent: Function, updateContent: Function, e, nodeSelected) => {
+export const handleEditorClick = (quill, openComment: Function, e) => {
     const quillRef = quill.current.getEditor(); // Get Quill instance
     const clickedElement = e.target; // Element clicked on
     const quillRoot = quillRef.root; // Quill's root DOM node
@@ -255,45 +260,31 @@ export const handleEditorClick = (quill, setContent: Function, updateContent: Fu
         if (clickedElement.tagName === 'COMMENT' || clickedElement.parentNode.tagName === 'COMMENT' || clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
             var body = '';
             var elementSelected = '';
+            var tooltipValue = '';
             if (clickedElement.tagName === 'COMMENT') {
                 body = clickedElement.innerHTML;
                 elementSelected = clickedElement.outerHTML;
+                tooltipValue = clickedElement.getAttribute('data-tooltip');
             }
 
             if (clickedElement.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.outerHTML;
+                tooltipValue = clickedElement.parentNode.getAttribute('data-tooltip');
             }
 
             if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+                tooltipValue = clickedElement.parentNode.parentNode.getAttribute('data-tooltip');
             }
 
-            // Replace the <img> with a <div> or any other tag you need
-            const newBody = replaceComment(quill.current.value, elementSelected, body);
+            let blot = Quill.find(clickedElement);
+            const index = quillRef.getIndex(blot);
+            let length = blot.length(quill.current.scroll);
 
-            updateContent(newBody, true);
-        }
-    }
-};
-
-export const addComment = (quill) => {
-    var prompt = window.prompt('Ingrese un comentario', '');
-    var txt;
-    if (prompt == null || prompt == '') {
-        txt = 'User cancelled the prompt.';
-    } else {
-        const range = quill.current.unprivilegedEditor.getSelection();
-
-        if (range) {
-            if (range.length == 0) {
-                alert('Selecciona un texto');
-            } else {
-                quill.current.editor.formatText(range.index, range.length, 'customTag', prompt);
-            }
-        } else {
-            alert('Editor no seleccionado');
+            const range = { index, length };
+            openComment(tooltipValue, range);
         }
     }
 };

@@ -15,3 +15,7 @@ export interface IDocTypePartial extends Partial<IDocType> {}
 export interface IDocTypeResponse extends IGeneralRequest {
     data: Array<IDocType>;
 }
+
+export interface IDocTypeResponseObject extends IDocType {
+    status: number;
+}

@@ -20,6 +20,15 @@ export interface IModalCreate extends IModal {
     toast: any;
 }
 
+export interface IModalComment extends IModal {
+    toast: any;
+    quill: any;
+    newRange: any;
+    setComment?: Function;
+    comment?: string;
+    updateContent?: Function;
+}
+
 export interface IVariableModal extends IModal {
     addData: Function;
     toast: any;

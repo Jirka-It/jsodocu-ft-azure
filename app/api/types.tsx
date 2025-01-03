@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IDocType, IDocTypePartial, IDocTypeResponse } from '@interfaces/IDocType';
+import { IDocType, IDocTypePartial, IDocTypeResponse, IDocTypeResponseObject } from '@interfaces/IDocType';
 
 const findAll = async (params: any): Promise<IDocTypeResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IDocTypeResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IDocTypeResponse> => {
+const findById = async (id: string): Promise<IDocTypeResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`)
         .then((res) => {
@@ -54,7 +54,7 @@ const findByCode = async (code: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: IDocType): Promise<IDocTypeResponse> => {
+const create = async (data: IDocType): Promise<IDocTypeResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types`, data)
         .then((res) => {
@@ -71,7 +71,7 @@ const create = async (data: IDocType): Promise<IDocTypeResponse> => {
         });
 };
 
-const update = async (id: string, data: IDocTypePartial): Promise<IDocTypeResponse> => {
+const update = async (id: string, data: IDocTypePartial): Promise<IDocTypeResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`, data)
         .then((res) => {
@@ -88,7 +88,7 @@ const update = async (id: string, data: IDocTypePartial): Promise<IDocTypeRespon
         });
 };
 
-const remove = async (id: string): Promise<IDocTypeResponse> => {
+const remove = async (id: string): Promise<IDocTypeResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-types/${id}`)
         .then((res) => {

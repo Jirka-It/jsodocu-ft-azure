@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IChapter, IChapterPartial, IChapterResponse, IChapterResponseCreate } from '@interfaces/IChapter';
+import { IChapter, IChapterPartial, IChapterResponse, IChapterResponseObject } from '@interfaces/IChapter';
 
 const findAll = async (params: any): Promise<IChapterResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IChapterResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IChapterResponse> => {
+const findById = async (id: string): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/${id}`)
         .then((res) => {
@@ -38,12 +38,12 @@ const findById = async (id: string): Promise<IChapterResponse> => {
         });
 };
 
-const create = async (data: IChapter): Promise<IChapterResponseCreate> => {
+const create = async (data: IChapter): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters`, data)
         .then((res) => {
             return {
-                data: res.data,
+                ...res.data,
                 status: res.status
             };
         })
@@ -55,7 +55,7 @@ const create = async (data: IChapter): Promise<IChapterResponseCreate> => {
         });
 };
 
-const update = async (id: string, data: IChapterPartial): Promise<IChapterResponse> => {
+const update = async (id: string, data: IChapterPartial): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/${id}`, data)
         .then((res) => {
@@ -72,7 +72,7 @@ const update = async (id: string, data: IChapterPartial): Promise<IChapterRespon
         });
 };
 
-const remove = async (id: string): Promise<IChapterResponse> => {
+const remove = async (id: string): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-chapters/${id}`)
         .then((res) => {

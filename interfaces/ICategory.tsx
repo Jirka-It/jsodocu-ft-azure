@@ -14,3 +14,8 @@ export interface ICategoryPartial extends Partial<ICategory> {}
 export interface ICategoryResponse extends IGeneralRequest {
     data: Array<ICategory>;
 }
+
+export interface IChapterResponseObject extends ICategory {
+    code?: number;
+    status: number;
+}

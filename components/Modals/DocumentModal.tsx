@@ -18,7 +18,6 @@ import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { CleanText } from '@lib/CleanText';
 
 export default function DocumentModal({ state, setState, update, data, toast }: IModalCreate) {
     const { data: session } = useSession(); //data:session

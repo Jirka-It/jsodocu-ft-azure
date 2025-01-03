@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { ICategory, ICategoryPartial, ICategoryResponse } from '@interfaces/ICategory';
+import { ICategory, ICategoryPartial, ICategoryResponse, IChapterResponseObject } from '@interfaces/ICategory';
 
 const findAll = async (params: any): Promise<ICategoryResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<ICategoryResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<ICategoryResponse> => {
+const findById = async (id: string): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories/${id}`)
         .then((res) => {
@@ -54,7 +54,7 @@ const findByName = async (name: string): Promise<boolean> => {
         });
 };
 
-const create = async (data: ICategory): Promise<ICategoryResponse> => {
+const create = async (data: ICategory): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories`, data)
         .then((res) => {
@@ -71,7 +71,7 @@ const create = async (data: ICategory): Promise<ICategoryResponse> => {
         });
 };
 
-const update = async (id: string, data: ICategoryPartial): Promise<ICategoryResponse> => {
+const update = async (id: string, data: ICategoryPartial): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories/${id}`, data)
         .then((res) => {
@@ -88,7 +88,7 @@ const update = async (id: string, data: ICategoryPartial): Promise<ICategoryResp
         });
 };
 
-const remove = async (id: string): Promise<ICategoryResponse> => {
+const remove = async (id: string): Promise<IChapterResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/categories/${id}`)
         .then((res) => {

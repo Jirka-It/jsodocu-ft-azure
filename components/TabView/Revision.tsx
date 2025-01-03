@@ -180,7 +180,7 @@ export default function Revision({ inReview }) {
             <div className="col-12 md:col-8">
                 <div className={`${stylesRevision['header-editor']}`}>
                     <div className="header-editor__description">
-                        <h5 className="m-0">{doc?.name}</h5>
+                        <h5 className="m-0 ml-3">{doc?.name}</h5>
                     </div>
                 </div>
 

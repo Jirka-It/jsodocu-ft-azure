@@ -12,22 +12,25 @@ import { INode, INodeGeneral } from '@interfaces/INode';
 import { IDocument } from '@interfaces/IDocument';
 
 import { IVariableLight } from '@interfaces/IVariable';
-import { count, replaceText } from '@lib/ReplaceText';
-import { addComment, addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { showError, showSuccess } from '@lib/ToastMessages';
-import { findById, update } from '@api/articles';
+import { State } from '@enums/DocumentEnum';
 import DeleteEditorModal from '@components/Modals/DeleteEditorModal';
-import EditorToolbar, { formats } from './EditorToolbar';
+import CommentModal from '@components/Modals/CommentModal';
 
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
 
+import { count, replaceText } from '@lib/ReplaceText';
+import { addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
+import { showError, showSuccess } from '@lib/ToastMessages';
+import { findById, update } from '@api/articles';
+
+import EditorToolbar, { formats } from './EditorToolbar';
+
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
-import { State } from '@enums/DocumentEnum';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -39,6 +42,11 @@ export default function Editor({ inReview }) {
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [comment, setComment] = useState<string>('');
+    const [newRange, setNewRange] = useState();
+
+    const [openModalComment, setOpenModalComment] = useState<boolean>(false);
+
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
@@ -59,10 +67,10 @@ export default function Editor({ inReview }) {
             if (typeof window !== 'undefined') {
                 if (quill.current) {
                     const quillRef = quill.current.getEditor(); // Get the Quill instance
-                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
+                    quillRef.root.addEventListener('click', (e) => handleEditorClick(quill, openComment, e));
 
                     return () => {
-                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, setContent, updateContent, e, nodeSelected));
+                        quillRef.root.removeEventListener('click', (e) => handleEditorClick(quill, openComment, e));
                     };
                 }
             }
@@ -89,6 +97,7 @@ export default function Editor({ inReview }) {
             });
 
             setExpandedKeys(keys);
+
             setNodes(res.data);
         }
     };
@@ -111,7 +120,9 @@ export default function Editor({ inReview }) {
             toolbar: {
                 container: '#toolbar',
                 handlers: {
-                    comment: () => addComment(quill)
+                    comment: () => {
+                        setOpenModalComment(true);
+                    }
                 }
             },
             mention: {
@@ -173,11 +184,12 @@ export default function Editor({ inReview }) {
                     <InputText
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
-                        onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer)}
+                        onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer, doc)}
                         className={`${styles['input-node']} w-full`}
                         type="text"
                         placeholder={node.chapter ? 'Capítulo' : 'Artículo'}
                     />
+
                     <Button icon="pi pi pi-plus" outlined size="small" className="p-button-success" onClick={() => addSection(node, setNodes, setExpandedKeys)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
                     <Button
                         icon="pi pi pi-times"
@@ -260,7 +272,7 @@ export default function Editor({ inReview }) {
         });
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
-            setNodes((prevArray) => [...prevArray, { ...res.data, key: res.data._id }]);
+            setNodes((prevArray) => [...prevArray, { ...res, key: res._id }]);
             showSuccess(toast, '', 'Capítulo creado');
         } else if (res.status === HttpStatus.BAD_REQUEST) {
             showError(toast, '', 'Revise los datos ingresados');
@@ -334,6 +346,9 @@ export default function Editor({ inReview }) {
         updateComments(nodeSelected, countComment, setNodes);
         setContent(content);
         clearTimeout(timer);
+        if (doc && doc.step === State.APPROVED) {
+            return;
+        }
 
         const newTimer = setTimeout(async () => {
             if (nodeSelected && (!inputClicked || permit)) {
@@ -361,9 +376,34 @@ export default function Editor({ inReview }) {
         setTimer(newTimer);
     };
 
+    //Events to add comments
+
+    const openComment = async (comment: string, range) => {
+        setComment(comment);
+        setNewRange(range);
+        setOpenModalComment(true);
+    };
+
     return (
         <section className="grid">
             <Toast ref={toast} />
+            {quill ? (
+                <CommentModal
+                    state={openModalComment}
+                    setState={(e) => setOpenModalComment(e)}
+                    toast={toast}
+                    quill={quill}
+                    comment={comment}
+                    newRange={newRange}
+                    setComment={(e) => setComment(e)}
+                    updateContent={() => {
+                        setComment(null);
+                        setNewRange(null);
+                    }}
+                />
+            ) : (
+                ''
+            )}
 
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
             <div className="col-12 lg:col-3">
@@ -395,24 +435,42 @@ export default function Editor({ inReview }) {
                     ''
                 )}
 
-                <div>
-                    <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
-                </div>
+                {nodes && nodes.length > 0 ? (
+                    <div>
+                        <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
 
             {modules && nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
                     <div className="col-12 lg:col-6">
                         <EditorToolbar inReview={inReview} />
-                        <ReactQuill theme="snow" onFocus={() => setInputClicked(false)} formats={formats} ref={quill} value={content} modules={modules} readOnly={nodeSelected.approved} onChange={(e) => updateContent(e)} />
+                        <ReactQuill
+                            theme="snow"
+                            onFocus={() => setInputClicked(false)}
+                            formats={formats}
+                            ref={quill}
+                            value={content}
+                            modules={modules}
+                            readOnly={nodeSelected.approved || doc.step === State.APPROVED}
+                            onChange={(e) => updateContent(e)}
+                        />
                     </div>
+
                     <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
 
-                    {inReview && nodeSelected && !nodeSelected.approved ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+                    {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
-                    {inReview && nodeSelected && nodeSelected.approved ? <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" /> : ''}
+                    {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
+                        <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
+                    ) : (
+                        ''
+                    )}
                 </div>
             ) : (
                 ''

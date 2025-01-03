@@ -10,6 +10,7 @@ export interface IDocumentAction extends IBasicAction {
 
 export interface ICustomAction extends IBasicAction {
     data: string;
+    children?: any;
 }
 
 export interface ICustomUserAction extends ICustomAction {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useImperativeHandle, useContext, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useContext, useRef, useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import AppBreadCrumb from './AppBreadCrumb';
@@ -8,16 +8,22 @@ import { LayoutContext } from './context/layoutcontext';
 import AppSidebar from './AppSidebar';
 import { StyleClass } from 'primereact/styleclass';
 import { Ripple } from 'primereact/ripple';
-import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { ISession } from '@interfaces/ISession';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
-    const btnRef1 = useRef(null);
+    const { data: session } = useSession(); //data:session
+    const [user, setUser] = useState<ISession>();
+
     const btnRef2 = useRef(null);
     const menubuttonRef = useRef(null);
-    const router = useRouter();
 
-    const { onMenuToggle, toggleSearch, showRightSidebar, layoutConfig } = useContext(LayoutContext);
+    useEffect(() => {
+        const data: ISession = session as any;
+        setUser(data);
+    }, [session]);
+
+    const { onMenuToggle, layoutConfig } = useContext(LayoutContext);
 
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current
@@ -50,11 +56,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
 
             <div className="topbar-right">
                 <ul className="topbar-menu">
-                    <li className="search-item">
-                        <a type="button" onClick={toggleSearch}>
-                            <i className="pi pi-search"></i>
-                        </a>
-                    </li>
+                    {/*
                     <li className="static sm:relative">
                         <StyleClass nodeRef={btnRef1} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick>
                             <a tabIndex={0} ref={btnRef1}>
@@ -113,43 +115,17 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                         </ul>
                     </li>
 
+                  */}
+
                     <li className="profile-item static sm:relative">
                         <StyleClass nodeRef={btnRef2} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick={true}>
                             <a tabIndex={1} ref={btnRef2}>
-                                <img src={`/demo/images/avatar/profile.jpg`} alt="diamond-layout" className="profile-image" />
-                                <span className="profile-name">Amelia Stone</span>
+                                <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
+                                {user ? <span className="profile-name">{`${user.user?.name} ${user.user?.lastName}`}</span> : ''}
                             </a>
                         </StyleClass>
                         <ul className="list-none p-3 m-0 border-round shadow-2 absolute surface-overlay hidden origin-top w-full sm:w-19rem mt-2 right-0 z-5 top-auto">
                             <li>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
-                                    <i className="pi pi-user mr-3"></i>
-                                    <span className="flex flex-column">
-                                        <span className="font-semibold">Profile</span>
-                                    </span>
-                                    <Ripple />
-                                </a>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
-                                    <i className="pi pi-cog mr-3"></i>
-                                    <span className="flex flex-column">
-                                        <span className="font-semibold">Settings</span>
-                                    </span>
-                                    <Ripple />
-                                </a>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
-                                    <i className="pi pi-calendar mr-3"></i>
-                                    <span className="flex flex-column">
-                                        <span className="font-semibold">Calendar</span>
-                                    </span>
-                                    <Ripple />
-                                </a>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
-                                    <i className="pi pi-inbox mr-3"></i>
-                                    <span className="flex flex-column">
-                                        <span className="font-semibold">Inbox</span>
-                                    </span>
-                                    <Ripple />
-                                </a>
                                 <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={handleLogout}>
                                     <i className="pi pi-power-off mr-3"></i>
                                     <span className="flex flex-column" onClick={() => handleLogout()}>
@@ -159,12 +135,6 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                                 </a>
                             </li>
                         </ul>
-                    </li>
-
-                    <li className="right-sidebar-item">
-                        <a onClick={showRightSidebar}>
-                            <i className="pi pi-align-right"></i>
-                        </a>
                     </li>
                 </ul>
             </div>

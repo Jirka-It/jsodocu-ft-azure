@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IArticle, IArticlePartial, IArticleResponse, IArticleResponseCreate } from '@interfaces/IArticle';
+import { IArticle, IArticlePartial, IArticleResponse, IArticleResponseObject } from '@interfaces/IArticle';
 
 const findAll = async (params: any): Promise<IArticleResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IArticleResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IArticle> => {
+const findById = async (id: string): Promise<IArticleResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/${id}`)
         .then((res) => {
@@ -38,12 +38,12 @@ const findById = async (id: string): Promise<IArticle> => {
         });
 };
 
-const create = async (data: IArticle): Promise<IArticleResponseCreate> => {
+const create = async (data: IArticle): Promise<IArticleResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles`, data)
         .then((res) => {
             return {
-                data: res.data,
+                ...res.data,
                 status: res.status
             };
         })
@@ -55,7 +55,7 @@ const create = async (data: IArticle): Promise<IArticleResponseCreate> => {
         });
 };
 
-const update = async (id: string, data: IArticlePartial): Promise<IArticle> => {
+const update = async (id: string, data: IArticlePartial): Promise<IArticleResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/${id}`, data)
         .then((res) => {
@@ -72,7 +72,7 @@ const update = async (id: string, data: IArticlePartial): Promise<IArticle> => {
         });
 };
 
-const remove = async (id: string): Promise<IArticleResponse> => {
+const remove = async (id: string): Promise<IArticleResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/${id}`)
         .then((res) => {

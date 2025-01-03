@@ -13,6 +13,9 @@ export default function BasicStates({ state }: IBasicState) {
         case State.INACTIVE:
             return <Badge value="Inactivo" severity="danger"></Badge>;
 
+        case State.PENDING:
+            return <Badge value="Pendiente" severity="warning"></Badge>;
+
         case true:
             return <Badge value="Si" severity="success"></Badge>;
 

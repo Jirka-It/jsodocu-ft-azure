@@ -30,31 +30,7 @@ comment {
 }
 
 // COMMENTS
-[data-tooltip] {
-    position: relative;
-}
 
-[data-tooltip]:after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 50%;
-    bottom: 0%;
-    /* put it on the top */
-    background-color: yellow;
-    padding: 5px;
-    width: max-content;
-    opacity: 0;
-    -webkit-transition: opacity 0.75s ease-in-out;
-}
-
-[data-tooltip]:hover:after {
-    opacity: 1;
-
-}
-
-div[data-tooltip]:after {
-    left: 5px !important;
-}
 
 // MENTIONS
 
@@ -87,9 +63,6 @@ div[data-tooltip]:after {
     .ql-editor {
         min-height: 50rem;
         max-height: 50rem;
-
-
-
     }
 }
 
@@ -97,6 +70,7 @@ div[data-tooltip]:after {
 .ql-editor {
 
     height: auto !important;
+    text-overflow: scroll;
 
     .mention {
         color: blue;

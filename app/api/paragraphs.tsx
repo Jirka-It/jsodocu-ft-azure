@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IParagraph, IParagraphPartial, IParagraphResponse, IParagraphResponseCreate } from '@interfaces/IParagraph';
+import { IParagraph, IParagraphPartial, IParagraphResponse, IParagraphResponseObject } from '@interfaces/IParagraph';
 
 const findAll = async (params: any): Promise<IParagraphResponse> => {
     return await axiosInstance
@@ -21,7 +21,7 @@ const findAll = async (params: any): Promise<IParagraphResponse> => {
         });
 };
 
-const findById = async (id: string): Promise<IParagraph> => {
+const findById = async (id: string): Promise<IParagraphResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/${id}`)
         .then((res) => {
@@ -38,12 +38,12 @@ const findById = async (id: string): Promise<IParagraph> => {
         });
 };
 
-const create = async (data: IParagraph): Promise<IParagraphResponseCreate> => {
+const create = async (data: IParagraph): Promise<IParagraphResponseObject> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs`, data)
         .then((res) => {
             return {
-                data: res.data,
+                ...res.data,
                 status: res.status
             };
         })
@@ -55,7 +55,7 @@ const create = async (data: IParagraph): Promise<IParagraphResponseCreate> => {
         });
 };
 
-const update = async (id: string, data: IParagraphPartial): Promise<IParagraph> => {
+const update = async (id: string, data: IParagraphPartial): Promise<IParagraphResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/${id}`, data)
         .then((res) => {
@@ -72,7 +72,7 @@ const update = async (id: string, data: IParagraphPartial): Promise<IParagraph> 
         });
 };
 
-const remove = async (id: string): Promise<IParagraphResponse> => {
+const remove = async (id: string): Promise<IParagraphResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/${id}`)
         .then((res) => {

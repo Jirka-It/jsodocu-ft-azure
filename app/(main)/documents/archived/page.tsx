@@ -111,7 +111,7 @@ const Documents = () => {
                         field="actions"
                         body={(rowData) => (
                             <>
-                                <Button onClick={() => handleActive(rowData)} icon="pi pi-folder" severity="help" tooltip="Activar documento" />
+                                <Button onClick={() => handleActive(rowData)} icon="pi pi-check-circle" severity="success" tooltip="Activar documento" />
                             </>
                         )}
                         header="Acciones"

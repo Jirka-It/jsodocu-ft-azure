@@ -10,8 +10,7 @@ export interface IParagraphResponse {
     status: number;
 }
 
-export interface IParagraphResponseCreate {
-    data?: IParagraph;
+export interface IParagraphResponseObject extends IParagraph {
     code?: number;
     status: number;
 }

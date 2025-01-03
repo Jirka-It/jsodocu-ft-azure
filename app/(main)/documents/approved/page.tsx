@@ -17,9 +17,11 @@ import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
 import { showError, showInfo } from '@lib/ToastMessages';
+import { useRouter } from 'next/navigation';
 
 const Documents = () => {
     const toast = useRef(null);
+    const router = useRouter();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
@@ -41,6 +43,10 @@ const Documents = () => {
     };
 
     //Table actions
+
+    const handleView = (id: string) => {
+        router.push(`/documents/approved/${id}`);
+    };
 
     const handleCopy = (data: string) => {
         CopyToClipBoard(data, toast);
@@ -117,6 +123,7 @@ const Documents = () => {
                         field="actions"
                         body={(rowData) => (
                             <>
+                                <Button onClick={() => handleView(rowData._id)} icon="pi pi-eye" className="mr-2" severity="help" tooltip="Revisar" />
                                 <Button onClick={() => handleExport(rowData)} icon="pi pi-file-import" className="mr-2" tooltip="Exportar" />
                             </>
                         )}

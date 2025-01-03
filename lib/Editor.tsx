@@ -284,7 +284,6 @@ export const handleEditorClick = (quill, openComment: Function, e) => {
             const index = quillRef.getIndex(blot);
             let length = blot.length(quill.current.scroll);
 
-            quillRef.formatText(index, length, 'customTag', false);
             const range = { index, length };
             openComment(tooltipValue, range);
         }

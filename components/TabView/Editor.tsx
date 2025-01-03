@@ -43,7 +43,7 @@ export default function Editor({ inReview, readOnly }) {
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [comment, setComment] = useState<string>('');
-    const [newBody, setNewBody] = useState<string>('');
+    const [newRange, setNewRange] = useState();
 
     const [openModalComment, setOpenModalComment] = useState<boolean>(false);
 
@@ -390,9 +390,9 @@ export default function Editor({ inReview, readOnly }) {
 
     //Events to add comments
 
-    const openComment = async (comment: string, newBody: string) => {
+    const openComment = async (comment: string, range) => {
         setComment(comment);
-        setNewBody(newBody);
+        setNewRange(range);
         setOpenModalComment(true);
     };
 
@@ -406,10 +406,11 @@ export default function Editor({ inReview, readOnly }) {
                     toast={toast}
                     quill={quill}
                     comment={comment}
+                    newRange={newRange}
                     setComment={(e) => setComment(e)}
                     updateContent={() => {
                         setComment(null);
-                        updateContent(newBody);
+                        setNewRange(null);
                     }}
                 />
             ) : (
@@ -459,8 +460,6 @@ export default function Editor({ inReview, readOnly }) {
                 <div className="grid col-12 lg:col-9">
                     {!readOnly ? (
                         <div className="col-12 lg:col-6">
-                            <Tooltip target=".quill>.ql-container.ql-editor>p>.comment" />
-
                             <EditorToolbar inReview={inReview} />
                             <ReactQuill
                                 theme="snow"

@@ -66,9 +66,9 @@ const Users = () => {
             <div className="card">
                 <div className="w-full flex justify-content-between align-items-center mb-3">
                     <div>
-                        <Badge value="Pendiente" onClick={() => setState(State.PENDING)} className="cursor-pointer" severity="warning"></Badge>
+                        <Badge value="Pendiente" onClick={() => setState(State.PENDING)} className="mr-2 cursor-pointer" severity="warning"></Badge>
                         <Badge value="Activo" onClick={() => setState(State.ACTIVE)} className="mr-2 cursor-pointer" severity="success"></Badge>
-                        <Badge value="Inactivo" onClick={() => setState(State.INACTIVE)} className="mr-2 cursor-pointer" severity="danger"></Badge>
+                        <Badge value="Inactivo" onClick={() => setState(State.INACTIVE)} className="cursor-pointer" severity="danger"></Badge>
                     </div>
 
                     <div className="flex align-items-center">

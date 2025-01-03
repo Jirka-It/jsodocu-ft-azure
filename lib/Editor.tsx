@@ -1,3 +1,4 @@
+import Quill from 'quill';
 import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
@@ -278,11 +279,14 @@ export const handleEditorClick = (quill, openComment: Function, e) => {
                 elementSelected = clickedElement.parentNode.parentNode.outerHTML;
                 tooltipValue = clickedElement.parentNode.parentNode.getAttribute('data-tooltip');
             }
-            // Replace the <img> with a <div> or any other tag you need
-            const newBody = replaceComment(quill.current.value, elementSelected, body);
-            openComment(tooltipValue, newBody);
 
-            //updateContent(newBody, true);
+            let blot = Quill.find(clickedElement);
+            const index = quillRef.getIndex(blot);
+            let length = blot.length(quill.current.scroll);
+
+            quillRef.formatText(index, length, 'customTag', false);
+            const range = { index, length };
+            openComment(tooltipValue, range);
         }
     }
 };

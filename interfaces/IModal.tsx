@@ -23,6 +23,7 @@ export interface IModalCreate extends IModal {
 export interface IModalComment extends IModal {
     toast: any;
     quill: any;
+    newRange: any;
     setComment?: Function;
     comment?: string;
     updateContent?: Function;

@@ -9,7 +9,7 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 import { showSuccess } from '@lib/ToastMessages';
 import { CommentValidation } from '@validations/CommentValidation';
 
-export default function CommentModal({ state, setState, toast, quill, setComment, comment, updateContent }: IModalComment) {
+export default function CommentModal({ state, setState, toast, quill, setComment, comment, newRange, updateContent }: IModalComment) {
     const [description, setDescription] = useState<string>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
     const [range, setRange] = useState<{ index: number; length: number }>();
@@ -57,10 +57,12 @@ export default function CommentModal({ state, setState, toast, quill, setComment
             }
 
             //Add comment
-            quill.current.editor.formatText(range.index, range.length, 'customTag', description.trim());
+            quill.current.editor.formatText(range.index, range.length, 'customTag', description);
             showSuccess(toast, '', 'Comentario agregado');
         } else {
+            //New range is when I want to delete one comment
             showSuccess(toast, '', 'Comentario eliminado');
+            quill.current.editor.formatText(newRange.index, newRange.length, 'customTag', false);
             updateContent();
         }
 

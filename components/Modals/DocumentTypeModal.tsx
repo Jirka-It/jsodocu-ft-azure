@@ -108,8 +108,11 @@ export default function DocumentTypeModal({ state, setState, update, data, toast
     };
 
     // Inputs events
-    const handleChange = async (name: string) => {
-        const newCode = CleanText(name);
+    const handleChange = async (code: string) => {
+        const newCode = CleanText(code);
+
+        console.log('newCode', newCode);
+
         setCode(newCode);
         clearTimeout(timer);
         const newTimer = setTimeout(async () => {

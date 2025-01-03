@@ -9,7 +9,7 @@ import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, remove, update } from '@api/documents';
+import { findAll, remove, updateWithState } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
@@ -48,7 +48,7 @@ const Documents = () => {
 
     const handleActive = async (data: IDocument) => {
         try {
-            const res = await update(data._id, {
+            const res = await updateWithState(data._id, {
                 step: State.EDITION
             });
             if (!res) {

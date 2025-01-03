@@ -6,11 +6,10 @@ import stylesRevision from './Revision.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { findByIdLight as findDocument } from '@api/documents';
+import { findByIdLight as findDocument, update, updateWithState } from '@api/documents';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { findAllPreview, findAllComments } from '@api/documents';
 import { findAllByAccount } from '@api/users';
-import { update } from '@api/documents';
 
 import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
@@ -98,7 +97,7 @@ export default function Revision({ inReview }) {
         }
 
         try {
-            const res = await update(paramsUrl.id, {
+            const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
                 step: State.REVIEW
             });
@@ -117,7 +116,7 @@ export default function Revision({ inReview }) {
 
     const handleBack = async () => {
         try {
-            const res = await update(paramsUrl.id, {
+            const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
                 step: State.EDITION
             });

@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, update } from '@api/documents';
+import { findAll, updateWithState } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
@@ -48,7 +48,7 @@ const Documents = () => {
 
     const handleArchive = async (data: IDocument) => {
         try {
-            const res = await update(data._id, {
+            const res = await updateWithState(data._id, {
                 step: State.ARCHIVED
             });
             if (!res) {

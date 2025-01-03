@@ -3,7 +3,6 @@ import { INodeGeneral } from '@interfaces/INode';
 import { update, remove } from '@api/chapters';
 import { create, update as updateArticle, remove as removeArticle } from '@api/articles';
 import { create as createParagraph, remove as removeParagraph } from '@api/paragraphs';
-import { replaceComment } from './ReplaceText';
 import { State } from '@enums/DocumentEnum';
 import { IDocument } from '@interfaces/IDocument';
 

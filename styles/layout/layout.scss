@@ -63,9 +63,6 @@ comment {
     .ql-editor {
         min-height: 50rem;
         max-height: 50rem;
-
-
-
     }
 }
 
@@ -73,6 +70,7 @@ comment {
 .ql-editor {
 
     height: auto !important;
+    text-overflow: scroll;
 
     .mention {
         color: blue;

@@ -32,7 +32,7 @@ import EditorToolbar, { formats } from './EditorToolbar';
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
 
-export default function Editor({ inReview, readOnly }) {
+export default function Editor({ inReview }) {
     const toast = useRef(null);
     const quill = useRef(null);
     const params = useParams();
@@ -182,7 +182,6 @@ export default function Editor({ inReview, readOnly }) {
                     )}
 
                     <InputText
-                        readOnly={readOnly ? true : false}
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
                         onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer, doc)}
@@ -191,25 +190,18 @@ export default function Editor({ inReview, readOnly }) {
                         placeholder={node.chapter ? 'Capítulo' : 'Artículo'}
                     />
 
-                    {!readOnly ? (
-                        <>
-                            {' '}
-                            <Button icon="pi pi pi-plus" outlined size="small" className="p-button-success" onClick={() => addSection(node, setNodes, setExpandedKeys)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
-                            <Button
-                                icon="pi pi pi-times"
-                                outlined
-                                size="small"
-                                className="p-button-danger"
-                                onClick={() => {
-                                    setNodeSelectedToDelete(node);
-                                    setOpenModalClose(!openModalClose);
-                                }}
-                                tooltip="Borrar"
-                            />
-                        </>
-                    ) : (
-                        ''
-                    )}
+                    <Button icon="pi pi pi-plus" outlined size="small" className="p-button-success" onClick={() => addSection(node, setNodes, setExpandedKeys)} tooltip={node.chapter ? 'Agregar artículo' : 'Agregar paragrafo'} />
+                    <Button
+                        icon="pi pi pi-times"
+                        outlined
+                        size="small"
+                        className="p-button-danger"
+                        onClick={() => {
+                            setNodeSelectedToDelete(node);
+                            setOpenModalClose(!openModalClose);
+                        }}
+                        tooltip="Borrar"
+                    />
                 </div>
             );
         }
@@ -247,23 +239,19 @@ export default function Editor({ inReview, readOnly }) {
                             </h6>
                         </span>
 
-                        {!readOnly ? (
-                            <div>
-                                <Button
-                                    size="small"
-                                    icon="pi pi pi-times"
-                                    outlined
-                                    className="p-button-danger h-2rem"
-                                    onClick={() => {
-                                        setNodeSelectedToDelete(node);
-                                        setOpenModalClose(!openModalClose);
-                                    }}
-                                    tooltip="Borrar"
-                                />
-                            </div>
-                        ) : (
-                            ''
-                        )}
+                        <div>
+                            <Button
+                                size="small"
+                                icon="pi pi pi-times"
+                                outlined
+                                className="p-button-danger h-2rem"
+                                onClick={() => {
+                                    setNodeSelectedToDelete(node);
+                                    setOpenModalClose(!openModalClose);
+                                }}
+                                tooltip="Borrar"
+                            />
+                        </div>
                     </div>
                 </div>
             );
@@ -458,35 +446,27 @@ export default function Editor({ inReview, readOnly }) {
 
             {modules && nodeSelected ? (
                 <div className="grid col-12 lg:col-9">
-                    {!readOnly ? (
-                        <div className="col-12 lg:col-6">
-                            <EditorToolbar inReview={inReview} />
-                            <ReactQuill
-                                theme="snow"
-                                onFocus={() => setInputClicked(false)}
-                                formats={formats}
-                                ref={quill}
-                                value={content}
-                                modules={modules}
-                                readOnly={nodeSelected.approved || doc.step === State.APPROVED}
-                                onChange={(e) => updateContent(e)}
-                            />
-                        </div>
-                    ) : (
-                        ''
-                    )}
+                    <div className="col-12 lg:col-6">
+                        <EditorToolbar inReview={inReview} />
+                        <ReactQuill
+                            theme="snow"
+                            onFocus={() => setInputClicked(false)}
+                            formats={formats}
+                            ref={quill}
+                            value={content}
+                            modules={modules}
+                            readOnly={nodeSelected.approved || doc.step === State.APPROVED}
+                            onChange={(e) => updateContent(e)}
+                        />
+                    </div>
 
-                    <div className={readOnly ? 'col-12  ql-editor' : 'col-12 lg:col-6 ql-editor'}>
+                    <div className="col-12 lg:col-6 ql-editor">
                         <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
 
-                    {inReview && nodeSelected && !nodeSelected.approved && !readOnly && doc.step !== State.APPROVED ? (
-                        <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" />
-                    ) : (
-                        ''
-                    )}
+                    {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
 
-                    {inReview && nodeSelected && nodeSelected.approved && !readOnly && doc.step !== State.APPROVED ? (
+                    {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
                         <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
                     ) : (
                         ''

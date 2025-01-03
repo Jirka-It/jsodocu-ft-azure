@@ -45,7 +45,7 @@ const Documents = () => {
     //Table actions
 
     const handleView = (id: string) => {
-        router.push(`/documents/in-review/${id}?read-only=true`);
+        router.push(`/documents/approved/${id}`);
     };
 
     const handleCopy = (data: string) => {
@@ -123,7 +123,7 @@ const Documents = () => {
                         field="actions"
                         body={(rowData) => (
                             <>
-                                <Button onClick={() => handleView(rowData._id)} icon="pi pi-eye" className="mr-2" tooltip="Revisar" />
+                                <Button onClick={() => handleView(rowData._id)} icon="pi pi-eye" className="mr-2" severity="help" tooltip="Revisar" />
                                 <Button onClick={() => handleExport(rowData)} icon="pi pi-file-import" className="mr-2" tooltip="Exportar" />
                             </>
                         )}

@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, update } from '@api/documents';
+import { findAll, updateWithState } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
@@ -15,6 +15,7 @@ import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -48,9 +49,15 @@ const Documents = () => {
 
     const handleArchive = async (data: IDocument) => {
         try {
-            const res = await update(data._id, {
+            const res = await updateWithState(data._id, {
                 step: State.ARCHIVED
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué archivado');
+                return;
+            }
+
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {

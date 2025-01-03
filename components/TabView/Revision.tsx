@@ -6,15 +6,15 @@ import stylesRevision from './Revision.module.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { findByIdLight as findDocument } from '@api/documents';
+import { findByIdLight as findDocument, updateWithState } from '@api/documents';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { findAllPreview, findAllComments } from '@api/documents';
 import { findAllByAccount } from '@api/users';
-import { update } from '@api/documents';
 
 import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
 import { IDocument } from '@interfaces/IDocument';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 export default function Revision({ inReview }) {
     const paramsUrl = useParams();
@@ -98,10 +98,16 @@ export default function Revision({ inReview }) {
         }
 
         try {
-            const res = await update(paramsUrl.id, {
+            const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
                 step: State.REVIEW
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué envíado a revisar');
+                return;
+            }
+
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {
@@ -117,10 +123,16 @@ export default function Revision({ inReview }) {
 
     const handleBack = async () => {
         try {
-            const res = await update(paramsUrl.id, {
+            const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
                 step: State.EDITION
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué envíado a edición');
+                return;
+            }
+
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {
@@ -136,10 +148,16 @@ export default function Revision({ inReview }) {
 
     const handleApprove = async () => {
         try {
-            const res = await update(paramsUrl.id, {
+            const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
-                step: State.APPROVED
+                step: State.APPROVED,
+                version: doc.version + 1
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué aprobado');
+                return;
+            }
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {

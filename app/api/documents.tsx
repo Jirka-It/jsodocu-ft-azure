@@ -140,6 +140,23 @@ const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResp
         });
 };
 
+const updateWithState = async (id: string, data: IDocumentPartial): Promise<IDocumentResponseObject> => {
+    return await axiosInstance
+        .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/step/${id}`, data)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const remove = async (id: string): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .delete(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
@@ -157,4 +174,4 @@ const remove = async (id: string): Promise<IDocumentResponseObject> => {
         });
 };
 
-export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, update, remove };
+export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, update, updateWithState, remove };

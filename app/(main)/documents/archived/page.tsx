@@ -9,7 +9,7 @@ import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
-import { findAll, remove, update } from '@api/documents';
+import { findAll, remove, updateWithState } from '@api/documents';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
@@ -17,6 +17,7 @@ import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const Documents = () => {
     const toast = useRef(null);
@@ -48,9 +49,15 @@ const Documents = () => {
 
     const handleActive = async (data: IDocument) => {
         try {
-            const res = await update(data._id, {
+            const res = await updateWithState(data._id, {
                 step: State.EDITION
             });
+
+            if (res.status === HttpStatus.FORBIDDEN) {
+                showError(toast, '', 'El documento ya fué envíado a edición');
+                return;
+            }
+
             if (!res) {
                 showWarn(toast, '', 'Contacte con soporte');
             } else {

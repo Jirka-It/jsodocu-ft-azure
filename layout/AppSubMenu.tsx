@@ -45,6 +45,9 @@ const AppSubMenu = (props: MenuProps) => {
     return (
         <MenuProvider>
             <ul className="layout-menu">
+                {
+                    //GENERATE EACH FATHER MENU
+                }
                 {props.model.map((item, i) => {
                     return !item.separator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li key={i} className="menu-separator"></li>;
                 })}

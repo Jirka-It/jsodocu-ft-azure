@@ -122,6 +122,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         }
     };
 
+    //GENERATE THE CHILDREN OF EACH ITEM - SUB MENUS
     const subMenu =
         item.items && item.visible !== false ? (
             <ul ref={submenuRef}>

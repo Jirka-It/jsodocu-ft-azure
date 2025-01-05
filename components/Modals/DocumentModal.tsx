@@ -18,6 +18,7 @@ import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { TokenBasicInformation } from '@lib/Token';
 
 export default function DocumentModal({ state, setState, update, data, toast }: IModalCreate) {
     const { data: session } = useSession(); //data:session
@@ -80,6 +81,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         }
 
         const v: ISession = session as any;
+        const decoded = TokenBasicInformation(v.access_token);
 
         var res;
         if (data) {
@@ -92,7 +94,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                 name,
                 type: type._id,
                 state: State.ACTIVE,
-                creator: v.user._id,
+                creator: decoded.sub,
                 step: Step.EDITION,
                 version: 1
             });

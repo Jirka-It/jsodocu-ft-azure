@@ -22,6 +22,7 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
+import { TokenBasicInformation } from '@lib/Token';
 
 export default function UserModalAccount({ state, setState, update, data, account, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
@@ -169,6 +170,8 @@ export default function UserModalAccount({ state, setState, update, data, accoun
         }
 
         const v: ISession = session as any;
+        const decoded = TokenBasicInformation(v.access_token);
+
         var res;
 
         if (data) {
@@ -189,7 +192,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
                 accountId,
                 state: stateUser.code,
                 roles: newTarget,
-                creator: v.user._id
+                creator: decoded.sub
             });
         }
 

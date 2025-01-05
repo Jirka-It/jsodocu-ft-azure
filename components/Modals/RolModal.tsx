@@ -20,6 +20,7 @@ import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { ISession } from '@interfaces/ISession';
 import { useSession } from 'next-auth/react';
+import { TokenBasicInformation } from '@lib/Token';
 
 export default function RolModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
@@ -152,6 +153,7 @@ export default function RolModal({ state, setState, update, data, toast }: IModa
         }
 
         const v: ISession = session as any;
+        const decoded = TokenBasicInformation(v.access_token);
 
         var res;
 
@@ -172,7 +174,7 @@ export default function RolModal({ state, setState, update, data, toast }: IModa
                 applyToAccount: applyToAccount.code,
                 state: stateRol.code,
                 permissions: newTarget,
-                creator: v.user._id
+                creator: decoded.sub
             });
         }
 

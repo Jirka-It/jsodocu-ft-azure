@@ -44,7 +44,6 @@ const AppSubMenu = (props: MenuProps) => {
         });
         setBreadcrumbs(breadcrumbs);
     };
-    /*<li key={i} className="menu-separator"></li> */
     return (
         <MenuProvider>
             <ul className="layout-menu">

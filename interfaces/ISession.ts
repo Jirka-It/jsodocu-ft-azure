@@ -5,7 +5,7 @@ export interface ISession {
 }
 
 export interface IToken {
-    roles: string[];
+    roles?: string[];
     permissions: string[];
     sub: any;
     accountId: any;

@@ -9,10 +9,14 @@ import { LayoutContext } from './context/layoutcontext';
 import { MenuContext } from './context/menucontext';
 import { useSubmenuOverlayPosition } from './hooks/useSubmenuOverlayPosition';
 import { AppMenuItemProps } from '@customTypes/layout';
+import { useSession } from 'next-auth/react';
+import { VerifyPermissions } from '@lib/Permissions';
 
 const AppMenuitem = (props: AppMenuItemProps) => {
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
     const { isSlim, isCompact, isHorizontal, isDesktop, setLayoutState, layoutState, layoutConfig } = useContext(LayoutContext);
+    const { data: session }: any = useSession(); //data:session
+
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const submenuRef = useRef(null);
@@ -127,7 +131,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         item.items && item.visible !== false ? (
             <ul ref={submenuRef}>
                 {item.items.map((child, i) => {
-                    return <AppMenuitem item={child} index={i} className={child.badgeClass} parentKey={key} key={child.label} />;
+                    return VerifyPermissions(session.access_token, child.permission) ? <AppMenuitem item={child} index={i} className={child.badgeClass} parentKey={key} key={child.label} /> : '';
                 })}
             </ul>
         ) : null;

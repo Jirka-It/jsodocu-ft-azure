@@ -155,6 +155,7 @@ export interface MenuProps {
 export interface MenuModal {
     label?: string;
     icon?: string;
+    permission?: Array<string>;
     items?: MenuModal[];
     to?: string;
     url?: string;

@@ -8,7 +8,7 @@ export enum Configuration {
 }
 
 export enum Permission {
-    ALL = 'A000',
+    SUDO = 'SUDO',
     HOME = 'HOM-000',
     //Documents
     DOCUMENTS = 'CAS-100',

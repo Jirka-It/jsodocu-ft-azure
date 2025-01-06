@@ -1,16 +1,17 @@
 import { MenuModal } from '@customTypes/layout';
 import AppSubMenu from './AppSubMenu';
+import { Permission } from '@enums/PermissionEnum';
 
 const AppMenu = () => {
     const model: MenuModal[] = [
         {
             label: 'Dashboard',
             icon: 'pi pi-home',
-            permission: ['HOM-000'],
+            permission: [Permission.SUDO, Permission.HOME],
             items: [
                 {
                     label: 'Inicio',
-                    permission: ['HOM-000'],
+                    permission: [Permission.SUDO, Permission.HOME],
                     icon: 'pi pi-home',
                     to: '/'
                 }
@@ -19,30 +20,30 @@ const AppMenu = () => {
         { separator: true },
         {
             label: 'Documentos',
-            permission: ['CAS-000'],
+            permission: [Permission.SUDO, Permission.DOCUMENTS],
             icon: 'pi pi-th-large',
             items: [
                 {
                     label: 'En edición',
-                    permission: ['CAS-101'],
+                    permission: [Permission.SUDO, Permission.EDIT_VIEW_DOCUMENT],
                     icon: 'pi pi-file',
                     to: '/documents/in-edition'
                 },
                 {
                     label: 'En revisión',
-                    permission: ['CAS-102'],
+                    permission: [Permission.SUDO, Permission.IN_REVIEW_DOCUMENTS],
                     icon: 'pi pi-file',
                     to: '/documents/in-review'
                 },
                 {
                     label: 'Aprobados',
-                    permission: ['CAS-103'],
+                    permission: [Permission.SUDO, Permission.APPROVED_DOCUMENTS],
                     icon: 'pi pi-file',
                     to: '/documents/approved'
                 },
                 {
                     label: 'Archivados',
-                    permission: ['CAS-104'],
+                    permission: [Permission.SUDO, Permission.ARCHIVED_DOCUMENTS],
                     icon: 'pi pi-file',
                     to: '/documents/archived'
                 }
@@ -51,12 +52,12 @@ const AppMenu = () => {
         { separator: true },
         {
             label: 'Plantillas',
-            permission: ['PLA-200'],
+            permission: [Permission.SUDO, Permission.TEMPLATES],
             icon: 'pi pi-th-large',
             items: [
                 {
                     label: 'Disponibles',
-                    permission: ['PLA-200'],
+                    permission: [Permission.SUDO, Permission.TEMPLATES],
                     icon: 'pi pi-file'
                     //to: '/documents/in-edition'
                 }
@@ -65,31 +66,31 @@ const AppMenu = () => {
         { separator: true },
         {
             label: 'Seguridad',
-            permission: ['SEG-400'],
+            permission: [Permission.SUDO, Permission.SECURITY],
             icon: 'pi pi-th-large',
             items: [
                 {
                     label: 'Permisos',
-                    permission: ['SEG-401'],
+                    permission: [Permission.SUDO, Permission.PERMISSIONS],
                     icon: 'pi pi-ban',
                     to: '/configuration/permissions'
                 },
                 {
                     label: 'Roles',
-                    permission: ['SEG-402'],
+                    permission: [Permission.SUDO, Permission.ROLES],
                     icon: 'pi pi-ban',
                     to: '/configuration/roles'
                 },
                 {
                     label: 'Usuarios',
-                    permission: ['SEG-404'],
+                    permission: [Permission.SUDO, Permission.USERS],
                     icon: 'pi pi-user',
                     to: '/configuration/users'
                 },
 
                 {
                     label: 'Cuenta',
-                    permission: ['SEG-405'],
+                    permission: [Permission.SUDO, Permission.ACCOUNTS],
                     icon: 'pi pi-user',
                     to: '/configuration/account'
                 }
@@ -99,18 +100,18 @@ const AppMenu = () => {
         {
             label: 'Configuración',
             icon: 'pi pi-th-large',
-            permission: ['CONF-500'],
+            permission: [Permission.SUDO, Permission.CONFIGURATION],
             items: [
                 {
                     label: 'Categorías de variables',
-                    permission: ['CONF-501'],
+                    permission: [Permission.SUDO, Permission.DOCUMENT_VARIABLES],
                     icon: 'pi pi-cog',
                     to: '/categories'
                 },
 
                 {
                     label: 'Tipos de documentos',
-                    permission: ['CONF-502'],
+                    permission: [Permission.SUDO, Permission.DOCUMENT_TYPES],
                     icon: 'pi pi-cog',
                     to: '/documents-types'
                 }
@@ -119,18 +120,18 @@ const AppMenu = () => {
         { separator: true },
         {
             label: 'Sistema',
-            permission: ['SIS-600'],
+            permission: [Permission.SUDO, Permission.SYSTEM],
             icon: 'pi pi-th-large',
             items: [
                 {
                     label: 'Parámetros generales',
-                    permission: ['SIS-601'],
+                    permission: [Permission.SUDO, Permission.SIS],
                     icon: 'pi pi-chart-line'
                     //to: '/documents/in-edition'
                 },
                 {
                     label: 'Analítica de uso',
-                    permission: ['SIS-602'],
+                    permission: [Permission.SUDO, Permission.ANALYTIC],
                     icon: 'pi pi-chart-line'
                     //to: '/documents/in-edition'
                 }

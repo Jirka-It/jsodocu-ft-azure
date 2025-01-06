@@ -298,7 +298,7 @@ export default function RolModal({ state, setState, update, data, toast }: IModa
                         onSourceFilterChange={onSourceFilterChange}
                         onTargetFilterChange={onTargetFilterChange}
                         filter
-                        filterBy="name"
+                        filterBy="name,code"
                         sourceFilterValue={sourceFilterValue}
                         targetFilterValue={targetFilterValue}
                         sourceFilterPlaceholder="Buscar por nombre"

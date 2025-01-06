@@ -1,4 +1,5 @@
 export const env = {
     NEXT_PUBLIC_API_URL_BACKEND: process.env.NEXT_PUBLIC_API_URL_BACKEND,
-    AUTH_SECRET: process.env.AUTH_SECRET
+    AUTH_SECRET: process.env.AUTH_SECRET,
+    NEXT_PUBLIC_ENCRYPT_SECRET: process.env.NEXT_PUBLIC_ENCRYPT_SECRET
 };

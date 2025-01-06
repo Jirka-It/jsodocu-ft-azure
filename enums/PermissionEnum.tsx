@@ -4,6 +4,35 @@ export enum Configuration {
     CONFIGURATION = 'CONFIGURATION',
     SYSTEM = 'SYSTEM',
     TEMPLATE = 'TEMPLATE',
-    GENERAL = 'GENERAL',
+    GENERAL = 'GENERAL'
+}
 
+export enum Permission {
+    SUDO = 'SUDO',
+    HOME = 'HOM-000',
+    //Documents
+    DOCUMENTS = 'CAS-100',
+    EDIT_VIEW_DOCUMENT = 'CAS-101',
+    REGISTER_DOCUMENT = 'CAS-101-1',
+    EDIT_DOCUMENTS = 'CAS-101-2',
+    IN_REVIEW_DOCUMENTS = 'CAS-102',
+    APPROVED_DOCUMENTS = 'CAS-103',
+    ARCHIVED_DOCUMENTS = 'CAS-104',
+    //Templates
+    TEMPLATES = 'PLAS-200',
+    AVAILABLE_TEMPLATES = 'PLAS-200',
+    //Security
+    SECURITY = 'SEG-400',
+    PERMISSIONS = 'SEG-401',
+    ROLES = 'SEG-402',
+    USERS = 'SEG-404',
+    ACCOUNTS = 'SEG-405',
+    //Configuration
+    CONFIGURATION = 'CONF-500',
+    DOCUMENT_VARIABLES = 'CONF-501',
+    DOCUMENT_TYPES = 'CONF-502',
+    //System
+    SYSTEM = 'SIS-600',
+    SIS = '601',
+    ANALYTIC = 'SIS-602'
 }

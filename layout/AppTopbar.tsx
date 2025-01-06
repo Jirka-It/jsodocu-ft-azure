@@ -10,17 +10,20 @@ import { StyleClass } from 'primereact/styleclass';
 import { Ripple } from 'primereact/ripple';
 import { signOut, useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
+import { IUser } from '@interfaces/IUser';
+import { TokenBasicInformation } from '@lib/Token';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
     const { data: session } = useSession(); //data:session
-    const [user, setUser] = useState<ISession>();
+    const [user, setUser] = useState<IUser>();
 
     const btnRef2 = useRef(null);
     const menubuttonRef = useRef(null);
 
     useEffect(() => {
         const data: ISession = session as any;
-        setUser(data);
+        const decoded = TokenBasicInformation(data.access_token);
+        setUser(decoded.user);
     }, [session]);
 
     const { onMenuToggle, layoutConfig } = useContext(LayoutContext);
@@ -121,7 +124,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                         <StyleClass nodeRef={btnRef2} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick={true}>
                             <a tabIndex={1} ref={btnRef2}>
                                 <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
-                                {user ? <span className="profile-name">{`${user.user?.name} ${user.user?.lastName}`}</span> : ''}
+                                {user ? <span className="profile-name">{`${user.name} ${user.lastName}`}</span> : ''}
                             </a>
                         </StyleClass>
                         <ul className="list-none p-3 m-0 border-round shadow-2 absolute surface-overlay hidden origin-top w-full sm:w-19rem mt-2 right-0 z-5 top-auto">

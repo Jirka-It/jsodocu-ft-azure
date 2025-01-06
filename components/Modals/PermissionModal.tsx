@@ -16,6 +16,7 @@ import { useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { categories } from '@lib/data';
+import { TokenBasicInformation } from '@lib/Token';
 
 export default function PermissionModal({ state, setState, update, data, toast }: IModalCreate) {
     const [timer, setTimer] = useState(null);
@@ -93,7 +94,7 @@ export default function PermissionModal({ state, setState, update, data, toast }
         }
 
         const v: ISession = session as any;
-
+        const decoded = TokenBasicInformation(v.access_token);
         var res;
 
         if (data) {
@@ -109,7 +110,7 @@ export default function PermissionModal({ state, setState, update, data, toast }
                 name,
                 description,
                 category: category.code,
-                creator: v.user._id
+                creator: decoded.sub
             });
         }
 

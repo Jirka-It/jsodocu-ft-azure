@@ -6,10 +6,13 @@ import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
 import { Breadcrumb, BreadcrumbItem, MenuModal, MenuProps } from '@customTypes/layout';
+import { VerifyPermissions } from '@lib/Permissions';
+import { useSession } from 'next-auth/react';
 
 const AppSubMenu = (props: MenuProps) => {
     const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
     const tooltipRef = useRef<Tooltip | null>(null);
+    const { data: session }: any = useSession(); //data:session
 
     useEffect(() => {
         if (tooltipRef.current) {
@@ -41,12 +44,11 @@ const AppSubMenu = (props: MenuProps) => {
         });
         setBreadcrumbs(breadcrumbs);
     };
-
     return (
         <MenuProvider>
             <ul className="layout-menu">
                 {props.model.map((item, i) => {
-                    return !item.separator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li key={i} className="menu-separator"></li>;
+                    return !item.separator && VerifyPermissions(session.access_token, item.permission) ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : '';
                 })}
             </ul>
             <Tooltip ref={tooltipRef} target="li:not(.active-menuitem)>.tooltip-target" />

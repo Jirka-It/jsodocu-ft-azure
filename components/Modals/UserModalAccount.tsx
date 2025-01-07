@@ -77,7 +77,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
         </div>
     );
 
-    const getData = async (page: number = 1, size: number = 100, state: string = State.ACTIVE) => {
+    const getData = async (page: number = 1, size: number = 100) => {
         let resRoles = { data: allRoles };
         if (!allRoles || allRoles.length === 0) {
             resRoles = await findAllRoles({ page, size, applyToAccount: true });

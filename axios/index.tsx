@@ -3,7 +3,7 @@ import { getSession, signOut } from 'next-auth/react';
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL_BACKEND, // Replace with your API base URL
-    timeout: 1000,
+    timeout: 10000,
     headers: { 'Content-Type': 'application/json' }
 });
 

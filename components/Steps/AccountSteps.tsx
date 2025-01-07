@@ -1,12 +1,12 @@
-import { useCallback, useState } from 'react';
-import { Card } from 'primereact/card';
-import { Steps } from 'primereact/steps';
-import StepInfo from './AccountItems/info/page';
+//import { useCallback, useState } from 'react';
+//import { Card } from 'primereact/card';
+//import { Steps } from 'primereact/steps';
+//import StepInfo from './AccountItems/info/page';
 import StepUsers from './AccountItems/users/page';
-import StepPayment from './AccountItems/payment/page';
+//import StepPayment from './AccountItems/payment/page';
 
 export default function AccountSteps() {
-    const [activeIndex, setActiveIndex] = useState(0);
+    /*  const [activeIndex, setActiveIndex] = useState(0);
     const items = [{ label: 'Información' }, { label: 'Usuarios' }, { label: 'Facturación' }];
 
     const renderContent = useCallback(() => {
@@ -23,7 +23,7 @@ export default function AccountSteps() {
             default:
                 return null;
         }
-    }, [activeIndex]);
+    }, [activeIndex]);*/
 
     return <StepUsers />;
 }

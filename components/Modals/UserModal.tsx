@@ -87,7 +87,9 @@ export default function UserModal({ state, setState, update, data, toast }: IMod
 
         let resRoles = { data: allRoles };
         if (!allRoles || allRoles.length === 0) {
-            resRoles = await findAllRoles({ page, size, applyToAccount: true });
+            const paramsRoles = { page, size };
+
+            resRoles = await findAllRoles(paramsRoles);
         }
 
         if (data && resRoles.data) {

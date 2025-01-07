@@ -124,7 +124,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                         <StyleClass nodeRef={btnRef2} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick={true}>
                             <a tabIndex={1} ref={btnRef2}>
                                 <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
-                                {user ? <span className="profile-name">{`${user.name} ${user.lastName}`}</span> : ''}
+                                {user ? <span className="profile-name">{`${user.name} ${user?.lastName}`}</span> : ''}
                             </a>
                         </StyleClass>
                         <ul className="list-none p-3 m-0 border-round shadow-2 absolute surface-overlay hidden origin-top w-full sm:w-19rem mt-2 right-0 z-5 top-auto">

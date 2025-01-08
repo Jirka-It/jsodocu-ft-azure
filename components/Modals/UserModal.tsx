@@ -54,7 +54,7 @@ export default function UserModal({ state, setState, update, data, toast }: IMod
             setName(data.name);
             setLastName(data.lastName);
             setUsername(data.username);
-            setAccountId(data.accountId);
+            setAccountId(data.accountId._id);
             const state = states.filter((s) => s.code === data.state);
             setStateUser(state[0]);
             setTarget(data.roles ?? []);

@@ -261,6 +261,7 @@ export const handleEditorClick = (quill, openComment: Function, e) => {
             var body = '';
             var elementSelected = '';
             var tooltipValue = '';
+            var elementToFind = clickedElement;
             if (clickedElement.tagName === 'COMMENT') {
                 body = clickedElement.innerHTML;
                 elementSelected = clickedElement.outerHTML;
@@ -270,16 +271,19 @@ export const handleEditorClick = (quill, openComment: Function, e) => {
             if (clickedElement.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.outerHTML;
+                elementToFind = clickedElement.parentNode;
                 tooltipValue = clickedElement.parentNode.getAttribute('data-tooltip');
             }
 
             if (clickedElement.parentNode.parentNode.tagName === 'COMMENT') {
                 body = clickedElement.parentNode.parentNode.innerHTML;
                 elementSelected = clickedElement.parentNode.parentNode.outerHTML;
+                elementToFind = clickedElement.parentNode.parentNode;
                 tooltipValue = clickedElement.parentNode.parentNode.getAttribute('data-tooltip');
             }
 
-            let blot = Quill.find(clickedElement);
+            let blot = Quill.find(elementToFind);
+
             const index = quillRef.getIndex(blot);
             let length = blot.length(quill.current.scroll);
 

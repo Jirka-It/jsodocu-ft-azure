@@ -409,7 +409,7 @@ export default function Editor({ inReview }) {
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer" onClick={() => selectTitle()}>
                     {inReview || doc?.count > 0 ? (
                         <>
                             {doc?.count > 0 && !doc?.approved ? (
@@ -424,7 +424,7 @@ export default function Editor({ inReview }) {
                     ) : (
                         ''
                     )}
-                    Título
+                    <h6 className="m-0 text-blue-500 font-bold">Título</h6>
                 </div>
 
                 {doc?.step === State.EDITION ? (
@@ -445,33 +445,38 @@ export default function Editor({ inReview }) {
             </div>
 
             {modules && nodeSelected ? (
-                <div className="grid col-12 lg:col-9">
-                    <div className="col-12 lg:col-6">
-                        <EditorToolbar inReview={inReview} />
-                        <ReactQuill
-                            theme="snow"
-                            onFocus={() => setInputClicked(false)}
-                            formats={formats}
-                            ref={quill}
-                            value={content}
-                            modules={modules}
-                            readOnly={nodeSelected.approved || doc.step === State.APPROVED}
-                            onChange={(e) => updateContent(e)}
-                        />
+                <>
+                    <div className="col-12 lg:col-9">
+                        <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                        <div className="grid">
+                            <div className="col-12 lg:col-6">
+                                <EditorToolbar inReview={inReview} />
+                                <ReactQuill
+                                    theme="snow"
+                                    onFocus={() => setInputClicked(false)}
+                                    formats={formats}
+                                    ref={quill}
+                                    value={content}
+                                    modules={modules}
+                                    readOnly={nodeSelected.approved || doc.step === State.APPROVED}
+                                    onChange={(e) => updateContent(e)}
+                                />
+                            </div>
+
+                            <div className="col-12 lg:col-6 ql-editor">
+                                <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
+                            </div>
+                        </div>
+
+                        {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+
+                        {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
+                            <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
+                        ) : (
+                            ''
+                        )}
                     </div>
-
-                    <div className="col-12 lg:col-6 ql-editor">
-                        <div className={`shadow-1 p-2 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
-                    </div>
-
-                    {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
-
-                    {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
-                        <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
-                    ) : (
-                        ''
-                    )}
-                </div>
+                </>
             ) : (
                 ''
             )}

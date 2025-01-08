@@ -28,6 +28,10 @@ export const replaceTextQuill = (text: string, variables: Array<IVariableLight>)
     return newString;
 };
 
+function escapeRegExp(str) {
+    return str + '(?![_,-, ,*,=])';
+}
+
 export const replaceText = (text: string, variables: Array<IVariableLight>) => {
     if (!text || !variables) {
         return '';
@@ -37,7 +41,7 @@ export const replaceText = (text: string, variables: Array<IVariableLight>) => {
     //Find by mentions
     for (var i = 0; i < variables.length; i++) {
         const valueMention = variables[i].value;
-        const regex = new RegExp(`@${valueMention}`, 'g');
+        const regex = new RegExp(escapeRegExp(`@${valueMention}`), 'g');
 
         newString = newString.replaceAll(regex, variables[i].name);
     }

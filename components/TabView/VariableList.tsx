@@ -43,7 +43,10 @@ export default function VariableList() {
         const newArray = [];
         departments.map((d) => {
             d.cities.map((c) => {
-                newArray.push(`${c} - ${d.department}`);
+                newArray.push({
+                    value: c,
+                    label: `${c} - ${d.department}`
+                });
             });
         });
         setMunicipalities(newArray);
@@ -72,6 +75,7 @@ export default function VariableList() {
     };
 
     const variableValue = (variable) => {
+        console.log('variable', variable);
         switch (variable.type) {
             case VariableType.TEXT:
                 return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" className="w-15rem" type="text" placeholder="Valor de la variable" />;
@@ -83,7 +87,19 @@ export default function VariableList() {
                 return <Calendar value={new Date(variable.value)} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="date" className="w-15rem" placeholder="Valor de la variable" />;
 
             case VariableType.MUNICIPALITIES:
-                return <Dropdown filter value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} options={municipalities} id="municipalities" placeholder="Categoría de la variable" className="w-15rem" />;
+                return (
+                    <Dropdown
+                        filter
+                        value={variable.value}
+                        onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')}
+                        options={municipalities}
+                        optionLabel="label"
+                        optionValue="value"
+                        id="municipalities"
+                        placeholder="Categoría de la variable"
+                        className="w-15rem"
+                    />
+                );
 
             default:
                 return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" type="text" className="w-15rem" placeholder="Valor de la variable" />;

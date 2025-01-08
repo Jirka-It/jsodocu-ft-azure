@@ -41,20 +41,7 @@ export const replaceText = (text: string, variables: Array<IVariableLight>) => {
     //Find by mentions
     for (var i = 0; i < variables.length; i++) {
         const valueMention = variables[i].value;
-
-        // const regex = new RegExp('^@' + valueMention + '$', 'g');
-
         const regex = new RegExp(escapeRegExp(`@${valueMention}`), 'g');
-
-        //console.log('-------------------------------');
-
-        //console.log('valueMention', valueMention);
-        //console.log('variables[i].name', variables[i].name);
-        // console.log('variables[i].value', variables[i].value);
-
-        //const found = newString.match(regex);
-
-        //console.log('found', found);
 
         newString = newString.replaceAll(regex, variables[i].name);
     }

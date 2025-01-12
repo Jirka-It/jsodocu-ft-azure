@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { Tree } from 'primereact/tree';
@@ -19,6 +19,8 @@ import { handleChangeEvent } from '@lib/Editor';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import { Button } from 'primereact/button';
+import { Divider } from 'primereact/divider';
 
 export default function Review() {
     const params = useParams();
@@ -161,9 +163,25 @@ export default function Review() {
             </div>
 
             {nodeSelected ? (
-                <div className="col-12 lg:col-9 ql-editor">
-                    <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
-                </div>
+                <section className="col-12 lg:col-9">
+                    <div className="ql-editor">
+                        <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
+                    </div>
+                    {nodeSelected ? (
+                        <Button onClick={() => console.log('M')} className={`${styles['button-template']} font-bold w-18rem`} severity="help">
+                            {doc?.template ? (
+                                'Utilizar Plantilla'
+                            ) : (
+                                <div>
+                                    <p className="m-0">Convertir en plantilla</p>
+                                    <p className="m-0 text-xs">Este documento sera la base para la elaboración de otros documentos</p>
+                                </div>
+                            )}
+                        </Button>
+                    ) : (
+                        ''
+                    )}
+                </section>
             ) : (
                 ''
             )}

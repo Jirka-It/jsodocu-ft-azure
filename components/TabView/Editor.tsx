@@ -21,11 +21,11 @@ import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters, create } from '@api/chapters';
 import { findById as findParagraph, update as updateParagraph } from '@api/paragraphs';
 import { findByIdLight, findByIdLight as findDocument, update as updateDocument } from '@api/documents';
+import { findById, update } from '@api/articles';
 
 import { count, replaceText } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import { findById, update } from '@api/articles';
 
 import EditorToolbar, { formats } from './EditorToolbar';
 

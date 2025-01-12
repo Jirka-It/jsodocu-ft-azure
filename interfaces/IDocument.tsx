@@ -6,11 +6,12 @@ export interface IDocument {
     name: string;
     reviewer?: string;
     creator: string;
-    version: number;
-    step: string;
+    version?: number;
+    step?: string;
     type: IDocType;
     state: string;
-    template?: string;
+    template?: boolean;
+    scope?: string;
     title?: string;
     count?: number;
     approved?: boolean;

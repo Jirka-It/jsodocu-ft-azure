@@ -13,10 +13,10 @@ import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters } from '@api/chapters';
 import { findById as findParagraph } from '@api/paragraphs';
 import { findByIdLight } from '@api/documents';
+import { findById } from '@api/articles';
 
 import { replaceText } from '@lib/ReplaceText';
 import { handleChangeEvent } from '@lib/Editor';
-import { findById } from '@api/articles';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';

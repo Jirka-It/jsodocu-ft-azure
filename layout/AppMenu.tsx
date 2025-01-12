@@ -56,10 +56,17 @@ const AppMenu = () => {
             icon: 'pi pi-th-large',
             items: [
                 {
-                    label: 'Disponibles',
+                    label: 'Por defecto',
                     permission: [Permission.SUDO, Permission.TEMPLATES],
-                    icon: 'pi pi-file'
-                    //to: '/documents/in-edition'
+                    icon: 'pi pi-file',
+                    to: '/templates/default'
+                },
+
+                {
+                    label: 'Mis plantillas',
+                    permission: [Permission.SUDO, Permission.TEMPLATES],
+                    icon: 'pi pi-file',
+                    to: '/templates/default'
                 }
             ]
         },

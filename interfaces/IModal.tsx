@@ -20,6 +20,10 @@ export interface IModalCreate extends IModal {
     toast: any;
 }
 
+export interface IModalTemplate extends IModalCreate {
+    scope: string;
+}
+
 export interface IModalComment extends IModal {
     toast: any;
     quill: any;

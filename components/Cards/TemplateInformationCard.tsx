@@ -10,9 +10,9 @@ const TemplateInformationCard = ({ name, type, state, handleEdit, handleDelete }
                         <Button onClick={() => handleEdit()} tooltip="Editar Template" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />
                         <Button tooltip="Usar como documento" className="mb-2" icon="pi pi-folder" severity="help" aria-label="Use how document" />
                         {state === State.ACTIVE ? (
-                            <Button onClick={() => handleDelete()} tooltip="Desactivar template" className="mb-2" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
+                            <Button onClick={() => handleDelete()} tooltip="Desactivar template" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
                         ) : (
-                            <Button onClick={() => handleDelete()} tooltip="Activar template" className="mb-2" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
+                            <Button onClick={() => handleDelete()} tooltip="Activar template" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
                         )}
                     </div>
                     <img src={'/demo/images/ecommerce/product-list/product-list-4-1.png'} className="w-full" />

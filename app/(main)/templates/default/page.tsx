@@ -6,7 +6,7 @@ import TemplateModal from '@components/Modals/TemplateModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
-import { findAll, remove, update, updateWithState } from '@api/documents';
+import { findAll, update, updateWithState } from '@api/documents';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';

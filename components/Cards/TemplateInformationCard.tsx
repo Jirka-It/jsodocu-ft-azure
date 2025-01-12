@@ -1,7 +1,7 @@
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
 
-const TemplateInformationCard = ({ name, type, state, handleEdit }) => {
+const TemplateInformationCard = ({ name, type, state, handleEdit, handleDelete }) => {
     return (
         <div className="col-12 md:col-6 lg:col-4">
             <div className="shadow-2 p-4 m-2 surface-card border-round">
@@ -10,9 +10,9 @@ const TemplateInformationCard = ({ name, type, state, handleEdit }) => {
                         <Button onClick={() => handleEdit()} tooltip="Editar Template" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />
                         <Button tooltip="Usar como documento" className="mb-2" icon="pi pi-folder" severity="help" aria-label="Use how document" />
                         {state === State.ACTIVE ? (
-                            <Button tooltip="Desactivar template" className="mb-2" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
+                            <Button onClick={() => handleDelete()} tooltip="Desactivar template" className="mb-2" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
                         ) : (
-                            <Button tooltip="Activar template" className="mb-2" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
+                            <Button onClick={() => handleDelete()} tooltip="Activar template" className="mb-2" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
                         )}
                     </div>
                     <img src={'/demo/images/ecommerce/product-list/product-list-4-1.png'} className="w-full" />

@@ -37,7 +37,7 @@ const Documents = () => {
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const state = checked ? StateDoc.ACTIVE : StateDoc.INACTIVE;
-        const params = { page, size, state, template: true, scope: Scope.DEFAULT };
+        const params = { page, size, state, template: true, scope: Scope.OWNED };
         if (searchParam) params['searchParam'] = searchParam;
         const res = await findAll(params);
         setData(res);

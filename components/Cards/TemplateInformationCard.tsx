@@ -1,7 +1,7 @@
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
 
-const TemplateInformationCard = ({ name, type, state, handleEdit, handleDelete }) => {
+const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleDelete }) => {
     return (
         <div className="col-12 md:col-6 lg:col-4">
             <div className="shadow-2 p-4 m-2 surface-card border-round">
@@ -15,7 +15,7 @@ const TemplateInformationCard = ({ name, type, state, handleEdit, handleDelete }
                             <Button onClick={() => handleDelete()} tooltip="Activar template" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
                         )}
                     </div>
-                    <img src={'/demo/images/ecommerce/product-list/product-list-4-1.png'} className="w-full" />
+                    <img onClick={() => handleView()} src={'/demo/images/ecommerce/product-list/product-list-4-1.png'} className="w-full cursor-pointer" />
                 </div>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <span className="text-900 font-medium text-xl">{name}</span>

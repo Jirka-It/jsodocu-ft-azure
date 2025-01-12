@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
@@ -120,6 +119,12 @@ export default function Review() {
 
     //Button events tree
 
+    const selectTitle = async () => {
+        setNodeSelected(null);
+        setNodeSelected({ key: doc._id, label: doc.name, document: true, content: doc.title });
+        setContent(doc.title);
+    };
+
     const handleClickEvent = async (node: INodeGeneral) => {
         setNodeSelected(null);
         if (node && node.article) {
@@ -142,7 +147,9 @@ export default function Review() {
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold">Título</div>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    Título
+                </div>
 
                 {nodes && nodes.length > 0 ? (
                     <div>

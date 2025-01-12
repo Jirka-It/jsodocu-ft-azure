@@ -37,7 +37,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     useEffect(() => {
         if (data) {
             setName(data.name);
-            setType(data.type._id);
+            setType(data.type?._id);
         } else {
             setName('');
             setType('');

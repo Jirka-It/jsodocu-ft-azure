@@ -18,6 +18,7 @@ import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
+import { State as StateDoc } from '@enums/DocumentEnum';
 
 export default function TemplateModal({ state, setState, update, data, toast, scope }: IModalTemplate) {
     const { data: session } = useSession(); //data:session
@@ -93,6 +94,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
                 template: true,
                 scope,
                 type: type,
+                step: StateDoc.EDITION,
                 state: State.ACTIVE,
                 creator: decoded.sub,
                 version: 1
@@ -100,7 +102,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
         }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
-            showSuccess(toast, '', 'Template creado');
+            showSuccess(toast, '', data ? 'Template editado' : 'Template creado');
             update(!data ? 1 : null);
             handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {

@@ -22,13 +22,7 @@ import { departments } from '@lib/data';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { Badge } from 'primereact/badge';
 import { CutText } from '@lib/CutText';
-
-const types = [
-    { name: 'Texto', value: VariableType.TEXT },
-    { name: 'Número', value: VariableType.NUMBER },
-    { name: 'Fecha', value: VariableType.DATE },
-    { name: 'Municipalidades', value: VariableType.MUNICIPALITIES }
-];
+import { types } from '@lib/Types';
 
 export default function VariableList() {
     const toast = useRef(null);

@@ -66,7 +66,7 @@ const AppMenu = () => {
                     label: 'Mis plantillas',
                     permission: [Permission.SUDO, Permission.TEMPLATES],
                     icon: 'pi pi-file',
-                    to: '/templates/default'
+                    to: '/templates/owned'
                 }
             ]
         },

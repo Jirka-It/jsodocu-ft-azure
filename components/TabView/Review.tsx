@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { InputText } from 'primereact/inputtext';
 import { INode, INodeGeneral } from '@interfaces/INode';
@@ -12,17 +11,21 @@ import { IVariableLight } from '@interfaces/IVariable';
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters } from '@api/chapters';
 import { findById as findParagraph } from '@api/paragraphs';
-import { findByIdLight } from '@api/documents';
+import { docToTemplate, findByIdLight, templateToDoc } from '@api/documents';
+import { findById } from '@api/articles';
 
 import { replaceText } from '@lib/ReplaceText';
 import { handleChangeEvent } from '@lib/Editor';
-import { findById } from '@api/articles';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import { Button } from 'primereact/button';
+import { showError, showSuccess } from '@lib/ToastMessages';
+import { Toast } from 'primereact/toast';
 
 export default function Review() {
     const params = useParams();
+    const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
@@ -120,6 +123,12 @@ export default function Review() {
 
     //Button events tree
 
+    const selectTitle = async () => {
+        setNodeSelected(null);
+        setNodeSelected({ key: doc._id, label: doc.name, document: true, content: doc.title });
+        setContent(doc.title);
+    };
+
     const handleClickEvent = async (node: INodeGeneral) => {
         setNodeSelected(null);
         if (node && node.article) {
@@ -137,12 +146,28 @@ export default function Review() {
         }
     };
 
+    const convertDoc = async (doc: IDocument) => {
+        try {
+            if (doc?.template) {
+                await templateToDoc(doc._id);
+            } else {
+                await docToTemplate(doc._id);
+            }
+            showSuccess(toast, '', doc?.template ? 'Documento creado' : 'Template creado');
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte.');
+        }
+    };
+
     return (
         <section className="grid">
+            <Toast ref={toast} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
-                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold">Título</div>
+                <div className="mt-2 mb-2 flex align-items-center cursor-pointer text-blue-500 font-bold" onClick={() => selectTitle()}>
+                    Título
+                </div>
 
                 {nodes && nodes.length > 0 ? (
                     <div>
@@ -154,9 +179,25 @@ export default function Review() {
             </div>
 
             {nodeSelected ? (
-                <div className="col-12 lg:col-9 ql-editor">
-                    <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
-                </div>
+                <section className="col-12 lg:col-9">
+                    <div className="ql-editor">
+                        <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
+                    </div>
+                    {nodeSelected ? (
+                        <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
+                            {doc?.template ? (
+                                'Utilizar Plantilla'
+                            ) : (
+                                <div>
+                                    <p className="m-0">Convertir en plantilla</p>
+                                    <p className="m-0 text-xs">Este documento sera la base para la elaboración de otros documentos</p>
+                                </div>
+                            )}
+                        </Button>
+                    ) : (
+                        ''
+                    )}
+                </section>
             ) : (
                 ''
             )}

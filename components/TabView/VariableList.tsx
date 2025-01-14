@@ -22,13 +22,7 @@ import { departments } from '@lib/data';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { Badge } from 'primereact/badge';
 import { CutText } from '@lib/CutText';
-
-const types = [
-    { name: 'Texto', value: VariableType.TEXT },
-    { name: 'Número', value: VariableType.NUMBER },
-    { name: 'Fecha', value: VariableType.DATE },
-    { name: 'Municipalidades', value: VariableType.MUNICIPALITIES }
-];
+import { types } from '@lib/Types';
 
 export default function VariableList() {
     const toast = useRef(null);
@@ -75,7 +69,6 @@ export default function VariableList() {
     };
 
     const variableValue = (variable) => {
-        console.log('variable', variable);
         switch (variable.type) {
             case VariableType.TEXT:
                 return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" className="w-15rem" type="text" placeholder="Valor de la variable" />;

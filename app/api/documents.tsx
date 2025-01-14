@@ -123,6 +123,40 @@ const create = async (data: IDocument): Promise<IDocumentResponseObject> => {
         });
 };
 
+const docToTemplate = async (id: string) => {
+    return await axiosInstance
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/doc-to-template/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const templateToDoc = async (id: string) => {
+    return await axiosInstance
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/template-to-doc/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const update = async (id: string, data: IDocumentPartial): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`, data)
@@ -174,4 +208,4 @@ const remove = async (id: string): Promise<IDocumentResponseObject> => {
         });
 };
 
-export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, update, updateWithState, remove };
+export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, docToTemplate, templateToDoc, update, updateWithState, remove };

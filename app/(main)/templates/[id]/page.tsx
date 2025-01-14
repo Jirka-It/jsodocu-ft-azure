@@ -2,19 +2,24 @@
 
 import React from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
+
 import styles from './DocumentEdit.module.css';
+import VariableList from '@components/TabView/VariableList';
 import Editor from '@components/TabView/Editor';
-import Revision from '@components/TabView/Revision';
+import Review from '@components/TabView/Review';
 
 const Document = () => {
     return (
         <section className={styles['layout-tab-view']}>
             <TabView>
+                <TabPanel header="Variables" leftIcon="pi pi-times mr-2">
+                    <VariableList />
+                </TabPanel>
                 <TabPanel header="Editor" leftIcon="pi pi-file-edit mr-2">
-                    <Editor inReview={true} />
+                    <Editor inReview={false} />
                 </TabPanel>
                 <TabPanel header="Revisión" leftIcon="pi pi-search mr-2">
-                    <Revision inReview={true} />
+                    <Review />
                 </TabPanel>
             </TabView>
         </section>

@@ -4,46 +4,43 @@ import { useSession } from 'next-auth/react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { IModalCreate } from '@interfaces/IModal';
+import { IModalTemplate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { Dropdown } from 'primereact/dropdown';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
 import { findAll } from '@api/types';
-import { findAll as findAllDoc, create, update as updateDoc } from '@api/documents';
+import { create, update as updateDoc } from '@api/documents';
 import { IDocTypeResponse } from '@interfaces/IDocType';
 import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import { Scope, State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
+import { State as StateDoc } from '@enums/DocumentEnum';
 
-export default function DocumentModal({ state, setState, update, data, toast }: IModalCreate) {
+export default function TemplateModal({ state, setState, update, data, toast, scope }: IModalTemplate) {
     const { data: session } = useSession(); //data:session
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
-    const [templates, setTemplates] = useState<any>('');
-    const [template, setTemplate] = useState<any>('');
+    //const [template, setTemplate] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
         if (state) {
             getTypes();
-            getTemplates();
         }
     }, [state]);
 
     useEffect(() => {
         if (data) {
             setName(data.name);
-            setType(data.type?._id);
+            setType(data.type._id);
         } else {
             setName('');
             setType('');
-            //setTemplate('');
         }
     }, [data]);
 
@@ -52,15 +49,9 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         setTypes(res);
     };
 
-    const getTemplates = async (page: number = 1, size: number = 100) => {
-        const params = { page, size, state: State.ACTIVE, template: true, scope: Scope.DEFAULT };
-        const res = await findAllDoc(params);
-        setTemplates(res);
-    };
-
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
-            <span className="font-bold white-space-nowrap">Documento</span>
+            <span className="font-bold white-space-nowrap">Template</span>
         </div>
     );
 
@@ -76,7 +67,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         const validationFlow = ValidationFlow(
             DocumentValidation({
                 name,
-                type
+                type: type
                 //template: template.code
             }),
             toast
@@ -95,22 +86,23 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         if (data) {
             res = await updateDoc(data._id, {
                 name,
-                type
+                type: type
             });
         } else {
             res = await create({
                 name,
-                type,
+                template: true,
+                scope,
+                type: type,
+                step: StateDoc.EDITION,
                 state: State.ACTIVE,
-                template: false,
                 creator: decoded.sub,
-                step: Step.EDITION,
                 version: 1
             });
         }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
-            showSuccess(toast, '', 'Documento creado');
+            showSuccess(toast, '', data ? 'Template editado' : 'Template creado');
             update(!data ? 1 : null);
             handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
@@ -144,15 +136,15 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">
-                        Nombre del documento <span className="text-red-500">*</span>
+                        Nombre del template <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del documento" />
+                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del template" />
                 </div>
 
                 <div>
                     <label htmlFor="type">
-                        Tipo de documento <span className="text-red-500">*</span>
+                        Tipo de template <span className="text-red-500">*</span>
                     </label>
                     <Dropdown
                         value={type}
@@ -161,28 +153,10 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                         id="type"
                         optionLabel="name"
                         optionValue="_id"
-                        placeholder="Tipo de documento"
+                        placeholder="Tipo de template"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `}
                     />{' '}
                 </div>
-
-                {/*
-                <div>
-                    <label htmlFor="template">
-                        Plantilla <span className="text-red-500">*</span>
-                    </label>
-
-                    <Dropdown
-                        value={template}
-                        onChange={(e) => setTemplate(e.value)}
-                        options={templates}
-                        id="template"
-                        optionLabel="name"
-                        placeholder="Plantilla"
-                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'template') ? 'p-invalid' : ''} `}
-                    />
-                </div>
-               */}
             </div>
         </Dialog>
     );

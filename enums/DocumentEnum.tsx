@@ -10,6 +10,11 @@ export const Variable = {
     PROJECT: 'PROJECT'
 };
 
+export const Scope = {
+    DEFAULT: 'DEFAULT',
+    OWNED: 'OWNED'
+};
+
 export const VariableType = {
     TEXT: 'TEXT',
     NUMBER: 'NUMBER',

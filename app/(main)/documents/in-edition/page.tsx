@@ -105,7 +105,8 @@ const Documents = () => {
     return (
         <div className="layout-documents">
             <Toast ref={toast} />
-            <DocumentModal state={openModal} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
+
+            {openModal ? <DocumentModal state={openModal} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} /> : ''}
             <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => remove(document._id)} update={() => handleUpdate()} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">

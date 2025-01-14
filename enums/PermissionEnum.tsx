@@ -19,8 +19,8 @@ export enum Permission {
     APPROVED_DOCUMENTS = 'DOC-103',
     ARCHIVED_DOCUMENTS = 'DOC-104',
     //Templates
-    TEMPLATES = 'PLAS-200',
-    AVAILABLE_TEMPLATES = 'PLAS-200',
+    TEMPLATES = 'PLA-200',
+    AVAILABLE_TEMPLATES = 'PLA-200',
     //Security
     SECURITY = 'SEG-400',
     PERMISSIONS = 'SEG-401',

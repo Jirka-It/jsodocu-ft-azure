@@ -120,7 +120,7 @@ const Documents = () => {
             <TemplateModal state={openModal} scope={Scope.DEFAULT} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
-                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="ml-2" label="Template" />
+                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Plantilla" />
 
                     <div className="flex align-items-center">
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />

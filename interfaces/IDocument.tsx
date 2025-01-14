@@ -11,6 +11,7 @@ export interface IDocument {
     type: IDocType;
     state: string;
     template?: boolean;
+    templateId?: boolean;
     scope?: string;
     title?: string;
     count?: number;

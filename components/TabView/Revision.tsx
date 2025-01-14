@@ -183,7 +183,7 @@ export default function Revision({ inReview }) {
                         <Dropdown disabled={true} value={user} onChange={(e) => setUser(e.value)} options={users} id="user" optionLabel="fullName" optionValue="_id" placeholder="Usuario responsable" className="w-full mt-2" />
 
                         <div className="flex justify-content-center mt-5">
-                            {comments ? <Button className="text-white" label="Corregir documento" severity="warning" onClick={() => handleBack()} /> : <Button label="Aprobar documento" onClick={() => handleApprove()} />}
+                            {comments ? <Button className="text-white" label="Enviar a corrección" severity="warning" onClick={() => handleBack()} /> : <Button label="Aprobar documento" onClick={() => handleApprove()} />}
                         </div>
                     </>
                 ) : (

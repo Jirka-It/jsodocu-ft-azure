@@ -20,12 +20,12 @@ import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
 import { State as StateDoc } from '@enums/DocumentEnum';
 
-export default function TemplateModal({ state, setState, update, data, toast, scope }: IModalTemplate) {
+export default function PlantillaModal({ state, setState, update, data, toast, scope }: IModalTemplate) {
     const { data: session } = useSession(); //data:session
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
-    //const [template, setTemplate] = useState<any>('');
+    //const [Plantilla, setPlantilla] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
 
     const headerElement = (
         <div className="inline-flex align-items-center justify-content-center gap-2">
-            <span className="font-bold white-space-nowrap">Template</span>
+            <span className="font-bold white-space-nowrap">Plantilla</span>
         </div>
     );
 
@@ -68,7 +68,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
             DocumentValidation({
                 name,
                 type: type
-                //template: template.code
+                //Plantilla: Plantilla.code
             }),
             toast
         );
@@ -102,7 +102,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
         }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
-            showSuccess(toast, '', data ? 'Template editado' : 'Template creado');
+            showSuccess(toast, '', data ? 'Plantilla editado' : 'Plantilla creado');
             update(!data ? 1 : null);
             handleClose();
         } else if (res.status === HttpStatus.BAD_REQUEST) {
@@ -115,7 +115,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
     const handleClose = async () => {
         setName('');
         setType('');
-        //setTemplate('');
+        //setPlantilla('');
         setValidations([]);
         setState(!state);
     };
@@ -136,15 +136,15 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
             <div className="flex flex-column gap-4">
                 <div>
                     <label htmlFor="name">
-                        Nombre del template <span className="text-red-500">*</span>
+                        Nombre del Plantilla <span className="text-red-500">*</span>
                     </label>
 
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del template" />
+                    <InputText value={name} onChange={(e) => setName(e.target.value)} id="name" type="text" className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre del Plantilla" />
                 </div>
 
                 <div>
                     <label htmlFor="type">
-                        Tipo de template <span className="text-red-500">*</span>
+                        Tipo de Plantilla <span className="text-red-500">*</span>
                     </label>
                     <Dropdown
                         value={type}
@@ -153,7 +153,7 @@ export default function TemplateModal({ state, setState, update, data, toast, sc
                         id="type"
                         optionLabel="name"
                         optionValue="_id"
-                        placeholder="Tipo de template"
+                        placeholder="Tipo de Plantilla"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `}
                     />{' '}
                 </div>

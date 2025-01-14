@@ -16,7 +16,7 @@ import { IDocTypeResponse } from '@interfaces/IDocType';
 import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import { Scope, State as Step } from '@enums/DocumentEnum';
+import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
 
@@ -26,7 +26,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
     const [templates, setTemplates] = useState<any>('');
-    const [template, setTemplate] = useState<any>('');
+    const [template, setTemplate] = useState<any>(null);
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
@@ -53,9 +53,9 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     };
 
     const getTemplates = async (page: number = 1, size: number = 100) => {
-        const params = { page, size, state: State.ACTIVE, template: true, scope: Scope.DEFAULT };
+        const params = { page, size, state: State.ACTIVE, template: true };
         const res = await findAllDoc(params);
-        setTemplates(res);
+        setTemplates(res.data);
     };
 
     const headerElement = (
@@ -98,7 +98,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                 type
             });
         } else {
-            res = await create({
+            let objToCreate = {
                 name,
                 type,
                 state: State.ACTIVE,
@@ -106,7 +106,13 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                 creator: decoded.sub,
                 step: Step.EDITION,
                 version: 1
-            });
+            };
+
+            if (template) {
+                objToCreate['templateId'] = template;
+            }
+
+            res = await create(objToCreate);
         }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
@@ -123,7 +129,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     const handleClose = async () => {
         setName('');
         setType('');
-        //setTemplate('');
+        setTemplate(null);
         setValidations([]);
         setState(!state);
     };
@@ -166,11 +172,8 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                     />{' '}
                 </div>
 
-                {/*
                 <div>
-                    <label htmlFor="template">
-                        Plantilla <span className="text-red-500">*</span>
-                    </label>
+                    <label htmlFor="template">Plantilla</label>
 
                     <Dropdown
                         value={template}
@@ -178,11 +181,11 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                         options={templates}
                         id="template"
                         optionLabel="name"
+                        optionValue="_id"
                         placeholder="Plantilla"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'template') ? 'p-invalid' : ''} `}
                     />
                 </div>
-               */}
             </div>
         </Dialog>
     );

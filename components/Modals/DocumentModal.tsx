@@ -173,9 +173,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                 </div>
 
                 <div>
-                    <label htmlFor="template">
-                        Plantilla <span className="text-red-500">*</span>
-                    </label>
+                    <label htmlFor="template">Plantilla</label>
 
                     <Dropdown
                         value={template}

@@ -68,7 +68,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         const validationFlow = ValidationFlow(
             DocumentValidation({
                 name,
-                type: type
+                type
                 //template: template.code
             }),
             toast
@@ -87,13 +87,14 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         if (data) {
             res = await updateDoc(data._id, {
                 name,
-                type: type
+                type
             });
         } else {
             res = await create({
                 name,
-                type: type,
+                type,
                 state: State.ACTIVE,
+                template: false,
                 creator: decoded.sub,
                 step: Step.EDITION,
                 version: 1
@@ -150,7 +151,8 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                         onChange={(e) => setType(e.value)}
                         options={types?.data}
                         id="type"
-                        optionLabel="code"
+                        optionLabel="name"
+                        optionValue="_id"
                         placeholder="Tipo de documento"
                         className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'type') ? 'p-invalid' : ''} `}
                     />{' '}

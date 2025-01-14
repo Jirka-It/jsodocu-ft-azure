@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { Tree } from 'primereact/tree';
@@ -11,7 +11,7 @@ import { IVariableLight } from '@interfaces/IVariable';
 import { findAllWithOutPagination } from '@api/variables';
 import { findAll as findAllChapters } from '@api/chapters';
 import { findById as findParagraph } from '@api/paragraphs';
-import { findByIdLight } from '@api/documents';
+import { docToTemplate, findByIdLight, templateToDoc } from '@api/documents';
 import { findById } from '@api/articles';
 
 import { replaceText } from '@lib/ReplaceText';
@@ -20,10 +20,12 @@ import { handleChangeEvent } from '@lib/Editor';
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
+import { showError, showSuccess } from '@lib/ToastMessages';
+import { Toast } from 'primereact/toast';
 
 export default function Review() {
     const params = useParams();
+    const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
@@ -144,8 +146,22 @@ export default function Review() {
         }
     };
 
+    const convertDoc = async (doc: IDocument) => {
+        try {
+            if (doc?.template) {
+                await templateToDoc(doc._id);
+            } else {
+                await docToTemplate(doc._id);
+            }
+            showSuccess(toast, '', doc?.template ? 'Documento creado' : 'Template creado');
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte.');
+        }
+    };
+
     return (
         <section className="grid">
+            <Toast ref={toast} />
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
@@ -168,7 +184,7 @@ export default function Review() {
                         <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
                     {nodeSelected ? (
-                        <Button onClick={() => console.log('M')} className={`${styles['button-template']} font-bold w-18rem`} severity="help">
+                        <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
                             {doc?.template ? (
                                 'Utilizar Plantilla'
                             ) : (

@@ -6,7 +6,7 @@ import TemplateModal from '@components/Modals/TemplateModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
-import { findAll, update, updateWithState } from '@api/documents';
+import { findAll, templateToDoc, update, updateWithState } from '@api/documents';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
@@ -14,7 +14,7 @@ import { State } from '@enums/DocumentEnum';
 import { State as StateDoc } from '@enums/StateEnum';
 
 import { Scope } from '@enums/DocumentEnum';
-import { showError, showInfo, showWarn } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import TemplateInformationCard from '@components/Cards/TemplateInformationCard';
 import { InputSwitch } from 'primereact/inputswitch';
@@ -105,6 +105,15 @@ const Documents = () => {
         }
     };
 
+    const handleTemplateToDoc = async (id: string) => {
+        try {
+            await templateToDoc(id);
+            showSuccess(toast, '', 'Template creado');
+        } catch (error) {
+            showError(toast, '', 'Contacte con soporte.');
+        }
+    };
+
     return (
         <div className="layout-documents">
             <Toast ref={toast} />
@@ -137,6 +146,7 @@ const Documents = () => {
                             state={doc.state}
                             handleEdit={() => handleEdit(doc)}
                             handleView={() => handleView(doc._id)}
+                            handleTemplateToDoc={() => handleTemplateToDoc(doc._id)}
                             handleDelete={() => handleDelete(doc)}
                         ></TemplateInformationCard>
                     )}

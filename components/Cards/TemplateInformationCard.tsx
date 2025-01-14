@@ -1,14 +1,14 @@
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
 
-const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleDelete }) => {
+const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleTemplateToDoc, handleDelete }) => {
     return (
         <div className="col-12 md:col-6 lg:col-4">
             <div className="shadow-2 p-4 m-2 surface-card border-round">
                 <div className="relative mb-3">
                     <div className="absolute right-0 flex flex-column">
                         <Button onClick={() => handleEdit()} tooltip="Editar Template" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />
-                        <Button tooltip="Usar como documento" className="mb-2" icon="pi pi-folder" severity="help" aria-label="Use how document" />
+                        <Button onClick={() => handleTemplateToDoc()} tooltip="Usar como documento" className="mb-2" icon="pi pi-folder" severity="help" aria-label="Use how document" />
                         {state === State.ACTIVE ? (
                             <Button onClick={() => handleDelete()} tooltip="Desactivar template" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
                         ) : (

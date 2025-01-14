@@ -11,12 +11,12 @@ import { Dropdown } from 'primereact/dropdown';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { DocumentValidation } from '@validations/DocumentValidation';
 import { findAll } from '@api/types';
-import { create, update as updateDoc } from '@api/documents';
+import { findAll as findAllDoc, create, update as updateDoc } from '@api/documents';
 import { IDocTypeResponse } from '@interfaces/IDocType';
 import { State } from '@enums/StateEnum';
 import { ISession } from '@interfaces/ISession';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import { State as Step } from '@enums/DocumentEnum';
+import { Scope, State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
 
@@ -25,12 +25,14 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
-    //const [template, setTemplate] = useState<any>('');
+    const [templates, setTemplates] = useState<any>('');
+    const [template, setTemplate] = useState<any>('');
     const [validations, setValidations] = useState<Array<IZodError>>([]);
 
     useEffect(() => {
         if (state) {
             getTypes();
+            getTemplates();
         }
     }, [state]);
 
@@ -48,6 +50,12 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
     const getTypes = async (page: number = 1, size: number = 100) => {
         const res = await findAll({ page, size });
         setTypes(res);
+    };
+
+    const getTemplates = async (page: number = 1, size: number = 100) => {
+        const params = { page, size, state: State.ACTIVE, template: true, scope: Scope.DEFAULT };
+        const res = await findAllDoc(params);
+        setTemplates(res);
     };
 
     const headerElement = (

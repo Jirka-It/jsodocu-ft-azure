@@ -153,7 +153,7 @@ export default function Review() {
             } else {
                 await docToTemplate(doc._id);
             }
-            showSuccess(toast, '', doc?.template ? 'Documento creado' : 'Template creado');
+            showSuccess(toast, '', doc?.template ? 'Documento creado' : 'Plantilla creada');
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }

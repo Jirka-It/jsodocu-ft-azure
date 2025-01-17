@@ -105,10 +105,10 @@ const Documents = () => {
         }
     };
 
-    const handleTemplateToDoc = async (id: string) => {
+    const handleTemplateToDoc = async (doc: IDocument) => {
         try {
-            await templateToDoc(id);
-            showSuccess(toast, '', 'Template creado');
+            await templateToDoc(doc._id);
+            showSuccess(toast, '', `Documento ${doc.name} creado`);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
@@ -146,7 +146,7 @@ const Documents = () => {
                             state={doc.state}
                             handleEdit={() => handleEdit(doc)}
                             handleView={() => handleView(doc._id)}
-                            handleTemplateToDoc={() => handleTemplateToDoc(doc._id)}
+                            handleTemplateToDoc={() => handleTemplateToDoc(doc)}
                             handleDelete={() => handleDelete(doc)}
                         ></TemplateInformationCard>
                     )}

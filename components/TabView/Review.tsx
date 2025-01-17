@@ -153,7 +153,7 @@ export default function Review() {
             } else {
                 await docToTemplate(doc._id);
             }
-            showSuccess(toast, '', doc?.template ? 'Documento creado' : 'Plantilla creada');
+            showSuccess(toast, '', doc?.template ? `Documento ${doc.name} creado` : `Plantilla ${doc.name} creada`);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
@@ -190,7 +190,7 @@ export default function Review() {
                             ) : (
                                 <div>
                                     <p className="m-0">Convertir en plantilla</p>
-                                    <p className="m-0 text-xs">Este documento sera la base para la elaboración de otros documentos</p>
+                                    <p className="m-0 text-xs">Este documento será la base para la elaboración de otros documentos</p>
                                 </div>
                             )}
                         </Button>

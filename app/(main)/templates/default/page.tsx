@@ -54,28 +54,6 @@ const Documents = () => {
         setChecked(check);
     };
 
-    const handleArchive = async (data: IDocument) => {
-        try {
-            const res = await updateWithState(data._id, {
-                step: State.ARCHIVED
-            });
-
-            if (res.status === HttpStatus.FORBIDDEN) {
-                showError(toast, '', 'El documento ya fué archivado');
-                return;
-            }
-
-            if (!res) {
-                showWarn(toast, '', 'Contacte con soporte');
-            } else {
-                showInfo(toast, '', 'Documento archivado');
-                getData();
-            }
-        } catch (error) {
-            showError(toast, '', 'Contacte con soporte');
-        }
-    };
-
     const handleEdit = (data) => {
         setDocument(data);
         setOpenModal(true);
@@ -105,10 +83,10 @@ const Documents = () => {
         }
     };
 
-    const handleTemplateToDoc = async (id: string) => {
+    const handleTemplateToDoc = async (doc: IDocument) => {
         try {
-            await templateToDoc(id);
-            showSuccess(toast, '', 'Template creado');
+            await templateToDoc(doc._id);
+            showSuccess(toast, '', `Documento ${doc.name} creado`);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');
         }
@@ -146,7 +124,7 @@ const Documents = () => {
                             state={doc.state}
                             handleEdit={() => handleEdit(doc)}
                             handleView={() => handleView(doc._id)}
-                            handleTemplateToDoc={() => handleTemplateToDoc(doc._id)}
+                            handleTemplateToDoc={() => handleTemplateToDoc(doc)}
                             handleDelete={() => handleDelete(doc)}
                         ></TemplateInformationCard>
                     )}

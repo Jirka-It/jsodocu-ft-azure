@@ -124,8 +124,8 @@ const LoginPage: Page = () => {
                         </div>
                         <div className="flex align-items-center justify-content-between w-25rem">
                             <div>
-                                <Checkbox inputId="ingredient4" onChange={() => setSaveMe(!saveMe)} name="pizza" value="true" checked={saveMe} />
-                                <label htmlFor="ingredient4" className="ml-2">
+                                <Checkbox inputId="rememberMe" onChange={() => setSaveMe(!saveMe)} name="rememberMe" value="true" checked={saveMe} />
+                                <label htmlFor="rememberMe" className="ml-2">
                                     Recuerdame
                                 </label>
                             </div>

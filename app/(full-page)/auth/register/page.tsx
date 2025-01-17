@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Checkbox } from 'primereact/checkbox';
 import { Page } from '@customTypes/layout';
 import Link from 'next/link';
-import TermsConditionsModal from '@components/Modals/TermsConditionsModal';
+//import TermsConditionsModal from '@components/Modals/TermsConditionsModal';
 import { RegisterValidation } from '@validations/RegisterValidation';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
@@ -30,6 +30,10 @@ const RegisterPage: Page = () => {
 
     const router = useRouter();
     const toast = useRef(null);
+
+    const showPDF = async () => {
+        window.open('/files/document.pdf', '_blank');
+    };
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -152,11 +156,11 @@ const RegisterPage: Page = () => {
                                 <label htmlFor="checkbox" className="text-900 font-medium mr-2">
                                     Acepto la
                                 </label>
-                                <a onClick={() => setOpenTermsConditionsModal(true)} className="text-color-secondary font-semibold cursor-pointerhover:text-primary cursor-pointer">
+                                <a onClick={() => showPDF()} className="text-blue-500 font-semibold cursor-pointerhover:text-primary cursor-pointer">
                                     Política de Tratamiento de Datos.
                                 </a>
 
-                                <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => setOpenTermsConditionsModal(e)} />
+                                {/* <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => setOpenTermsConditionsModal(e)} /> */}
                             </div>
                             <Button label="Regístrate" className="w-full" onClick={handleRegister}></Button>
                             <span className="font-semibold text-color-secondary">

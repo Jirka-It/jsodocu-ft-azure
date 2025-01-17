@@ -38,10 +38,10 @@ const findById = async (id: string): Promise<IPermissionResponseObject> => {
         });
 };
 
-const findByCode = async (name: string): Promise<boolean> => {
+const findByCode = async (code: string): Promise<boolean> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/permissions/is-unique`, {
-            params: { name }
+            params: { code }
         })
         .then((res) => {
             return res.data;

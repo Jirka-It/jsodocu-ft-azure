@@ -446,7 +446,7 @@ export default function Editor({ inReview }) {
 
             {modules && nodeSelected ? (
                 <>
-                    <div className="col-12 lg:col-9">
+                    <div className="col-12 lg:col-9 text-center">
                         <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
                         <div className="grid">
                             <div className="col-12 lg:col-6">

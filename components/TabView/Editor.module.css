@@ -39,13 +39,11 @@
 .button-approve {
     position: sticky;
     bottom: 2%;
-    margin-left: 47%;
     z-index: 9999;
 }
 
 .button-template {
-    position: fixed;
+    position: sticky;
     bottom: 12%;
-    margin-left: 25%;
     z-index: 9999;
 }

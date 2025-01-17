@@ -179,7 +179,7 @@ export default function Review() {
             </div>
 
             {nodeSelected ? (
-                <section className="col-12 lg:col-9">
+                <section className="col-12 lg:col-9 text-center">
                     <div className="ql-editor">
                         <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>

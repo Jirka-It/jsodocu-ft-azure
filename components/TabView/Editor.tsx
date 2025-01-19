@@ -157,7 +157,7 @@ export default function Editor({ inReview }) {
         if (node.chapter || node.article) {
             label = (
                 <div className="p-inputgroup flex h-2rem">
-                    {(node.article && inReview) || node.count > 0 ? (
+                    {(node.article && (doc?.step === State.REVIEW || doc?.step === State.EDITION)) || node.count > 0 ? (
                         <>
                             {node.count > 0 && !node.approved ? (
                                 <>
@@ -211,7 +211,7 @@ export default function Editor({ inReview }) {
                 <div>
                     <div className="flex align-items-center justify-content-between h-2rem">
                         <span className="flex">
-                            {inReview || node.count > 0 ? (
+                            {doc?.step === State.REVIEW || doc?.step === State.EDITION || node.count > 0 ? (
                                 <>
                                     {node.count > 0 && !node.approved ? (
                                         <>
@@ -435,7 +435,7 @@ export default function Editor({ inReview }) {
                     ''
                 )}
 
-                {nodes && nodes.length > 0 ? (
+                {doc && nodes && nodes.length > 0 ? (
                     <div>
                         <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                     </div>
@@ -447,7 +447,9 @@ export default function Editor({ inReview }) {
             {modules && nodeSelected ? (
                 <>
                     <div className="col-12 lg:col-9 text-center">
-                        <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                        <div className="text-left">
+                            <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                        </div>
                         <div className="grid">
                             <div className="col-12 lg:col-6">
                                 <EditorToolbar inReview={inReview} />

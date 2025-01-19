@@ -183,20 +183,17 @@ export default function Review() {
                     <div className="ql-editor">
                         <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
-                    {nodeSelected ? (
-                        <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
-                            {doc?.template ? (
-                                'Utilizar Plantilla'
-                            ) : (
-                                <div>
-                                    <p className="m-0">Convertir en plantilla</p>
-                                    <p className="m-0 text-xs">Este documento será la base para la elaboración de otros documentos</p>
-                                </div>
-                            )}
-                        </Button>
-                    ) : (
-                        ''
-                    )}
+
+                    <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
+                        {doc?.template ? (
+                            'Utilizar Plantilla'
+                        ) : (
+                            <div>
+                                <p className="m-0">Convertir en plantilla</p>
+                                <p className="m-0 text-xs">Este documento será la base para la elaboración de otros documentos</p>
+                            </div>
+                        )}
+                    </Button>
                 </section>
             ) : (
                 ''

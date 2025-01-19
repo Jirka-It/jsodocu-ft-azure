@@ -1,5 +1,6 @@
 import { IZodError } from '@interfaces/IAuth';
 import Image from 'next/image';
+import { env } from '@config/env';
 
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Button } from 'primereact/button';
@@ -17,9 +18,10 @@ import { findById, update } from '@api/accounts';
 import { useParams } from 'next/navigation';
 import { IAccount } from '@interfaces/IAccount';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { showError, showSuccess } from '@lib/ToastMessages';
-import { Badge } from 'primereact/badge';
+import { showError, showSuccess, showWarn } from '@lib/ToastMessages';
 import BasicStates from '@components/TableExtensions/BasicStates';
+import { create, remove } from '@api/file';
+import { newFile } from '@lib/File';
 
 export default function BasicInformationForm() {
     const params = useParams();
@@ -52,12 +54,36 @@ export default function BasicInformationForm() {
             setWebsite(res.website);
             setCity(res.city);
             setDescription(res.description);
+            setFile(res.photo);
         } catch (error) {}
     };
 
-    function handleChange(e) {
-        setFile(URL.createObjectURL(e.target.files[0]));
-    }
+    const handleChange = async (e) => {
+        const bodyFormData = new FormData();
+        const fileRenamed = await newFile('SODOCU-avatar', e.target.files[0]);
+        bodyFormData.append('file', fileRenamed);
+        const res = await create(bodyFormData);
+
+        if (res.status === HttpStatus.CREATED) {
+            const filePath = res.filePath;
+
+            // Set file
+            setFile(filePath);
+
+            // Update file
+            await update(account._id, {
+                photo: filePath
+            });
+
+            //Delete old image
+            if (file) {
+                await remove({ filePath: file });
+            }
+            showSuccess(toast, '', 'Imagen actualizada');
+        } else {
+            showError(toast, '', 'La imagen no ha sido actualizada');
+        }
+    };
 
     const onFileUploadClick = () => {
         inputFile?.current.click();
@@ -120,7 +146,7 @@ export default function BasicInformationForm() {
                                 </div>
                             ) : (
                                 <div>
-                                    <Image src={file} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
+                                    <Image src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${file}` || ''} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
                                     <input className=" hidden" type="file" onChange={handleChange} ref={inputFile} />
                                     <i className="pi pi-image"></i>
                                 </div>

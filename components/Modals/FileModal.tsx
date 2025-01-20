@@ -8,9 +8,9 @@ import { Column } from 'primereact/column';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { iconFile, newFile, parsingFile } from '@lib/File';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { create, remove } from '@api/file';
-import { update as updateArticle, findFiles } from '@api/articles';
-import { update as updateParagraph, findFiles as findParagraphFiles } from '@api/paragraphs';
+import { findFile, create, remove } from '@api/file';
+import { update as updateArticle } from '@api/articles';
+import { update as updateParagraph } from '@api/paragraphs';
 import { INodeGeneral } from '@interfaces/INode';
 import { IFileTable } from '@interfaces/IFile';
 
@@ -22,9 +22,9 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
     const inputFile = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (data) {
+        if (node) {
             const isArticle = node.article || false;
-            getFiles(isArticle, node._id);
+            getFiles(isArticle, node.files);
         } else {
             setFiles([]);
         }
@@ -44,19 +44,16 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
 
     //Find Files
 
-    const getFiles = async (article: boolean, id: string) => {
+    const getFiles = async (article: boolean, files: string[]) => {
         if (article) {
-            const res = await findFiles(id);
-            if (res && res.files) {
-                const files = res.files.map((f) => parsingFile(f));
-
-                setFiles(files);
+            if (files) {
+                const newFiles = files.map((f) => parsingFile(f));
+                setFiles(newFiles);
             }
         } else {
-            const res = await findParagraphFiles(id);
-            if (res && res.files) {
-                const files = res.files.map((f) => parsingFile(f));
-                setFiles(files);
+            if (files) {
+                const newFiles = files.map((f) => parsingFile(f));
+                setFiles(newFiles);
             }
         }
     };
@@ -116,6 +113,20 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         }
     };
 
+    const handleView = async (data: IFileTable) => {
+        const res = await findFile({ filePath: data.filePath });
+
+        const reportXlsxUrl = URL.createObjectURL(res);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = reportXlsxUrl;
+        anchorElement.download = `${data.name}`;
+        anchorElement.target = '_blank';
+
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(reportXlsxUrl);
+    };
+
     //Table event
 
     const handleClose = async () => {
@@ -131,7 +142,6 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
             header={headerElement}
             footer={footerContent}
             closable={false}
-            style={{ width: '60rem' }}
             onHide={() => {
                 if (!state) return;
                 setState(false);
@@ -142,7 +152,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                     <input className=" hidden" type="file" onChange={(e) => handleChange(e, node)} multiple ref={inputFile} />
                 </Button>
 
-                <DataTable ref={table} value={files} paginator tableStyle={{ minWidth: '50rem' }} rows={5}>
+                <DataTable ref={table} value={files} paginator style={{ width: '50vw' }} rows={5}>
                     <Column
                         field="name"
                         sortable
@@ -157,7 +167,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                         body={(rowData) => (
                             <>
                                 <Button onClick={() => handleDelete(rowData, node)} icon="pi pi-trash" className="mr-2" severity="danger" tooltip="Borrar" />
-                                <Button icon="pi pi-eye" tooltip="Revisar" />
+                                <Button onClick={() => handleView(rowData)} icon="pi pi-eye" tooltip="Revisar" />
                             </>
                         )}
                         header="Acciones"

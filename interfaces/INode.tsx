@@ -6,6 +6,7 @@ export interface INodeGeneral {
     ownChapter?: string;
     ownArticle?: string;
     label: string;
+    files?: string[];
     content?: string;
     count?: number;
     chapter?: boolean;

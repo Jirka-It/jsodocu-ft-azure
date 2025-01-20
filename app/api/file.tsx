@@ -6,16 +6,11 @@ const headersFile = {
     'Content-Type': 'multipart/form-data'
 };
 
-const findImage = async (params: any): Promise<IFile> => {
+const findFile = async (data: IFile): Promise<any> => {
     return await axiosInstance
-        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/file-upload`, {
-            params: params
-        })
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/file-upload/get-file`, data, { responseType: 'blob' })
         .then((res) => {
-            return {
-                ...res.data,
-                status: res.status
-            };
+            return res.data;
         })
         .catch((error) => {
             return {
@@ -61,4 +56,4 @@ const remove = async (data: IFile): Promise<IFileResponse> => {
         });
 };
 
-export { findImage, create, remove };
+export { findFile, create, remove };

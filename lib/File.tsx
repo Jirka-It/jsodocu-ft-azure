@@ -48,6 +48,12 @@ export const iconFile = (ext: string, name: string) => {
                 <i className="pi pi-file-pdf mr-2 text-red-600" style={{ fontSize: '2rem' }}></i> {name}
             </div>
         );
+    } else if (ext === 'txt') {
+        return (
+            <div className="flex align-items-center">
+                <i className="pi pi-align-justify mr-2" style={{ fontSize: '2rem' }}></i> {name}
+            </div>
+        );
     } else {
         return (
             <div className="flex align-items-center">

@@ -431,6 +431,7 @@ export default function Editor({ inReview }) {
                     <h6 className="m-0 text-blue-500 font-bold">Título</h6>
                 </div>
 
+                {/*Only add chapters when the doc is in edition */}
                 {doc?.step === State.EDITION ? (
                     <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                         <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
@@ -452,10 +453,17 @@ export default function Editor({ inReview }) {
                 <>
                     <div className="col-12 lg:col-9 text-center">
                         <div className="flex justify-content-between">
+                            <Tooltip target=".count-badge-docs" />
+
                             <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
-                            <i className="pi pi-folder-open p-overlay-badge cursor-pointer mr-2" onClick={() => setOpenModal(true)} style={{ fontSize: '2rem' }}>
-                                <Badge value="2"></Badge>
-                            </i>
+                            {/*Only in articles and paragraphs */}
+                            {doc.template === false && (nodeSelected.article || nodeSelected.paragraph) ? (
+                                <i className="pi pi-folder-open p-overlay-badge count-badge-docs cursor-pointer mr-2" data-pr-position="left" data-pr-tooltip="Cargar documentos" onClick={() => setOpenModal(true)} style={{ fontSize: '2rem' }}>
+                                    <Badge value={nodeSelected.files ? nodeSelected.files.length : 0}></Badge>
+                                </i>
+                            ) : (
+                                ''
+                            )}
                         </div>
                         <div className="grid">
                             <div className="col-12 lg:col-6">

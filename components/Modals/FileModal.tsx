@@ -15,8 +15,9 @@ import { INodeGeneral } from '@interfaces/INode';
 import { IFileTable } from '@interfaces/IFile';
 
 export default function FileModal({ state, setState, data, toast }: IModalCreate) {
-    const [files, setFiles] = useState<Array<IFileTable>>([]);
+    const [files, setFiles] = useState<Array<IFileTable>>(null);
     const [node, setNode] = useState<INodeGeneral>(data);
+    const table = useRef(null);
 
     const inputFile = useRef<HTMLInputElement>(null);
 
@@ -49,7 +50,6 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
             if (res && res.files) {
                 const files = res.files.map((f) => parsingFile(f));
 
-                console.log('files', files);
                 setFiles(files);
             }
         } else {
@@ -78,16 +78,18 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
             const parsedFile = parsingFile(res.filePath);
 
             //Parsing filePath
-            filePaths.push(parsedFile);
-            filesString.push(res.filePath);
+            filePaths.unshift(parsedFile);
+            filesString.unshift(res.filePath);
         }
 
-        console.log('filesString', filesString);
-
         await updateArticle(node._id, { files: filesString });
+
         setFiles(filePaths);
+        table.current.reset();
         showSuccess(toast, '', 'Documentos agregados');
     };
+
+    //Table event
 
     const handleClose = async () => {
         setState(!state);
@@ -113,8 +115,8 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                     <input className=" hidden" type="file" onChange={handleChange} multiple ref={inputFile} />
                 </Button>
 
-                <DataTable value={files} lazy tableStyle={{ minWidth: '50rem' }} paginator={true} rows={5} rowsPerPageOptions={[5, 10, 25, 50]} totalRecords={files.length}>
-                    <Column field="name" sortable header="Documento"></Column>
+                <DataTable ref={table} value={files} paginator tableStyle={{ minWidth: '50rem' }} rows={5}>
+                    <Column field="name" sortable header="Documento" body={(rowData: IFileTable) => `${rowData.ext} ${rowData.name}`}></Column>
                     <Column field="date" header="Fecha de cargue"></Column>
                     <Column
                         field="actions"

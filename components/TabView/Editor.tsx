@@ -485,9 +485,13 @@ export default function Editor({ inReview }) {
                             </div>
                         </div>
 
-                        {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+                        {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED && !openModal ? (
+                            <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" />
+                        ) : (
+                            ''
+                        )}
 
-                        {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
+                        {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED && !openModal ? (
                             <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
                         ) : (
                             ''

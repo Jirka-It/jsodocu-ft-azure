@@ -22,6 +22,8 @@ import 'react-quill/dist/quill.snow.css';
 import { Button } from 'primereact/button';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
+import FileModal from '@components/Modals/FileModal';
 
 export default function Review() {
     const params = useParams();
@@ -29,6 +31,7 @@ export default function Review() {
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
+    const [openModal, setOpenModal] = useState<boolean>(false);
 
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
@@ -177,23 +180,40 @@ export default function Review() {
                     ''
                 )}
             </div>
+            {openModal && nodeSelected ? <FileModal state={openModal} toast={toast} data={nodeSelected} setState={(e) => setOpenModal(e)} /> : ''}
 
             {nodeSelected ? (
                 <section className="col-12 lg:col-9 text-center">
-                    <div className="ql-editor">
+                    <div className="flex justify-content-between">
+                        <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                        {doc.template === false && (nodeSelected.article || nodeSelected.paragraph) ? (
+                            <i className="pi pi-folder-open p-overlay-badge count-badge-docs cursor-pointer mr-2 mb-2" data-pr-position="left" data-pr-tooltip="Cargar documentos" onClick={() => setOpenModal(true)} style={{ fontSize: '2rem' }}>
+                                <Badge value={nodeSelected.files ? nodeSelected.files.length : 0}></Badge>
+                            </i>
+                        ) : (
+                            ''
+                        )}
+                    </div>
+
+                    <div className="ql-editor p-0">
                         <div className={`shadow-1 p-4 ${styles['div-editor-html']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                     </div>
 
-                    <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
-                        {doc?.template ? (
-                            'Utilizar Plantilla'
-                        ) : (
-                            <div>
-                                <p className="m-0">Convertir en plantilla</p>
-                                <p className="m-0 text-xs">Este documento será la base para la elaboración de otros documentos</p>
-                            </div>
-                        )}
-                    </Button>
+                    {/*Only show button when the modal is closed */}
+                    {!openModal ? (
+                        <Button onClick={() => convertDoc(doc)} className={`${styles['button-template']} ${doc?.template ? '' : ' w-18rem'} font-bold`} severity="help">
+                            {doc?.template ? (
+                                'Utilizar Plantilla'
+                            ) : (
+                                <div>
+                                    <p className="m-0">Convertir en plantilla</p>
+                                    <p className="m-0 text-xs">Este documento será la base para la elaboración de otros documentos</p>
+                                </div>
+                            )}
+                        </Button>
+                    ) : (
+                        ''
+                    )}
                 </section>
             ) : (
                 ''

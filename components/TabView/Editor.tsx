@@ -31,6 +31,7 @@ import EditorToolbar, { formats } from './EditorToolbar';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import FileModal from '@components/Modals/FileModal';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -42,6 +43,8 @@ export default function Editor({ inReview }) {
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [openModal, setOpenModal] = useState<boolean>(false);
+
     const [comment, setComment] = useState<string>('');
     const [newRange, setNewRange] = useState();
 
@@ -404,8 +407,9 @@ export default function Editor({ inReview }) {
             ) : (
                 ''
             )}
-
+            {openModal && nodeSelected ? <FileModal state={openModal} toast={toast} data={nodeSelected} setState={(e) => setOpenModal(e)} /> : ''}
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
+
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
@@ -447,8 +451,11 @@ export default function Editor({ inReview }) {
             {modules && nodeSelected ? (
                 <>
                     <div className="col-12 lg:col-9 text-center">
-                        <div className="text-left">
+                        <div className="flex justify-content-between">
                             <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                            <i className="pi pi-folder-open p-overlay-badge cursor-pointer mr-2" onClick={() => setOpenModal(true)} style={{ fontSize: '2rem' }}>
+                                <Badge value="2"></Badge>
+                            </i>
                         </div>
                         <div className="grid">
                             <div className="col-12 lg:col-6">

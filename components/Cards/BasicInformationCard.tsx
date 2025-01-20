@@ -60,7 +60,7 @@ export default function BasicInformationForm() {
 
     const handleChange = async (e) => {
         const bodyFormData = new FormData();
-        const fileRenamed = await newFile('SODOCU-avatar', e.target.files[0]);
+        const fileRenamed = await newFile('SODOCU_AVATAR', e.target.files[0]);
         bodyFormData.append('file', fileRenamed);
         const res = await create(bodyFormData);
 

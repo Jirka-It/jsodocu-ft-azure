@@ -5,6 +5,7 @@ export interface IUser {
     lastName: string;
     password?: string;
     confirmPassword?: string;
+    accountPhoto?: string;
     accountId?: string;
     state: string;
     roles: Array<any>;

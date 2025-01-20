@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IParagraph, IParagraphPartial, IParagraphResponse, IParagraphResponseObject } from '@interfaces/IParagraph';
+import { IParagraph, IParagraphFiles, IParagraphPartial, IParagraphResponse, IParagraphResponseObject } from '@interfaces/IParagraph';
 
 const findAll = async (params: any): Promise<IParagraphResponse> => {
     return await axiosInstance
@@ -55,6 +55,23 @@ const create = async (data: IParagraph): Promise<IParagraphResponseObject> => {
         });
 };
 
+const findFiles = async (id: string): Promise<IParagraphFiles> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/files/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const update = async (id: string, data: IParagraphPartial): Promise<IParagraphResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-paragraphs/${id}`, data)
@@ -89,4 +106,4 @@ const remove = async (id: string): Promise<IParagraphResponseObject> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findById, findFiles, create, update, remove };

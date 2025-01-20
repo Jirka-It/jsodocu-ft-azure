@@ -3,7 +3,7 @@ const nextConfig = {
     /*output:"export",
     basePath:"/cacao",*/
     images: {
-        domains: ['dummyimage.com']
+        domains: ['dummyimage.com', 'localhost', 'backend.jirka.co']
     },
     reactStrictMode: false
 };

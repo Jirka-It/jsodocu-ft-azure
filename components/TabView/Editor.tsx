@@ -31,6 +31,7 @@ import EditorToolbar, { formats } from './EditorToolbar';
 
 import styles from './Editor.module.css';
 import 'react-quill/dist/quill.snow.css';
+import FileModal from '@components/Modals/FileModal';
 
 export default function Editor({ inReview }) {
     const toast = useRef(null);
@@ -42,6 +43,8 @@ export default function Editor({ inReview }) {
     const [modules, setModules] = useState<any>(null);
 
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+    const [openModal, setOpenModal] = useState<boolean>(false);
+
     const [comment, setComment] = useState<string>('');
     const [newRange, setNewRange] = useState();
 
@@ -157,7 +160,7 @@ export default function Editor({ inReview }) {
         if (node.chapter || node.article) {
             label = (
                 <div className="p-inputgroup flex h-2rem">
-                    {(node.article && inReview) || node.count > 0 ? (
+                    {(node.article && (doc?.step === State.REVIEW || doc?.step === State.EDITION)) || node.count > 0 ? (
                         <>
                             {node.count > 0 && !node.approved ? (
                                 <>
@@ -211,7 +214,7 @@ export default function Editor({ inReview }) {
                 <div>
                     <div className="flex align-items-center justify-content-between h-2rem">
                         <span className="flex">
-                            {inReview || node.count > 0 ? (
+                            {doc?.step === State.REVIEW || doc?.step === State.EDITION || node.count > 0 ? (
                                 <>
                                     {node.count > 0 && !node.approved ? (
                                         <>
@@ -404,8 +407,9 @@ export default function Editor({ inReview }) {
             ) : (
                 ''
             )}
-
+            {openModal && nodeSelected ? <FileModal state={openModal} toast={toast} data={nodeSelected} setState={(e) => setOpenModal(e)} /> : ''}
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
+
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
 
@@ -427,6 +431,7 @@ export default function Editor({ inReview }) {
                     <h6 className="m-0 text-blue-500 font-bold">Título</h6>
                 </div>
 
+                {/*Only add chapters when the doc is in edition */}
                 {doc?.step === State.EDITION ? (
                     <div className="mb-2 cursor-pointer text-blue-500" onClick={() => addChapter()}>
                         <i className="pi pi-plus-circle mr-1"></i> Agregar Capítulo
@@ -435,7 +440,7 @@ export default function Editor({ inReview }) {
                     ''
                 )}
 
-                {nodes && nodes.length > 0 ? (
+                {doc && nodes && nodes.length > 0 ? (
                     <div>
                         <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                     </div>
@@ -447,7 +452,19 @@ export default function Editor({ inReview }) {
             {modules && nodeSelected ? (
                 <>
                     <div className="col-12 lg:col-9 text-center">
-                        <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                        <div className="flex justify-content-between">
+                            <Tooltip target=".count-badge-docs" />
+
+                            <h6 className="text-blue-500 font-bold">{nodeSelected.document ? 'Titulo' : nodeSelected.value}</h6>
+                            {/*Only in articles and paragraphs */}
+                            {doc.template === false && (nodeSelected.article || nodeSelected.paragraph) ? (
+                                <i className="pi pi-folder-open p-overlay-badge count-badge-docs cursor-pointer mr-2" data-pr-position="left" data-pr-tooltip="Cargar documentos" onClick={() => setOpenModal(true)} style={{ fontSize: '2rem' }}>
+                                    <Badge value={nodeSelected.files ? nodeSelected.files.length : 0}></Badge>
+                                </i>
+                            ) : (
+                                ''
+                            )}
+                        </div>
                         <div className="grid">
                             <div className="col-12 lg:col-6">
                                 <EditorToolbar inReview={inReview} />
@@ -468,9 +485,13 @@ export default function Editor({ inReview }) {
                             </div>
                         </div>
 
-                        {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED ? <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" /> : ''}
+                        {inReview && nodeSelected && !nodeSelected.approved && doc.step !== State.APPROVED && !openModal ? (
+                            <Button label="Aprobar" onClick={() => handleApprove(nodeSelected, true)} className={`${styles['button-approve']}`} severity="help" />
+                        ) : (
+                            ''
+                        )}
 
-                        {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED ? (
+                        {inReview && nodeSelected && nodeSelected.approved && doc.step !== State.APPROVED && !openModal ? (
                             <Button label="Re-abrir" onClick={() => handleApprove(nodeSelected, false)} className={`${styles['button-approve']} text-white`} severity="warning" />
                         ) : (
                             ''

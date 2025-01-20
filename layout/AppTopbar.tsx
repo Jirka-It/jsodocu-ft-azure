@@ -1,6 +1,8 @@
 'use client';
 
 import React, { forwardRef, useImperativeHandle, useContext, useRef, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { env } from '@config/env';
 
 import Link from 'next/link';
 import AppBreadCrumb from './AppBreadCrumb';
@@ -23,6 +25,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
     useEffect(() => {
         const data: ISession = session as any;
         const decoded = TokenBasicInformation(data.access_token);
+
         setUser(decoded.user);
     }, [session]);
 
@@ -123,7 +126,12 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                     <li className="profile-item static sm:relative">
                         <StyleClass nodeRef={btnRef2} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick={true}>
                             <a tabIndex={1} ref={btnRef2}>
-                                <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
+                                {user?.accountPhoto ? (
+                                    <Image className="border-circle mr-2" src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${user.accountPhoto}` || ''} width={40} height={40} alt="Avatar" />
+                                ) : (
+                                    <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
+                                )}
+
                                 {user ? <span className="profile-name">{`${user.name} ${user.lastName ?? ''}`}</span> : ''}
                             </a>
                         </StyleClass>

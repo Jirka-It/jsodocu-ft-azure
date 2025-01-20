@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IArticle, IArticlePartial, IArticleResponse, IArticleResponseObject } from '@interfaces/IArticle';
+import { IArticle, IArticleFiles, IArticlePartial, IArticleResponse, IArticleResponseObject } from '@interfaces/IArticle';
 
 const findAll = async (params: any): Promise<IArticleResponse> => {
     return await axiosInstance
@@ -24,6 +24,23 @@ const findAll = async (params: any): Promise<IArticleResponse> => {
 const findById = async (id: string): Promise<IArticleResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const findFiles = async (id: string): Promise<IArticleFiles> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/doc-articles/files/${id}`)
         .then((res) => {
             return {
                 ...res.data,
@@ -89,4 +106,4 @@ const remove = async (id: string): Promise<IArticleResponseObject> => {
         });
 };
 
-export { findAll, findById, create, update, remove };
+export { findAll, findById, findFiles, create, update, remove };

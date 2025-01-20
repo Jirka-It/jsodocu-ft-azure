@@ -1,6 +1,8 @@
 import { INodeArticle } from './INode';
 
-export interface IArticle extends INodeArticle {}
+export interface IArticle extends INodeArticle {
+    files: string[];
+}
 
 export interface IArticlePartial extends Partial<IArticle> {}
 
@@ -11,6 +13,13 @@ export interface IArticleResponse {
 }
 
 export interface IArticleResponseObject extends IArticle {
+    code?: number;
+    status: number;
+}
+
+export interface IArticleFiles {
+    files?: string[];
+    _id: string;
     code?: number;
     status: number;
 }

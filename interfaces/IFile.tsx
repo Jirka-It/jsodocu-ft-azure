@@ -4,3 +4,10 @@ export interface IFile {
     code?: number;
     status?: number;
 }
+
+export interface IFileTable {
+    name: string;
+    date: string;
+    filePath: string;
+    ext: string;
+}

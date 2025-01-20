@@ -14,3 +14,10 @@ export interface IParagraphResponseObject extends IParagraph {
     code?: number;
     status: number;
 }
+
+export interface IParagraphFiles {
+    files?: string[];
+    _id: string;
+    code?: number;
+    status: number;
+}

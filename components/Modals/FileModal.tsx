@@ -6,7 +6,7 @@ import { IModalCreate } from '@interfaces/IModal';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import { newFile, parsingFile } from '@lib/File';
+import { iconFile, newFile, parsingFile } from '@lib/File';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { create } from '@api/file';
 import { update as updateArticle, findFiles } from '@api/articles';
@@ -82,7 +82,11 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
             filesString.unshift(res.filePath);
         }
 
-        await updateArticle(node._id, { files: filesString });
+        if (node.article) {
+            await updateArticle(node._id, { files: filesString });
+        } else {
+            await updateParagraph(node._id, { files: filesString });
+        }
 
         setFiles(filePaths);
         table.current.reset();
@@ -116,7 +120,14 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                 </Button>
 
                 <DataTable ref={table} value={files} paginator tableStyle={{ minWidth: '50rem' }} rows={5}>
-                    <Column field="name" sortable header="Documento" body={(rowData: IFileTable) => `${rowData.ext} ${rowData.name}`}></Column>
+                    <Column
+                        field="name"
+                        sortable
+                        header="Documento"
+                        body={(rowData: IFileTable) => {
+                            return iconFile(rowData.ext, rowData.name);
+                        }}
+                    ></Column>
                     <Column field="date" header="Fecha de cargue"></Column>
                     <Column
                         field="actions"

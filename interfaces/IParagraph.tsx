@@ -1,6 +1,8 @@
 import { INodeParagraph } from './INode';
 
-export interface IParagraph extends INodeParagraph {}
+export interface IParagraph extends INodeParagraph {
+    files?: string[];
+}
 
 export interface IParagraphPartial extends Partial<IParagraph> {}
 

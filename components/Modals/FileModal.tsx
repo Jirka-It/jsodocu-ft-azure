@@ -8,7 +8,7 @@ import { Column } from 'primereact/column';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { iconFile, newFile, parsingFile } from '@lib/File';
 import { HttpStatus } from '@enums/HttpStatusEnum';
-import { create } from '@api/file';
+import { create, remove } from '@api/file';
 import { update as updateArticle, findFiles } from '@api/articles';
 import { update as updateParagraph, findFiles as findParagraphFiles } from '@api/paragraphs';
 import { INodeGeneral } from '@interfaces/INode';
@@ -66,7 +66,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         inputFile?.current.click();
     };
 
-    const handleChange = async (e) => {
+    const handleChange = async (e, node: INodeGeneral) => {
         const filePaths: IFileTable[] = files; // Variable to table
         const filesString: string[] = files.map((f) => f.filePath); // Variable to API
         for (let i = 0; i < e.target.files.length; i++) {
@@ -93,6 +93,29 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         showSuccess(toast, '', 'Documentos agregados');
     };
 
+    const handleDelete = async (data: IFileTable, node: INodeGeneral) => {
+        const res = await remove({ filePath: data.filePath });
+
+        //Remove from array of files
+        const newArray = files.filter((item) => item.filePath !== data.filePath);
+        setFiles(newArray);
+        table.current.reset();
+
+        if (res.status === HttpStatus.OK) {
+            //Update array of files in bd
+            const parsingNewArray = newArray.map((f) => f.filePath);
+
+            if (node.article) {
+                await updateArticle(node._id, { files: parsingNewArray });
+            } else {
+                await updateParagraph(node._id, { files: parsingNewArray });
+            }
+            showSuccess(toast, '', 'Documento eliminado');
+        } else {
+            showError(toast, '', 'El documento ya no existe');
+        }
+    };
+
     //Table event
 
     const handleClose = async () => {
@@ -116,7 +139,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         >
             <div>
                 <Button icon="pi pi-plus" className="mb-4" label="Adjuntar" onClick={onFileUploadClick}>
-                    <input className=" hidden" type="file" onChange={handleChange} multiple ref={inputFile} />
+                    <input className=" hidden" type="file" onChange={(e) => handleChange(e, node)} multiple ref={inputFile} />
                 </Button>
 
                 <DataTable ref={table} value={files} paginator tableStyle={{ minWidth: '50rem' }} rows={5}>
@@ -133,7 +156,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                         field="actions"
                         body={(rowData) => (
                             <>
-                                <Button icon="pi pi-trash" className="mr-2" severity="danger" tooltip="Borrar" />
+                                <Button onClick={() => handleDelete(rowData, node)} icon="pi pi-trash" className="mr-2" severity="danger" tooltip="Borrar" />
                                 <Button icon="pi pi-eye" tooltip="Revisar" />
                             </>
                         )}

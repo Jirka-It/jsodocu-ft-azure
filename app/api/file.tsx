@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IFile } from '@interfaces/IFile';
+import { IFile, IFileResponse } from '@interfaces/IFile';
 
 const headersFile = {
     'Content-Type': 'multipart/form-data'
@@ -44,7 +44,7 @@ const create = async (data: any): Promise<IFile> => {
         });
 };
 
-const remove = async (data: IFile): Promise<any> => {
+const remove = async (data: IFile): Promise<IFileResponse> => {
     return await axiosInstance
         .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/file-upload/delete`, data)
         .then((res) => {

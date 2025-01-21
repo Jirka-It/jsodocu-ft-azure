@@ -1,3 +1,5 @@
+import { IFileTable } from './IFile';
+
 export interface INodeGeneral {
     _id?: string;
     key?: string;
@@ -6,7 +8,7 @@ export interface INodeGeneral {
     ownChapter?: string;
     ownArticle?: string;
     label: string;
-    files?: string[];
+    files?: IFileTable[];
     content?: string;
     count?: number;
     chapter?: boolean;

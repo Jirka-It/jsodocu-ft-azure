@@ -96,6 +96,7 @@ export default function CommentModal({ state, setState, toast, quill, setComment
                         Descripción <span className="text-red-500">*</span>
                     </label>
                     <InputTextarea
+                        autoResize
                         disabled={comment ? true : false}
                         autoFocus={true}
                         value={description}

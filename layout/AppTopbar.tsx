@@ -137,6 +137,14 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                         </StyleClass>
                         <ul className="list-none p-3 m-0 border-round shadow-2 absolute surface-overlay hidden origin-top w-full sm:w-19rem mt-2 right-0 z-5 top-auto">
                             <li>
+                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
+                                    <i className="pi pi-user mr-3"></i>
+                                    <span className="flex flex-column">
+                                        <span className="font-semibold">Perfil</span>
+                                    </span>
+                                    <Ripple />
+                                </a>
+
                                 <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={handleLogout}>
                                     <i className="pi pi-power-off mr-3"></i>
                                     <span className="flex flex-column" onClick={() => handleLogout()}>

@@ -13,6 +13,7 @@ import { update as updateUser } from '@api/users';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { PasswordValidation } from '@validations/PasswordValidation';
+import { Message } from 'primereact/message';
 
 export default function UserPasswordModal({ state, setState, data, toast }: IModalCreate) {
     const [password, setPassword] = useState<string>('');
@@ -77,7 +78,7 @@ export default function UserPasswordModal({ state, setState, data, toast }: IMod
             header={headerElement}
             footer={footerContent}
             closable={false}
-            style={{ width: '20rem' }}
+            style={{ width: '30rem' }}
             onHide={() => {
                 if (!state) return;
                 setState(false);
@@ -85,7 +86,22 @@ export default function UserPasswordModal({ state, setState, data, toast }: IMod
         >
             <div className="grid">
                 <div className="col-12">
-                    {' '}
+                    {validations && validations.length > 0 ? (
+                        <Message
+                            className="w-full justify-content-start mb-3"
+                            text="Username is required"
+                            content={
+                                <div>
+                                    <p className="mb-0 font-bold">Al menos 8 caracteres de largo</p>
+                                    <p className="mb-0 font-bold">Use una mezcla de minúsculas y mayúsculas</p>
+                                    <p className="mb-0 font-bold">Incluya numeros y caracteres especiales</p>
+                                </div>
+                            }
+                        />
+                    ) : (
+                        ''
+                    )}
+
                     <label htmlFor="email">
                         Contraseña <span className="text-red-500">*</span>
                     </label>

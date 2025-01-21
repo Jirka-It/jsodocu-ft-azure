@@ -172,20 +172,26 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
                     />{' '}
                 </div>
 
-                <div>
-                    <label htmlFor="template">Plantilla</label>
-
-                    <Dropdown
-                        value={template}
-                        onChange={(e) => setTemplate(e.value)}
-                        options={templates}
-                        id="template"
-                        optionLabel="name"
-                        optionValue="_id"
-                        placeholder="Plantilla"
-                        className={`w-full mt-2 ${VerifyErrorsInForms(validations, 'template') ? 'p-invalid' : ''} `}
-                    />
-                </div>
+                {!data ? (
+                    <div>
+                        <label htmlFor="template">Plantilla</label>
+                        <p className="m-0 font-bold	text-xs">Seleccione una plantilla base o deje vacia la selección para iniciar un documento en blanco</p>
+                        <Dropdown
+                            filter
+                            showClear
+                            value={template}
+                            onChange={(e) => setTemplate(e.value)}
+                            options={templates}
+                            id="template"
+                            optionLabel="name"
+                            optionValue="_id"
+                            placeholder="Plantilla"
+                            className={`w-full ${VerifyErrorsInForms(validations, 'template') ? 'p-invalid' : ''} `}
+                        />
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
         </Dialog>
     );

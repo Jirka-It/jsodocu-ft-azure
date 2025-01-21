@@ -179,7 +179,7 @@ export default function StepUsers() {
                     </div>
 
                     <DeleteModal toast={toast} state={openModalClose} setState={(e) => setOpenModalClose(e)} api={() => console.log('')} update={() => console.log('')} />
-                    <DataTable value={users} tableStyle={{ minWidth: '50rem' }} paginator rows={10} onPage={(e) => console.log(e)}>
+                    <DataTable value={users} paginator rows={10} onPage={(e) => console.log(e)}>
                         <Column field="id" header="ID"></Column>
                         <Column field="name" header="Nombre"></Column>
                         <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>

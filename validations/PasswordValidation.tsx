@@ -5,8 +5,8 @@ import { IUserPassword } from '@interfaces/IUser';
 
 const PasswordSchema = z
     .object({
-        password: z.string().min(1).optional(),
-        confirmPassword: z.string().min(1).optional()
+        password: z.string().regex(new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9]).{8,}$')),
+        confirmPassword: z.string().regex(new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9]).{8,}$'))
     })
     .superRefine(({ confirmPassword, password }, ctx) => {
         if (confirmPassword !== password) {

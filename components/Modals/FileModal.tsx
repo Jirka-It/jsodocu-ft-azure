@@ -72,9 +72,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         const filePaths: IFileTable[] = files; // Variable
         for (let i = 0; i < e.target.files.length; i++) {
             const bodyFormData = new FormData();
-
             bodyFormData.append('file', e.target.files[i]);
-
             // Name of the file
             const name = e.target.files[i].name;
             const res = await create(bodyFormData);

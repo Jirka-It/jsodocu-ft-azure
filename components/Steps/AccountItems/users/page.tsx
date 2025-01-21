@@ -93,16 +93,7 @@ const Users = () => {
                     />
                     <InputSwitch checked={checked} onChange={(e) => handleCheck(e.value)} />
                 </div>
-                <DataTable
-                    value={data?.data}
-                    lazy
-                    tableStyle={{ minWidth: '50rem' }}
-                    paginator={true}
-                    first={tableState?.first ?? 0}
-                    rows={data?.elementsByPage}
-                    onPage={(e) => handlePagination(e)}
-                    totalRecords={data?.elementsByPage * data?.totalPages}
-                >
+                <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
                     <Column field="_id" header="Id" body={(rowData: IUser) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre" body={(rowData) => `${rowData.name} ${rowData.lastName ?? ''}`}></Column>
                     <Column field="username" header="Usuario"></Column>

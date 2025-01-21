@@ -162,7 +162,7 @@ export default function BasicInformationForm() {
                             Nombre o razón social <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-cog"></i>
+                            <i className="pi pi-user"></i>
                             <InputText
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -179,7 +179,7 @@ export default function BasicInformationForm() {
                             Correo <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-cog"></i>
+                            <i className="pi pi-envelope"></i>
                             <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'email') ? 'p-invalid' : ''} `} placeholder="Escribe aquí tu correo" />
                         </span>
                     </div>
@@ -189,7 +189,7 @@ export default function BasicInformationForm() {
                             Correo alternativo <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-cog"></i>
+                            <i className="pi pi-envelope"></i>
                             <InputText
                                 value={alternateEmail}
                                 onChange={(e) => setAlternateEmail(e.target.value)}
@@ -206,7 +206,7 @@ export default function BasicInformationForm() {
                             NIT <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-lock"></i>
+                            <i className="pi pi-user-edit"></i>
                             <InputText value={nit} onChange={(e) => setNit(e.target.value)} id="nit" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'nit') ? 'p-invalid' : ''} `} placeholder="Escribe aquí el NIT si eres empresa" />
                         </span>
                     </div>
@@ -216,7 +216,7 @@ export default function BasicInformationForm() {
                             Sitio web <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-lock"></i>
+                            <i className="pi pi-link"></i>
                             <InputText
                                 value={website}
                                 onChange={(e) => setWebsite(e.target.value)}
@@ -233,7 +233,7 @@ export default function BasicInformationForm() {
                             Ciudad <span className="text-red-500">*</span>
                         </label>
                         <span className="p-input-icon-left w-full">
-                            <i className="pi pi-lock"></i>
+                            <i className="pi pi-map-marker"></i>
                             <InputText value={city} onChange={(e) => setCity(e.target.value)} id="city" type="text" className={`w-full ${VerifyErrorsInForms(validations, 'city') ? 'p-invalid' : ''} `} placeholder="Escribe aquí tu ciudad" />
                         </span>
                     </div>
@@ -246,7 +246,7 @@ export default function BasicInformationForm() {
                             </p>
                             <p>Describe tu experiencia</p>
                         </label>
-                        <InputTextarea value={description ?? account?.description} onChange={(e) => setDescription(e.target.value)} id="description" className="w-full mt-2" placeholder="Descripción" rows={5} cols={30} />
+                        <InputTextarea autoResize value={description ?? account?.description} onChange={(e) => setDescription(e.target.value)} id="description" className="w-full mt-2" placeholder="Descripción" rows={5} cols={30} />
                     </div>
 
                     <div className="flex justify-content-end">

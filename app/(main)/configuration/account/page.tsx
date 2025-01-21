@@ -76,16 +76,7 @@ const Users = () => {
                         <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => getData(1)}></i>
                     </div>
                 </div>
-                <DataTable
-                    value={data?.data}
-                    lazy
-                    tableStyle={{ minWidth: '50rem' }}
-                    paginator={true}
-                    first={tableState?.first ?? 0}
-                    rows={data?.elementsByPage}
-                    onPage={(e) => handlePagination(e)}
-                    totalRecords={data?.elementsByPage * data?.totalPages}
-                >
+                <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
                     <Column field="_id" header="Id" body={(rowData: IAccount) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="nit" header="NIT"></Column>

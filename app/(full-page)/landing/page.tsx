@@ -285,7 +285,7 @@ const LandingPage: Page = () => {
 
                                 <InputText placeholder="Full Name" />
                                 <InputText placeholder="Email Address" />
-                                <InputTextarea rows={7} placeholder="Your Message"></InputTextarea>
+                                <InputTextarea autoResize rows={7} placeholder="Your Message"></InputTextarea>
 
                                 <a className="p-ripple p-button w-full font-bold bg-blue-600 text-white mt-2 flex justify-content-center mx-auto select-none border-none hover:bg-blue-400">
                                     SEND A MESSAGE

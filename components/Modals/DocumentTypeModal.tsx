@@ -164,6 +164,7 @@ export default function DocumentTypeModal({ state, setState, update, data, toast
                         Descripción <span className="text-red-500">*</span>
                     </label>
                     <InputTextarea
+                        autoResize
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         id="description"

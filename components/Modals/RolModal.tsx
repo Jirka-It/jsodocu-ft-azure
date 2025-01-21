@@ -267,6 +267,7 @@ export default function RolModal({ state, setState, update, data, toast }: IModa
                         Descripción <span className="text-red-500">*</span>
                     </label>
                     <InputTextarea
+                        autoResize
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         id="description"

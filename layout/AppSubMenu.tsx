@@ -42,6 +42,7 @@ const AppSubMenu = (props: MenuProps) => {
         model.forEach((item) => {
             getBreadcrumb(item);
         });
+
         setBreadcrumbs(breadcrumbs);
     };
     return (

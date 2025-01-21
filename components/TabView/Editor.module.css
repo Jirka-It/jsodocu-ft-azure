@@ -47,3 +47,11 @@
     bottom: 12%;
     z-index: 9999;
 }
+
+.badge-input {
+    margin-top: 0.75rem !important;
+}
+
+.badge-input-paragraph {
+    margin-top: 0.3rem !important;
+}

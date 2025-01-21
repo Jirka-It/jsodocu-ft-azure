@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { IModalCreate } from '@interfaces/IModal';
+import { CutText } from '@lib/CutText';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { showError, showSuccess } from '@lib/ToastMessages';
+import { showError, showInfo, showSuccess } from '@lib/ToastMessages';
 import { iconFile, newFile, parsingFile } from '@lib/File';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { findFile, create, remove } from '@api/file';
@@ -13,10 +14,14 @@ import { update as updateArticle } from '@api/articles';
 import { update as updateParagraph } from '@api/paragraphs';
 import { INodeGeneral } from '@interfaces/INode';
 import { IFileTable } from '@interfaces/IFile';
+import DeleteModal from './DeleteModal';
 
 export default function FileModal({ state, setState, data, toast }: IModalCreate) {
     const [files, setFiles] = useState<Array<IFileTable>>(null);
     const [node, setNode] = useState<INodeGeneral>(data);
+    const [file, setFile] = useState<IFileTable>(data);
+    const [openModalClose, setOpenModalClose] = useState<boolean>(false);
+
     const table = useRef(null);
 
     const inputFile = useRef<HTMLInputElement>(null);
@@ -44,16 +49,14 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
 
     //Find Files
 
-    const getFiles = async (article: boolean, files: string[]) => {
+    const getFiles = async (article: boolean, files: IFileTable[]) => {
         if (article) {
             if (files) {
-                const newFiles = files.map((f) => parsingFile(f));
-                setFiles(newFiles);
+                setFiles(files);
             }
         } else {
             if (files) {
-                const newFiles = files.map((f) => parsingFile(f));
-                setFiles(newFiles);
+                setFiles(files);
             }
         }
     };
@@ -64,25 +67,27 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
     };
 
     const handleChange = async (e, node: INodeGeneral) => {
-        const filePaths: IFileTable[] = files; // Variable to table
-        const filesString: string[] = files.map((f) => f.filePath); // Variable to API
+        showInfo(toast, '', 'Cargando documentos, espere...');
+
+        const filePaths: IFileTable[] = files; // Variable
         for (let i = 0; i < e.target.files.length; i++) {
             const bodyFormData = new FormData();
-            const fileRenamed = await newFile('SODOCU_ATTACH', e.target.files[i]);
-            bodyFormData.append('file', fileRenamed);
-            const res = await create(bodyFormData);
 
-            const parsedFile = parsingFile(res.filePath);
+            bodyFormData.append('file', e.target.files[i]);
+
+            // Name of the file
+            const name = e.target.files[i].name;
+            const res = await create(bodyFormData);
+            const parsedFile = parsingFile(res.filePath, name);
 
             //Parsing filePath
             filePaths.unshift(parsedFile);
-            filesString.unshift(res.filePath);
         }
 
         if (node.article) {
-            await updateArticle(node._id, { files: filesString });
+            await updateArticle(node._id, { files: filePaths });
         } else {
-            await updateParagraph(node._id, { files: filesString });
+            await updateParagraph(node._id, { files: filePaths });
         }
 
         setFiles(filePaths);
@@ -100,17 +105,14 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
 
         if (res.status === HttpStatus.OK) {
             //Update array of files in bd
-            const parsingNewArray = newArray.map((f) => f.filePath);
 
             if (node.article) {
-                await updateArticle(node._id, { files: parsingNewArray });
+                await updateArticle(node._id, { files: newArray });
             } else {
-                await updateParagraph(node._id, { files: parsingNewArray });
+                await updateParagraph(node._id, { files: newArray });
             }
-            showSuccess(toast, '', 'Documento eliminado');
-        } else {
-            showError(toast, '', 'El documento ya no existe');
         }
+        return { status: res.status };
     };
 
     const handleView = async (data: IFileTable) => {
@@ -128,6 +130,15 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
     };
 
     //Table event
+
+    const handleModalDelete = (data: IFileTable) => {
+        setFile(data);
+        setOpenModalClose(true);
+    };
+
+    const handleUpdate = () => {
+        setFile(null);
+    };
 
     const handleClose = async () => {
         setState(!state);
@@ -152,13 +163,15 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                     <input className=" hidden" type="file" onChange={(e) => handleChange(e, node)} multiple ref={inputFile} />
                 </Button>
 
+                <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => handleDelete(file, node)} update={() => handleUpdate()} />
+
                 <DataTable ref={table} value={files} paginator style={{ width: '50vw' }} rows={5}>
                     <Column
                         field="name"
                         sortable
                         header="Documento"
                         body={(rowData: IFileTable) => {
-                            return iconFile(rowData.ext, rowData.name);
+                            return iconFile(rowData.ext, CutText(rowData.name));
                         }}
                     ></Column>
                     <Column field="date" header="Fecha de cargue"></Column>
@@ -166,8 +179,8 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                         field="actions"
                         body={(rowData) => (
                             <>
-                                <Button onClick={() => handleDelete(rowData, node)} icon="pi pi-trash" className="mr-2" severity="danger" tooltip="Borrar" />
-                                <Button onClick={() => handleView(rowData)} icon="pi pi-eye" tooltip="Revisar" />
+                                <Button onClick={() => handleView(rowData)} icon="pi pi-eye" className="mr-2" tooltip="Revisar" />
+                                <Button onClick={() => handleModalDelete(rowData)} icon="pi pi-trash" severity="danger" tooltip="Borrar" />
                             </>
                         )}
                         header="Acciones"

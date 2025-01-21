@@ -9,15 +9,14 @@ export const newFile = (name: string, file: any) => {
     });
 };
 
-export const parsingFile = (filePath: string): IFileTable => {
+export const parsingFile = (filePath: string, name: string): IFileTable => {
     //Separate date and name
     const separatedInf = filePath.split('/');
     const inf = separatedInf[1].split('-');
 
     const date = format(new Date(parseInt(inf[0])), 'dd/MM/yyyy');
-    const name = inf[1];
     //Extension
-    const ext = filePath.split('.').pop();
+    const ext = name.split('.').pop();
 
     const newFile = {
         name,

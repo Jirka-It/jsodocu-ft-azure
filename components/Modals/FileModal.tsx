@@ -79,7 +79,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
             const name = e.target.files[i].name;
             const res = await create(bodyFormData);
 
-            if (res.status !== HttpStatus.OK) {
+            if (res.status !== HttpStatus.CREATED) {
                 showError(toast, '', 'Un documento no pudo ser cargado');
                 return;
             }

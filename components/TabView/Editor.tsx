@@ -164,10 +164,9 @@ export default function Editor({ inReview }) {
                         <>
                             {node.count > 0 && !node.approved ? (
                                 <>
-                                    {' '}
-                                    <Tooltip target=".count-badge-article" />
+                                    <Tooltip target=".count-badge-article" />{' '}
                                     <Badge
-                                        className="mr-1 cursor-pointer border-circle count-badge-article"
+                                        className={`mr-1 cursor-pointer border-circle count-badge-article ${styles['badge-input']}`}
                                         value=""
                                         data-pr-tooltip={`${node.count} comentarios`}
                                         data-pr-position="right"
@@ -177,7 +176,25 @@ export default function Editor({ inReview }) {
                                     ></Badge>
                                 </>
                             ) : (
-                                <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                                <>
+                                    {node.approved ? (
+                                        <>
+                                            <Tooltip target=".count-badge-article" />
+
+                                            <Badge
+                                                className={`mr-1 cursor-pointer count-badge-article border-circle ${styles['badge-input']}`}
+                                                data-pr-tooltip="Elemento aprobado"
+                                                data-pr-position="right"
+                                                data-pr-at="right+5 top"
+                                                data-pr-my="left center-2"
+                                                value=""
+                                                severity="success"
+                                            ></Badge>
+                                        </>
+                                    ) : (
+                                        ''
+                                    )}
+                                </>
                             )}
                         </>
                     ) : (
@@ -185,6 +202,7 @@ export default function Editor({ inReview }) {
                     )}
 
                     <InputText
+                        tooltip={node.value}
                         onClick={() => handleClickEvent(node.chapter ? null : node)}
                         value={node.value}
                         onChange={(e) => handleChangeEvent(node, e.target.value, setNodes, timer, setTimer, doc)}
@@ -220,7 +238,7 @@ export default function Editor({ inReview }) {
                                         <>
                                             <Tooltip target=".count-badge-paragraph" />
                                             <Badge
-                                                className="mr-1 cursor-pointer border-circle count-badge-paragraph"
+                                                className={`mr-1 cursor-pointer border-circle count-badge-paragraph ${styles['badge-input-paragraph']}`}
                                                 value=""
                                                 data-pr-tooltip={`${node.count} comentarios`}
                                                 data-pr-position="right"
@@ -230,7 +248,25 @@ export default function Editor({ inReview }) {
                                             ></Badge>
                                         </>
                                     ) : (
-                                        <>{node.approved ? <Badge className="mr-1 cursor-pointer border-circle" value="" severity="success"></Badge> : ''}</>
+                                        <>
+                                            {node.approved ? (
+                                                <>
+                                                    <Tooltip target=".count-badge-paragraph" />
+
+                                                    <Badge
+                                                        data-pr-tooltip="Elemento aprobado"
+                                                        data-pr-position="right"
+                                                        data-pr-at="right+5 top"
+                                                        data-pr-my="left center-2"
+                                                        className={`mr-1 cursor-pointer count-badge-paragraph border-circle ${styles['badge-input-paragraph']}`}
+                                                        value=""
+                                                        severity="success"
+                                                    ></Badge>
+                                                </>
+                                            ) : (
+                                                ''
+                                            )}
+                                        </>
                                     )}
                                 </>
                             ) : (

@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 
 const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleTemplateToDoc, handleDelete }) => {
     return (
-        <div className="col-12 md:col-6 lg:col-4">
+        <div className="col-12 md:col-6 lg:col-3">
             <div className="shadow-2 p-4 m-2 surface-card border-round">
                 <div className="relative mb-3">
                     <div className="absolute right-0 flex flex-column">

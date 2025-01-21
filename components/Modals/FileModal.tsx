@@ -121,15 +121,8 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
     const handleView = async (data: IFileTable) => {
         const res = await findFile({ filePath: data.filePath });
 
-        const reportXlsxUrl = URL.createObjectURL(res);
-        const anchorElement = document.createElement('a');
-        anchorElement.href = reportXlsxUrl;
-        anchorElement.download = `${data.name}`;
-        anchorElement.target = '_blank';
-
-        anchorElement.click();
-        anchorElement.remove();
-        URL.revokeObjectURL(reportXlsxUrl);
+        const fileToDownload = URL.createObjectURL(res);
+        window.open(fileToDownload);
     };
 
     //Table event

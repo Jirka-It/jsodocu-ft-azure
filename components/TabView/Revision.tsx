@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Toast } from 'primereact/toast';
+import { useDispatch } from 'react-redux';
 
 import stylesRevision from './Revision.module.css';
 import { Dropdown } from 'primereact/dropdown';
@@ -15,8 +16,10 @@ import { IUser } from '@interfaces/IUser';
 import { State } from '@enums/DocumentEnum';
 import { IDocument } from '@interfaces/IDocument';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { addInReview, subInReview, addInEdition, subInEdition } from '@store/slices/menuSlices';
 
 export default function Revision({ inReview }) {
+    const dispatch = useDispatch();
     const paramsUrl = useParams();
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
@@ -103,6 +106,9 @@ export default function Revision({ inReview }) {
                 step: State.REVIEW
             });
 
+            dispatch(addInReview());
+            dispatch(subInEdition());
+
             if (res.status === HttpStatus.FORBIDDEN) {
                 showError(toast, '', 'El documento ya fué envíado a revisar');
                 return;
@@ -127,6 +133,9 @@ export default function Revision({ inReview }) {
                 reviewer: user,
                 step: State.EDITION
             });
+
+            dispatch(addInEdition());
+            dispatch(subInReview());
 
             if (res.status === HttpStatus.FORBIDDEN) {
                 showError(toast, '', 'El documento ya fué envíado a edición');

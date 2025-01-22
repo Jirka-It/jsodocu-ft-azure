@@ -6,22 +6,23 @@ import TemplateModal from '@components/Modals/TemplateModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { useRouter } from 'next/navigation';
-import { findAll, templateToDoc, update, updateWithState } from '@api/documents';
+import { findAll, templateToDoc, update } from '@api/documents';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
-import { State } from '@enums/DocumentEnum';
 import { State as StateDoc } from '@enums/StateEnum';
 
 import { Scope } from '@enums/DocumentEnum';
-import { showError, showInfo, showSuccess, showWarn } from '@lib/ToastMessages';
-import { HttpStatus } from '@enums/HttpStatusEnum';
+import { showError, showSuccess } from '@lib/ToastMessages';
 import TemplateInformationCard from '@components/Cards/TemplateInformationCard';
 import { InputSwitch } from 'primereact/inputswitch';
+import { useDispatch } from 'react-redux';
+import { addInEdition } from '@store/slices/menuSlices';
 
 const Documents = () => {
     const toast = useRef(null);
     const router = useRouter();
+    const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [checked, setChecked] = useState(true);
     const [searchParam, setSearchParam] = useState<string>('');
@@ -52,28 +53,6 @@ const Documents = () => {
     const handleCheck = (check: boolean) => {
         setDataViewState(null);
         setChecked(check);
-    };
-
-    const handleArchive = async (data: IDocument) => {
-        try {
-            const res = await updateWithState(data._id, {
-                step: State.ARCHIVED
-            });
-
-            if (res.status === HttpStatus.FORBIDDEN) {
-                showError(toast, '', 'El documento ya fué archivado');
-                return;
-            }
-
-            if (!res) {
-                showWarn(toast, '', 'Contacte con soporte');
-            } else {
-                showInfo(toast, '', 'Documento archivado');
-                getData();
-            }
-        } catch (error) {
-            showError(toast, '', 'Contacte con soporte');
-        }
     };
 
     const handleEdit = (data) => {
@@ -108,6 +87,7 @@ const Documents = () => {
     const handleTemplateToDoc = async (doc: IDocument) => {
         try {
             await templateToDoc(doc._id);
+            dispatch(addInEdition());
             showSuccess(toast, '', `Documento ${doc.name} creado`);
         } catch (error) {
             showError(toast, '', 'Contacte con soporte.');

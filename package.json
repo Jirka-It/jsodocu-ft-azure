@@ -10,6 +10,9 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@reduxjs/toolkit": "^2.5.0",
+        "react-redux": "^9.2.0",
+        "redux": "^5.0.1",
         "@fullcalendar/core": "6.1.4",
         "@fullcalendar/daygrid": "6.1.4",
         "@fullcalendar/interaction": "6.1.4",

@@ -30,3 +30,10 @@ export interface IDocumentResponseObject extends IDocument {
     code?: number;
     status: number;
 }
+
+export interface IDocumentResponseCount {
+    inEdition: number;
+    inReview: number;
+    code?: number;
+    status: number;
+}

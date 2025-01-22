@@ -1,4 +1,5 @@
 'use client';
+import { useDispatch } from 'react-redux';
 
 import { Tooltip } from 'primereact/tooltip';
 import { useContext, useEffect, useRef } from 'react';
@@ -8,8 +9,12 @@ import { MenuProvider } from './context/menucontext';
 import { Breadcrumb, BreadcrumbItem, MenuModal, MenuProps } from '@customTypes/layout';
 import { VerifyPermissions } from '@lib/Permissions';
 import { useSession } from 'next-auth/react';
+import { setInReview, setInEdition } from '@store/slices/menuSlices';
+import { findCount } from '@api/documents';
+import { HttpStatus } from '@enums/HttpStatusEnum';
 
 const AppSubMenu = (props: MenuProps) => {
+    const dispatch = useDispatch();
     const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
     const tooltipRef = useRef<Tooltip | null>(null);
     const { data: session }: any = useSession(); //data:session
@@ -22,8 +27,18 @@ const AppSubMenu = (props: MenuProps) => {
     }, [layoutState.overlaySubmenuActive]);
 
     useEffect(() => {
+        getData();
         generateBreadcrumbs(props.model);
     }, []);
+
+    const getData = async () => {
+        const res = await findCount();
+
+        if (res.status === HttpStatus.OK) {
+            dispatch(setInReview(res.inReview));
+            dispatch(setInEdition(res.inEdition));
+        }
+    };
 
     const generateBreadcrumbs = (model: MenuModal[]) => {
         let breadcrumbs: Breadcrumb[] = [];

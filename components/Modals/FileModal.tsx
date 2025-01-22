@@ -156,7 +156,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
         >
             <div>
                 <Button icon="pi pi-plus" className="mb-4" label="Adjuntar" onClick={onFileUploadClick}>
-                    <input className=" hidden" type="file" onChange={(e) => handleChange(e, node)} multiple ref={inputFile} />
+                    <input accept=".xlsx,.xls,.doc, .docx" className="hidden" type="file" onChange={(e) => handleChange(e, node)} multiple ref={inputFile} />
                 </Button>
 
                 <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => handleDelete(file, node)} update={() => handleUpdate()} />

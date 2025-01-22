@@ -1,7 +1,11 @@
 'use client';
+
 import { LayoutProvider } from '../layout/context/layoutcontext';
 import { PrimeReactProvider } from 'primereact/api';
+
 import Providers from '@components/Providers';
+import { Provider } from 'react-redux';
+import { store } from '@store/store';
 
 import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
@@ -17,10 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <Providers>
-                    <PrimeReactProvider>
-                        <LayoutProvider>{children}</LayoutProvider>
-                    </PrimeReactProvider>
+                    <Provider store={store}>
+                        <PrimeReactProvider>
+                            <LayoutProvider>{children}</LayoutProvider>
+                        </PrimeReactProvider>
+                    </Provider>
                 </Providers>
+                ;
             </body>
         </html>
     );

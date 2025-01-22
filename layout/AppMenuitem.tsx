@@ -1,4 +1,5 @@
 'use client';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -11,12 +12,14 @@ import { useSubmenuOverlayPosition } from './hooks/useSubmenuOverlayPosition';
 import { AppMenuItemProps } from '@customTypes/layout';
 import { useSession } from 'next-auth/react';
 import { VerifyPermissions } from '@lib/Permissions';
+import { Badge } from 'primereact/badge';
+import { RootState } from '@store/store';
 
 const AppMenuitem = (props: AppMenuItemProps) => {
+    const menu = useSelector((state: RootState) => state.menu);
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
     const { isSlim, isCompact, isHorizontal, isDesktop, setLayoutState, layoutState, layoutConfig } = useContext(LayoutContext);
     const { data: session }: any = useSession(); //data:session
-
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const submenuRef = useRef(null);
@@ -172,13 +175,20 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                         replace={item.replaceUrl}
                         onClick={(e) => itemClick(e)}
                         className={classNames(item.class, 'p-ripple ', {
+                            'flex justify-content-between': item.label === 'En edición' || item.label === 'En revisión',
                             'active-route': isActiveRoute
                         })}
                         tabIndex={0}
                         onMouseEnter={onMouseEnter}
                     >
-                        <i className={classNames('layout-menuitem-icon', item.icon)}></i>
-                        <span className="layout-menuitem-text">{item.label}</span>
+                        <div>
+                            <i className={classNames('layout-menuitem-icon', item.icon)}></i>
+                            <span className="layout-menuitem-text">{item.label}</span>
+                        </div>
+
+                        {item.label === 'En edición' ? <Badge className="ml-3" value={menu.inEdition}></Badge> : ''}
+                        {item.label === 'En revisión' ? <Badge className="ml-3" value={menu.inReview}></Badge> : ''}
+
                         {item.items && <i className="pi pi-fw pi-angle-down layout-submenu-toggler"></i>}
                         <Ripple />
                     </Link>

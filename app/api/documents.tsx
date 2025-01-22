@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IDocument, IDocumentPartial, IDocumentResponse, IDocumentResponseObject } from '@interfaces/IDocument';
+import { IDocument, IDocumentPartial, IDocumentResponse, IDocumentResponseCount, IDocumentResponseObject } from '@interfaces/IDocument';
 
 const findAll = async (params: any): Promise<IDocumentResponse> => {
     return await axiosInstance
@@ -59,6 +59,23 @@ const findExport = async (id: string): Promise<any> => {
 const findById = async (id: string): Promise<IDocumentResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const findCount = async (): Promise<IDocumentResponseCount> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/documents/count`)
         .then((res) => {
             return {
                 ...res.data,
@@ -208,4 +225,4 @@ const remove = async (id: string): Promise<IDocumentResponseObject> => {
         });
 };
 
-export { findAll, findById, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, docToTemplate, templateToDoc, update, updateWithState, remove };
+export { findAll, findById, findCount, findAllPreview, findAllComments, findExport, findByIdLight, findByName, create, docToTemplate, templateToDoc, update, updateWithState, remove };

@@ -18,8 +18,11 @@ import useDebounce from '@hooks/debounceHook';
 import { State } from '@enums/DocumentEnum';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
+import { useDispatch } from 'react-redux';
+import { addInEdition } from '@store/slices/menuSlices';
 
 const Documents = () => {
+    const dispatch = useDispatch();
     const toast = useRef(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
@@ -52,6 +55,8 @@ const Documents = () => {
             const res = await updateWithState(data._id, {
                 step: State.EDITION
             });
+
+            dispatch(addInEdition());
 
             if (res.status === HttpStatus.FORBIDDEN) {
                 showError(toast, '', 'El documento ya fué envíado a edición');

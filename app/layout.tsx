@@ -12,6 +12,7 @@ import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
+import AlertModal from '@components/Modals/AlertModal';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -22,6 +23,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body>
                 <Providers>
                     <Provider store={store}>
+                        <AlertModal />
+
                         <PrimeReactProvider>
                             <LayoutProvider>{children}</LayoutProvider>
                         </PrimeReactProvider>

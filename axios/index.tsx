@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { getSession, signOut } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
+import { store } from '@store/store';
+
+import { setShowModal } from '@store/slices/modalSlices';
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL_BACKEND, // Replace with your API base URL
@@ -32,7 +35,7 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 401) {
-            signOut({ callbackUrl: '/auth/login', redirect: true });
+            store.dispatch(setShowModal(true));
         } else {
             return Promise.reject(error);
         }

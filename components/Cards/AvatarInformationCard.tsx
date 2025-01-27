@@ -7,7 +7,7 @@ const AvatarInformation = ({ name, account, photo, roles }) => {
     return (
         <section className="sm:flex align-items-center sm:ml-7 mb-4">
             <div className="flex justify-content-center">
-                {!photo ? <img src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${photo}`} className={styles.img} alt="User image" width={150} height={150} /> : <i className="pi pi-user" style={{ fontSize: '6rem' }}></i>}
+                {photo ? <img src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${photo}`} className={styles.img} alt="User image" width={150} height={150} /> : <i className="pi pi-user" style={{ fontSize: '6rem' }}></i>}
             </div>
             <div className={styles.information}>
                 <h2 className="m-0 font-bold text-blue-500">{account}</h2>

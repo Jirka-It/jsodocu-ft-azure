@@ -91,9 +91,9 @@ export default function UserPasswordModal({ state, setState, data, toast }: IMod
                         text="Username is required"
                         content={
                             <div>
-                                <p className="mb-0 font-bold">Al menos 8 caracteres de largo</p>
-                                <p className="mb-0 font-bold">Use una mezcla de minúsculas y mayúsculas</p>
-                                <p className="mb-0 font-bold">Incluya numeros y caracteres especiales</p>
+                                <p className="mb-0">Al menos 8 caracteres de largo</p>
+                                <p className="mb-0">Use una mezcla de minúsculas y mayúsculas</p>
+                                <p className="mb-0">Incluya numeros y caracteres especiales</p>
                             </div>
                         }
                     />

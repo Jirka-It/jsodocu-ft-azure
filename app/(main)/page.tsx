@@ -35,8 +35,8 @@ const ordersChartOptions = {
             ticks: {
                 min: 0,
                 max: 100,
-                callback: function (value) {
-                    return value + '%';
+                callback: function (value: number) {
+                    return value.toFixed(1) + '%';
                 }
             }
         }

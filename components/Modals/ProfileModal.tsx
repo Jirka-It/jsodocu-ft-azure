@@ -247,9 +247,9 @@ export default function ProfileModal({ state, setState, toast }: IModalCreate) {
                             text="Username is required"
                             content={
                                 <div>
-                                    <p className="mb-0 font-bold">Al menos 8 caracteres de largo</p>
-                                    <p className="mb-0 font-bold">Use una mezcla de minúsculas y mayúsculas</p>
-                                    <p className="mb-0 font-bold">Incluya numeros y caracteres especiales</p>
+                                    <p className="mb-0">Al menos 8 caracteres de largo</p>
+                                    <p className="mb-0">Use una mezcla de minúsculas y mayúsculas</p>
+                                    <p className="mb-0">Incluya números y caracteres especiales</p>
                                 </div>
                             }
                         />

@@ -30,7 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </PrimeReactProvider>
                     </Provider>
                 </Providers>
-                ;
             </body>
         </html>
     );

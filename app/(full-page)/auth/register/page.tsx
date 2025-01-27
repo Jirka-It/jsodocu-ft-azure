@@ -17,6 +17,7 @@ import { Toast } from 'primereact/toast';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { registerUser } from '@api/auth/register';
 import { State } from '@enums/StateEnum';
+import { Message } from 'primereact/message';
 
 const RegisterPage: Page = () => {
     const [name, setName] = useState<string>('');
@@ -93,6 +94,17 @@ const RegisterPage: Page = () => {
                         </div>
 
                         <div className="flex flex-column gap-4">
+                            <Message
+                                className="w-full justify-content-center mb-3"
+                                text="Username is required"
+                                content={
+                                    <div>
+                                        <p className="mb-0">Al menos 8 caracteres de largo</p>
+                                        <p className="mb-0">Use una mezcla de minúsculas y mayúsculas</p>
+                                        <p className="mb-0">Incluya números y caracteres especiales</p>
+                                    </div>
+                                }
+                            />
                             <span className="p-input-icon-left w-full">
                                 <i className="pi pi-user"></i>
                                 <InputText id="name" value={name} onChange={(e) => setName(e.target.value)} type="text" className={`w-full md:w-25rem ${VerifyErrorsInForms(validations, 'name') ? 'p-invalid' : ''} `} placeholder="Nombre" />

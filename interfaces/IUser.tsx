@@ -12,6 +12,25 @@ export interface IUser {
     creator?: string;
 }
 
+interface IMonth {
+    month: string;
+    avgPercentageUse: number;
+}
+
+export interface IUserDashboard {
+    name: string;
+    account: string;
+    photo: string;
+    roles: string;
+    inEdition: number;
+    inReview: number;
+    approved: number;
+    averageUsePercentage: number;
+    useLastSixMonths: Array<IMonth>;
+    code?: number;
+    status: number;
+}
+
 export interface IUserPassword {
     password: string;
     confirmPassword?: string;

@@ -53,7 +53,8 @@ const Documents = () => {
     const handleActive = async (data: IDocument) => {
         try {
             const res = await updateWithState(data._id, {
-                step: State.EDITION
+                step: State.EDITION,
+                dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
             dispatch(addInEdition());

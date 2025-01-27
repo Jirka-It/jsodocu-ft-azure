@@ -50,7 +50,8 @@ const Documents = () => {
     const handleArchive = async (data: IDocument) => {
         try {
             const res = await updateWithState(data._id, {
-                step: State.ARCHIVED
+                step: State.ARCHIVED,
+                dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
             if (res.status === HttpStatus.FORBIDDEN) {

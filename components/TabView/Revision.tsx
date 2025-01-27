@@ -17,6 +17,7 @@ import { State } from '@enums/DocumentEnum';
 import { IDocument } from '@interfaces/IDocument';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { addInReview, subInReview, addInEdition, subInEdition } from '@store/slices/menuSlices';
+import { format } from 'date-fns';
 
 export default function Revision({ inReview }) {
     const dispatch = useDispatch();
@@ -103,7 +104,8 @@ export default function Revision({ inReview }) {
         try {
             const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
-                step: State.REVIEW
+                step: State.REVIEW,
+                dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
             dispatch(addInReview());
@@ -131,7 +133,8 @@ export default function Revision({ inReview }) {
         try {
             const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
-                step: State.EDITION
+                step: State.EDITION,
+                dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
             dispatch(addInEdition());
@@ -160,7 +163,8 @@ export default function Revision({ inReview }) {
             const res = await updateWithState(paramsUrl.id, {
                 reviewer: user,
                 step: State.APPROVED,
-                version: doc.version + 1
+                version: doc.version + 1,
+                dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
             if (res.status === HttpStatus.FORBIDDEN) {

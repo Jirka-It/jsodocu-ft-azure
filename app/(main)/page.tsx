@@ -74,16 +74,14 @@ const Dashboard = () => {
             </div>
             <div className="grid mb-4">
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
+                    <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" value={67} iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
+                    <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" value={999} iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
+
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Validaciones Solicitadas'} icon="pi pi-chart-line" iconColor="text-green-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
-                </div>
-                <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
+                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={5} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                 </div>
             </div>
 

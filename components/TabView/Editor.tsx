@@ -110,7 +110,7 @@ export default function Editor({ inReview }) {
         const data = res.data;
 
         if (data) {
-            // This code is to change the name by the value and vice versa
+            // This code is to change the name by the value and vice versa, cuz the mentions
             data.map((r) => {
                 const name = r.name;
                 const value = r.value;

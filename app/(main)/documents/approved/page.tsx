@@ -1,12 +1,11 @@
 'use client';
 const { format } = require('date-fns');
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
-import DocumentModal from '@components/Modals/DocumentModal';
 import { IDocument, IDocumentResponse } from '@interfaces/IDocument';
 
 import { findAll, findExport, remove } from '@api/documents';
@@ -23,7 +22,6 @@ const Documents = () => {
     const toast = useRef(null);
     const router = useRouter();
 
-    const [openModal, setOpenModal] = useState<boolean>(false);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [searchParam, setSearchParam] = useState<string>('');
     const debouncedSearchParam = useDebounce(searchParam, 500);
@@ -94,7 +92,6 @@ const Documents = () => {
     return (
         <div className="layout-documents">
             <Toast ref={toast} />
-            <DocumentModal state={openModal} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <DeleteModal state={openModalClose} toast={toast} setState={(e) => setOpenModalClose(e)} api={() => remove(doc._id)} update={() => handleUpdate()} />
             <div className="card">
                 <div className="w-full flex justify-content-end mb-3">

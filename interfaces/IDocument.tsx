@@ -18,6 +18,7 @@ export interface IDocument {
     approved?: boolean;
     createdAt?: string;
     updatedAt?: string;
+    dateOfUpdate?: string;
 }
 
 export interface IDocumentPartial extends Partial<IDocument> {}

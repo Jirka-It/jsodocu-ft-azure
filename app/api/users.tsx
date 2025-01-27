@@ -1,6 +1,6 @@
 import axiosInstance from '../../axios';
 import { env } from '@config/env';
-import { IUser, IUserPartial, IUserResponse, IUserResponseObject } from '@interfaces/IUser';
+import { IUser, IUserDashboard, IUserPartial, IUserResponse, IUserResponseObject } from '@interfaces/IUser';
 
 const findAll = async (params: any): Promise<IUserResponse> => {
     return await axiosInstance
@@ -37,6 +37,23 @@ const findAllByAccount = async (params: any): Promise<Array<IUser>> => {
 const findById = async (id: string): Promise<IUserResponseObject> => {
     return await axiosInstance
         .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`)
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
+const findDashboard = async (): Promise<IUserDashboard> => {
+    return await axiosInstance
+        .get(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/dashboard`)
         .then((res) => {
             return {
                 ...res.data,
@@ -118,4 +135,4 @@ const remove = async (id: string): Promise<IUserResponseObject> => {
         });
 };
 
-export { findAll, findById, findAllByAccount, findByUsername, create, update, remove };
+export { findAll, findById, findDashboard, findAllByAccount, findByUsername, create, update, remove };

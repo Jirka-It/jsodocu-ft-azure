@@ -14,7 +14,7 @@ const NewPassword: Page = () => {
         <>
             <div className="flex h-screen">
                 <div className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-between">
-                    <img src={`/layout/images/logo-dark.svg`} className="h-4rem mt-4" alt="diamond-layout" />
+                    <img src={`/layout/images/sodocu-transparent.svg`} className="h-4rem mt-4 mb-4" alt="logo-layout" />
 
                     <div className="flex flex-column align-items-center gap-4">
                         <div className="mb-3">

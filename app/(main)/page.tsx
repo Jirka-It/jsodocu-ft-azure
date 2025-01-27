@@ -1,26 +1,14 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { Button } from 'primereact/button';
+import React, { useEffect, useRef, useState } from 'react';
+//import { Button } from 'primereact/button';
 import { Chart } from 'primereact/chart';
-import { Menu } from 'primereact/menu';
+//import { Menu } from 'primereact/menu';
 import HomeInformationCard from '@components/Cards/HomeInformationCard';
 import AvatarInformation from '@components/Cards/AvatarInformationCard';
-
-const ordersChart = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
-    datasets: [
-        {
-            label: 'Promedio',
-            data: [2, 7, 20, 9, 16, 9, 5],
-            backgroundColor: ['rgba(100, 181, 246, 0.2)'],
-            borderColor: ['#64B5F6'],
-            borderWidth: 3,
-            fill: true,
-            tension: 0.2
-        }
-    ]
-};
+import { findDashboard } from '@api/users';
+import { HttpStatus } from '@enums/HttpStatusEnum';
+import { IUserDashboard } from '@interfaces/IUser';
 
 const ordersChartOptions = {
     maintainAspectRatio: false,
@@ -28,6 +16,14 @@ const ordersChartOptions = {
     plugins: {
         legend: {
             display: false
+        },
+        tooltip: {
+            callbacks: {
+                label: function (context) {
+                    let label = context.dataset.label || '';
+                    return `${label}: ${context.parsed.y}%`;
+                }
+            }
         }
     },
     responsive: true,
@@ -38,69 +34,86 @@ const ordersChartOptions = {
         y: {
             ticks: {
                 min: 0,
-                max: 20
+                max: 100,
+                callback: function (value) {
+                    return value + '%';
+                }
             }
         }
     }
 };
 
 const Dashboard = () => {
-    const items = [
-        {
-            label: 'Meses',
-            items: [
-                { label: 'Enero', icon: 'pi pi-calendar' },
-                { label: 'Febrero', icon: 'pi pi-calendar' },
-                { label: 'Marzo', icon: 'pi pi-calendar' },
-                { label: 'Abril', icon: 'pi pi-calendar' },
-                { label: 'Mayo', icon: 'pi pi-calendar' },
-                { label: 'Junio', icon: 'pi pi-calendar' },
-                { label: 'Julio', icon: 'pi pi-calendar' }
-            ]
+    const [ordersChart, setOrdersChart] = useState(null);
+    const [data, setData] = useState<IUserDashboard>(null);
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        const res = await findDashboard();
+
+        if (res.status === HttpStatus.OK) {
+            const labels = res.useLastSixMonths.map((u) => u.month);
+            const data = res.useLastSixMonths.map((u) => u.avgPercentageUse);
+
+            setOrdersChart({
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Promedio',
+                        data: data,
+                        backgroundColor: ['rgba(100, 181, 246, 0.2)'],
+                        borderColor: ['#64B5F6'],
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.2
+                    }
+                ]
+            });
+
+            setData(res);
         }
-    ];
-
-    const menuRef = useRef(null);
-    const chartRef = useRef(null);
-
-    const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-        menuRef.current.toggle(event);
     };
+
+    const chartRef = useRef(null);
 
     return (
         <div className="layout-dashboard">
             <div className="grid">
-                <AvatarInformation />
+                <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
             </div>
             <div className="grid mb-4">
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
+                    <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" value={data?.inEdition} iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
+                    <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" value={data?.inReview} iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
+
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Validaciones Solicitadas'} icon="pi pi-chart-line" iconColor="text-green-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
+                    <HomeInformationCard title={'Documentos Aprobados'} icon="pi pi-chart-line" value={data?.approved} iconColor="text-green-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
+
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
+                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={`${data?.averageUsePercentage}%`} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                 </div>
             </div>
 
             <div className="grid">
                 <div className="col-12">
                     <div className="card">
+                        {/*
                         <div className="flex w-full justify-content-between align-items-center">
                             <h4>Promedio Uso</h4>
                             <Button severity="secondary" text icon="pi pi-search" label="Mostrar" onClick={menuToggle}></Button>
                         </div>
-                        <Menu model={items} popup ref={menuRef} />
+                        <Menu model={items} popup ref={menuRef} /> */}
 
                         <div className="grid mt-3">
                             <div className="col-12">
-                                <div className="overview-chart">
-                                    <Chart ref={chartRef} type="line" data={ordersChart} options={ordersChartOptions} id="order-chart"></Chart>
-                                </div>
+                                <div className="overview-chart">{ordersChart ? <Chart ref={chartRef} type="line" data={ordersChart} options={ordersChartOptions} id="order-chart"></Chart> : ''}</div>
                             </div>
                         </div>
                     </div>

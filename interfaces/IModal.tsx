@@ -14,7 +14,7 @@ export interface IModalEditorDelete extends IModal {
 }
 
 export interface IModalCreate extends IModal {
-    data: any;
+    data?: any;
     account?: string;
     update?: Function;
     toast: any;

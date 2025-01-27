@@ -2,9 +2,11 @@ export interface IUser {
     _id?: string;
     username: string;
     name: string;
+    photo: string;
     lastName: string;
     password?: string;
     confirmPassword?: string;
+    accountName?: string;
     accountPhoto?: string;
     accountId?: string;
     state: string;
@@ -18,7 +20,10 @@ interface IMonth {
 }
 
 export interface IUserDashboard {
+    id: string;
     name: string;
+    lastName: string;
+    username: string;
     account: string;
     photo: string;
     roles: string;

@@ -14,10 +14,14 @@ import { signOut, useSession } from 'next-auth/react';
 import { ISession } from '@interfaces/ISession';
 import { IUser } from '@interfaces/IUser';
 import { TokenBasicInformation } from '@lib/Token';
+import ProfileModal from '@components/Modals/ProfileModal';
+import { Toast } from 'primereact/toast';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
     const { data: session } = useSession(); //data:session
+    const toast = useRef(null);
     const [user, setUser] = useState<IUser>();
+    const [openModal, setOpenModal] = useState<boolean>(false);
 
     const btnRef2 = useRef(null);
     const menubuttonRef = useRef(null);
@@ -38,9 +42,14 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
     const handleLogout = () => {
         signOut({ callbackUrl: '/auth/login', redirect: true });
     };
+    //update={(page, update) => handleUpdate(page, update)}
 
     return (
         <div className="layout-topbar">
+            <Toast ref={toast} />
+
+            {openModal ? <ProfileModal state={openModal} toast={toast} data={document} setState={(e) => setOpenModal(e)} /> : ''}
+
             <div className="topbar-left">
                 <button ref={menubuttonRef} type="button" className="menu-button p-link" onClick={onMenuToggle}>
                     <i className="pi pi-chevron-left"></i>
@@ -137,7 +146,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                         </StyleClass>
                         <ul className="list-none p-3 m-0 border-round shadow-2 absolute surface-overlay hidden origin-top w-full sm:w-19rem mt-2 right-0 z-5 top-auto">
                             <li>
-                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer">
+                                <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={() => setOpenModal(true)}>
                                     <i className="pi pi-user mr-3"></i>
                                     <span className="flex flex-column">
                                         <span className="font-semibold">Perfil</span>
@@ -147,7 +156,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
 
                                 <a className="p-ripple flex p-2 border-round align-items-center hover:surface-hover transition-colors transition-duration-150 cursor-pointer" onClick={handleLogout}>
                                     <i className="pi pi-power-off mr-3"></i>
-                                    <span className="flex flex-column" onClick={() => handleLogout()}>
+                                    <span className="flex flex-column">
                                         <span className="font-semibold">Logout</span>
                                     </span>
                                     <Ripple />

@@ -104,3 +104,10 @@ comment {
     scrollbar-width: none;
     /* Firefox */
 }
+
+.modal-profile {
+    .p-tabview-panels {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

@@ -82,7 +82,7 @@ const Dashboard = () => {
     return (
         <div className="layout-dashboard">
             <div className="grid">
-                <AvatarInformation name={data?.name} account={data?.account} photo={data?.photo} roles={data?.roles} />
+                <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
             </div>
             <div className="grid mb-4">
                 <div className="col-12 md:col-6 lg:col-3">

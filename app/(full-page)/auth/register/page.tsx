@@ -101,7 +101,7 @@ const RegisterPage: Page = () => {
                                     <div>
                                         <p className="mb-0">Al menos 8 caracteres de largo</p>
                                         <p className="mb-0">Use una mezcla de minúsculas y mayúsculas</p>
-                                        <p className="mb-0">Incluya numeros y caracteres especiales</p>
+                                        <p className="mb-0">Incluya números y caracteres especiales</p>
                                     </div>
                                 }
                             />

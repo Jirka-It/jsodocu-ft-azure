@@ -296,7 +296,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
                                     <div>
                                         <p className="mb-0 text-xs text-red-500">Al menos 8 caracteres de largo</p>
                                         <p className="mb-0 text-xs text-red-500">Use una mezcla de minúsculas y mayúsculas</p>
-                                        <p className="mb-0 text-xs text-red-500">Incluya numeros y caracteres especiales</p>
+                                        <p className="mb-0 text-xs text-red-500">Incluya números y caracteres especiales</p>
                                     </div>
                                 ) : (
                                     ''

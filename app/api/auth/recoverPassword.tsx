@@ -1,13 +1,12 @@
-import { IRecover, IRecoverPassword, IRegisterResponse } from '@interfaces/IAuth';
+import { IRecover, IRecoverPassword } from '@interfaces/IAuth';
 import { env } from '@config/env';
 
 import axios from 'axios';
 
 export const recoverPassword = async (recoverPassword: IRecover): Promise<IRecoverPassword> => {
     const response = await axios
-        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/auth/recover`, recoverPassword)
+        .post(`${env.NEXT_PUBLIC_API_URL_BACKEND}/mail`, recoverPassword)
         .then((response) => {
-            console.log('response', response);
             return {
                 code: response.status,
                 message: 'Verifique su correo electronico.'

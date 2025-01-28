@@ -18,10 +18,14 @@ import TemplateInformationCard from '@components/Cards/TemplateInformationCard';
 import { InputSwitch } from 'primereact/inputswitch';
 import { useDispatch } from 'react-redux';
 import { addInEdition } from '@store/slices/menuSlices';
+import { Permission } from '@enums/PermissionEnum';
+import { VerifyPermissions } from '@lib/Permissions';
+import { useSession } from 'next-auth/react';
 
 const Documents = () => {
     const toast = useRef(null);
     const router = useRouter();
+    const { data: session }: any = useSession(); //data:session
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [checked, setChecked] = useState(true);
@@ -100,7 +104,7 @@ const Documents = () => {
             <TemplateModal state={openModal} scope={Scope.OWNED} toast={toast} data={document} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <div className="card">
                 <div className="w-full flex justify-content-between mb-3">
-                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="ml-2" label="Plantilla" />
+                    {VerifyPermissions(session?.access_token, [Permission.OWN_TEMPLATES_BUTTON]) ? <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Plantilla" /> : <div></div>}
 
                     <div className="flex align-items-center">
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />

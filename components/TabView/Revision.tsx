@@ -10,6 +10,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { findByIdLight as findDocument, updateWithState } from '@api/documents';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { findAllPreview, findAllComments } from '@api/documents';
+import { findAllWithOutPagination } from '@api/variables';
+
 import { findAllByAccount } from '@api/users';
 
 import { IUser } from '@interfaces/IUser';
@@ -18,6 +20,8 @@ import { IDocument } from '@interfaces/IDocument';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { addInReview, subInReview, addInEdition, subInEdition } from '@store/slices/menuSlices';
 import { format } from 'date-fns';
+import { IVariableLight } from '@interfaces/IVariable';
+import { replaceText } from '@lib/ReplaceText';
 
 export default function Revision({ inReview }) {
     const dispatch = useDispatch();
@@ -25,6 +29,8 @@ export default function Revision({ inReview }) {
     const toast = useRef(null);
     const [user, setUser] = useState<any>('');
     const [doc, setDoc] = useState<IDocument>(null);
+    const [variables, setVariables] = useState<Array<IVariableLight>>([]);
+
     const [comments, setComments] = useState<number>(0);
     const [length, setLength] = useState(1);
     const [content, setContent] = useState<string>('');
@@ -36,9 +42,26 @@ export default function Revision({ inReview }) {
         getInitialContent();
         getUsers();
         getComments();
-
+        getVariables();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getVariables = async () => {
+        const res = await findAllWithOutPagination({ documentId: paramsUrl.id });
+        const data = res.data;
+
+        if (data) {
+            // This code is to change the name by the value and vice versa
+            data.map((r) => {
+                const name = r.name;
+                const value = r.value;
+                (r.name = value), (r.value = name);
+                return r;
+            });
+        }
+
+        setVariables(data);
+    };
 
     // Users, title and chapters
 
@@ -216,7 +239,7 @@ export default function Revision({ inReview }) {
                 </div>
 
                 <InfiniteScroll dataLength={length} next={fetchMoreData} hasMore={true} loader="" height={700} className="ql-editor">
-                    <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: content }}></div>
+                    <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                 </InfiniteScroll>
             </div>
         </section>

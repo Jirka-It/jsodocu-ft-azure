@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const menuSlice = createSlice({
     name: 'menu',
     initialState: {
-        inReview: 1,
-        inEdition: 1
+        inReview: 0,
+        inEdition: 0
     },
     reducers: {
         setInReview: (state, action) => void (state.inReview = action.payload),

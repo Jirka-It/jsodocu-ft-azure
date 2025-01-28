@@ -97,7 +97,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="col-12 md:col-6 lg:col-3">
-                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={`${data?.averageUsePercentage}%`} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
+                    <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={`${data?.averageUsePercentage || 0}%`} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                 </div>
             </div>
 

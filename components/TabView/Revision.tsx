@@ -190,6 +190,8 @@ export default function Revision({ inReview }) {
                 dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
+            dispatch(subInReview());
+
             if (res.status === HttpStatus.FORBIDDEN) {
                 showError(toast, '', 'El documento ya fué aprobado');
                 return;

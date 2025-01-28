@@ -57,14 +57,14 @@ const AppMenu = () => {
             items: [
                 {
                     label: 'Por defecto',
-                    permission: [Permission.SUDO, Permission.TEMPLATES],
+                    permission: [Permission.SUDO, Permission.DEFAULT_TEMPLATES],
                     icon: 'pi pi-file',
                     to: '/templates/default'
                 },
 
                 {
                     label: 'Mis plantillas',
-                    permission: [Permission.SUDO, Permission.TEMPLATES],
+                    permission: [Permission.SUDO, Permission.OWN_TEMPLATES],
                     icon: 'pi pi-file',
                     to: '/templates/owned'
                 }

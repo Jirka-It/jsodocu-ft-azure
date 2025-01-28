@@ -20,7 +20,12 @@ export enum Permission {
     ARCHIVED_DOCUMENTS = 'DOC-104',
     //Templates
     TEMPLATES = 'PLA-200',
-    AVAILABLE_TEMPLATES = 'PLA-200',
+    DEFAULT_TEMPLATES = 'PLA-201',
+    DEFAULT_TEMPLATES_BUTTON = 'PLA-201-1',
+
+    OWN_TEMPLATES = 'PLA-202',
+    OWN_TEMPLATES_BUTTON = 'PLA-202-1',
+
     //Security
     SECURITY = 'SEG-400',
     PERMISSIONS = 'SEG-401',

@@ -448,6 +448,7 @@ export default function Editor({ inReview }) {
 
             <div className="col-12 lg:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
+                <p className="m-0 text-blue-500">{doc?.type?.name}</p>
 
                 <div className="mt-2 mb-2 flex align-items-center cursor-pointer" onClick={() => selectTitle()}>
                     {inReview || doc?.count > 0 ? (

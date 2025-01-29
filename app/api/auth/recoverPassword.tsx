@@ -16,13 +16,13 @@ export const recoverPassword = async (recoverPassword: IRecover): Promise<IRecov
             if (error && error.response) {
                 if (error.response.status === 404) {
                     return {
-                        code: error.response.status,
+                        code: error?.response.status,
                         message: 'Usuario no encontrado.'
                     };
                 }
             }
             return {
-                code: error.response.status,
+                code: error?.response.status,
                 message: 'Contacte con soporte.'
             };
         });

@@ -101,6 +101,27 @@ const create = async (data: IUser): Promise<IUserResponseObject> => {
         });
 };
 
+const updatePassword = async (id: string, token, data: IUserPartial): Promise<IUserResponseObject> => {
+    return await axiosInstance
+        .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then((res) => {
+            return {
+                ...res.data,
+                status: res.status
+            };
+        })
+        .catch((error) => {
+            return {
+                code: error.code,
+                status: error.status
+            };
+        });
+};
+
 const update = async (id: string, data: IUserPartial): Promise<IUserResponseObject> => {
     return await axiosInstance
         .put(`${env.NEXT_PUBLIC_API_URL_BACKEND}/users/${id}`, data)
@@ -135,4 +156,4 @@ const remove = async (id: string): Promise<IUserResponseObject> => {
         });
 };
 
-export { findAll, findById, findDashboard, findAllByAccount, findByUsername, create, update, remove };
+export { findAll, findById, findDashboard, findAllByAccount, findByUsername, create, update, updatePassword, remove };

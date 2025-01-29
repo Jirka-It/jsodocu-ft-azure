@@ -10,4 +10,6 @@ export interface IToken {
     sub: any;
     accountId: any;
     user: IUser;
+    iat: number;
+    exp: number;
 }

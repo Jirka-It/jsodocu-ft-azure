@@ -182,8 +182,8 @@ export default function StepUsers() {
                     <DataTable value={users} paginator rows={10} onPage={(e) => console.log(e)}>
                         <Column field="id" header="ID"></Column>
                         <Column field="name" header="Nombre"></Column>
-                        <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                        <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData.id)} handleDelete={() => handleDelete(rowData.id)} />} header="Acciones"></Column>
+                        <Column field="state" body={(rowData) => <BasicStates state={rowData?.state} />} header="Estado"></Column>
+                        <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData?.id)} handleDelete={() => handleDelete(rowData?.id)} />} header="Acciones"></Column>
                     </DataTable>
                 </div>
             </div>

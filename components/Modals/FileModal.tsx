@@ -167,7 +167,7 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
                         sortable
                         header="Documento"
                         body={(rowData: IFileTable) => {
-                            return iconFile(rowData.ext, CutText(rowData.name));
+                            return iconFile(rowData?.ext, CutText(rowData?.name));
                         }}
                     ></Column>
                     <Column field="date" header="Fecha de cargue"></Column>

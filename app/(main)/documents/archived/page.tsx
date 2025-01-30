@@ -60,7 +60,7 @@ const Documents = () => {
             dispatch(addInEdition());
 
             if (res.status === HttpStatus.FORBIDDEN) {
-                showError(toast, '', 'El documento ya fué envíado a edición');
+                showError(toast, '', 'El documento ya fué enviado a edición');
                 return;
             }
 

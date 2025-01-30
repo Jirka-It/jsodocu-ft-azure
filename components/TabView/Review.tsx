@@ -24,9 +24,12 @@ import { showError, showSuccess } from '@lib/ToastMessages';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import FileModal from '@components/Modals/FileModal';
+import { useDispatch } from 'react-redux';
+import { addInEdition } from '@store/slices/menuSlices';
 
 export default function Review() {
     const params = useParams();
+    const dispatch = useDispatch();
     const toast = useRef(null);
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
@@ -153,6 +156,7 @@ export default function Review() {
         try {
             if (doc?.template) {
                 await templateToDoc(doc._id);
+                dispatch(addInEdition());
             } else {
                 await docToTemplate(doc._id);
             }

@@ -72,7 +72,7 @@ const ForgotPassword: Page = () => {
         });
 
         if (res.code === 200 || res.code === 201) {
-            showSuccess(toast, '', 'Correo envíado.');
+            showSuccess(toast, '', 'Correo enviado.');
             setTimeout(() => {
                 router.push('/auth/login');
             }, 1000);

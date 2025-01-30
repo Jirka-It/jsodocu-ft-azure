@@ -135,7 +135,7 @@ export default function Revision({ inReview }) {
             dispatch(subInEdition());
 
             if (res.status === HttpStatus.FORBIDDEN) {
-                showError(toast, '', 'El documento ya fué envíado a revisar');
+                showError(toast, '', 'El documento ya fué enviado a revisar');
                 return;
             }
 
@@ -164,7 +164,7 @@ export default function Revision({ inReview }) {
             dispatch(subInReview());
 
             if (res.status === HttpStatus.FORBIDDEN) {
-                showError(toast, '', 'El documento ya fué envíado a edición');
+                showError(toast, '', 'El documento ya fué enviado a edición');
                 return;
             }
 

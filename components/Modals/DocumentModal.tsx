@@ -19,9 +19,12 @@ import { showError, showSuccess } from '@lib/ToastMessages';
 import { State as Step } from '@enums/DocumentEnum';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { TokenBasicInformation } from '@lib/Token';
+import { addInEdition } from '@store/slices/menuSlices';
+import { useDispatch } from 'react-redux';
 
 export default function DocumentModal({ state, setState, update, data, toast }: IModalCreate) {
     const { data: session } = useSession(); //data:session
+    const dispatch = useDispatch();
     const [name, setName] = useState<string>('');
     const [types, setTypes] = useState<IDocTypeResponse>();
     const [type, setType] = useState<any>('');
@@ -116,6 +119,7 @@ export default function DocumentModal({ state, setState, update, data, toast }: 
         }
 
         if (res.status === HttpStatus.OK || res.status === HttpStatus.CREATED) {
+            dispatch(addInEdition());
             showSuccess(toast, '', 'Documento creado');
             update(!data ? 1 : null);
             handleClose();

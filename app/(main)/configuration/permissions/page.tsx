@@ -83,10 +83,10 @@ const Permissions = () => {
                     </div>
                 </div>
                 <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
-                    <Column field="_id" header="Id" body={(rowData: IPermission) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IPermission) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="name" header="Nombre"></Column>
-                    <Column field="category" header="Categoría" body={(rowData: IPermission) => `${categories.find((c) => c.code === rowData.category)?.name}`}></Column>
+                    <Column field="category" header="Categoría" body={(rowData: IPermission) => `${categories.find((c) => c.code === rowData?.category)?.name}`}></Column>
                     <Column field="description" header="Descripción"></Column>
                     <Column field="actions" body={(rowData) => <BasicActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>

@@ -108,12 +108,12 @@ const Documents = () => {
                     ''
                 )}
                 <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
-                    <Column field="_id" header="Id" body={(rowData: IDocType) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IDocType) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="code" header="Código"></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="description" header="Descripción"></Column>
-                    <Column field="state" body={(rowData: IDocType) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData: IDocType) => <CustomTypeActions data={rowData.state} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
+                    <Column field="state" body={(rowData: IDocType) => <BasicStates state={rowData?.state} />} header="Estado"></Column>
+                    <Column field="actions" body={(rowData: IDocType) => <CustomTypeActions data={rowData?.state} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

@@ -77,12 +77,12 @@ const Users = () => {
                     </div>
                 </div>
                 <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
-                    <Column field="_id" header="Id" body={(rowData: IAccount) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IAccount) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre"></Column>
                     <Column field="nit" header="NIT"></Column>
                     <Column field="email" header="Correo"></Column>
-                    <Column field="state" body={(rowData) => <BasicStates state={rowData.state} />} header="Estado"></Column>
-                    <Column field="actions" body={(rowData: IAccount) => <CustomTypeActions handleEdit={() => handleEdit(rowData._id)} data={rowData.state} handleDelete={(e) => handleDelete(e, rowData._id)} />} header="Acciones"></Column>
+                    <Column field="state" body={(rowData) => <BasicStates state={rowData?.state} />} header="Estado"></Column>
+                    <Column field="actions" body={(rowData: IAccount) => <CustomTypeActions handleEdit={() => handleEdit(rowData?._id)} data={rowData?.state} handleDelete={(e) => handleDelete(e, rowData?._id)} />} header="Acciones"></Column>
                 </DataTable>
             </div>
         </div>

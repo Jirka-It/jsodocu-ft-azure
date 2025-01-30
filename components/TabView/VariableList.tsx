@@ -69,22 +69,22 @@ export default function VariableList() {
     };
 
     const variableValue = (variable) => {
-        switch (variable.type) {
+        switch (variable?.type) {
             case VariableType.TEXT:
-                return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" className="w-15rem" type="text" placeholder="Valor de la variable" />;
+                return <InputText value={variable?.value} onChange={(e) => handleInputChange(variable?._id, e.target.value, 'value')} id="value" className="w-15rem" type="text" placeholder="Valor de la variable" />;
 
             case VariableType.NUMBER:
-                return <InputNumber value={variable.value} onValueChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="number" className="w-15rem" placeholder="Valor de la variable" useGrouping={false} />;
+                return <InputNumber value={variable?.value} onValueChange={(e) => handleInputChange(variable?._id, e.target.value, 'value')} id="number" className="w-15rem" placeholder="Valor de la variable" useGrouping={false} />;
 
             case VariableType.DATE:
-                return <Calendar value={new Date(variable.value)} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="date" className="w-15rem" placeholder="Valor de la variable" />;
+                return <Calendar value={new Date(variable?.value)} onChange={(e) => handleInputChange(variable?._id, e.target.value, 'value')} id="date" className="w-15rem" placeholder="Valor de la variable" />;
 
             case VariableType.MUNICIPALITIES:
                 return (
                     <Dropdown
                         filter
-                        value={variable.value}
-                        onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')}
+                        value={variable?.value}
+                        onChange={(e) => handleInputChange(variable?._id, e.target.value, 'value')}
                         options={municipalities}
                         optionLabel="label"
                         optionValue="value"
@@ -95,14 +95,14 @@ export default function VariableList() {
                 );
 
             default:
-                return <InputText value={variable.value} onChange={(e) => handleInputChange(variable._id, e.target.value, 'value')} id="value" type="text" className="w-15rem" placeholder="Valor de la variable" />;
+                return <InputText value={variable?.value} onChange={(e) => handleInputChange(variable?._id, e.target.value, 'value')} id="value" type="text" className="w-15rem" placeholder="Valor de la variable" />;
         }
     };
 
     const typeValue = (variable) => {
         return (
             <div>
-                <Dropdown value={variable.type} optionLabel="name" optionValue="value" onChange={(e) => handleInputChange(variable._id, e.target.value, 'type')} options={types} id="type" placeholder="Tipo de la variable" className="w-15rem" />
+                <Dropdown value={variable?.type} optionLabel="name" optionValue="value" onChange={(e) => handleInputChange(variable?._id, e.target.value, 'type')} options={types} id="type" placeholder="Tipo de la variable" className="w-15rem" />
             </div>
         );
     };
@@ -160,12 +160,12 @@ export default function VariableList() {
                 <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
                 <VariableModal state={openModal} toast={toast} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} />
                 <DataTable value={variables} emptyMessage=" ">
-                    <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
-                    <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData.name)}`}></Column>
+                    <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData?.name)}`}></Column>
                     <Column field="value" header="Valor" body={variableValue}></Column>
-                    <Column field="category.name" header="Categoría" body={(rowData) => <Badge value={rowData.category.name} severity="danger"></Badge>}></Column>
+                    <Column field="category.name" header="Categoría" body={(rowData) => <Badge value={rowData?.category.name} severity="danger"></Badge>}></Column>
                     <Column field="type" header="Tipo" body={typeValue}></Column>
-                    <Column field="actions" header="Acciones" body={(rowData: IVariable) => <VariableActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData._id)} />}></Column>
+                    <Column field="actions" header="Acciones" body={(rowData: IVariable) => <VariableActions handleEdit={() => handleEdit(rowData)} handleDelete={() => handleDelete(rowData?._id)} />}></Column>
                 </DataTable>
             </section>
         </InfiniteScroll>

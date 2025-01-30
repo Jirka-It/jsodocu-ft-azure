@@ -102,17 +102,17 @@ const Documents = () => {
                 </div>
 
                 <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
-                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="type.name" header="Tipo"></Column>
                     <Column field="name" header="Nombre"></Column>
-                    <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
-                    <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
-                    <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
+                    <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData?.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
+                    <Column field="version" header="Versión" body={(rowData) => `V. ${rowData?.version}`}></Column>
+                    <Column field="step" body={(rowData) => <DocumentStates state={rowData?.step} />} header="Estado"></Column>
                     <Column
                         field="actions"
                         body={(rowData) => (
                             <>
-                                <Button onClick={() => handleView(rowData._id)} icon="pi pi-eye" className="mr-2" severity="help" tooltip="Revisar" />
+                                <Button onClick={() => handleView(rowData?._id)} icon="pi pi-eye" className="mr-2" severity="help" tooltip="Revisar" />
                                 <Button onClick={() => handleExport(rowData)} icon="pi pi-file-import" className="mr-2" tooltip="Exportar" />
                             </>
                         )}

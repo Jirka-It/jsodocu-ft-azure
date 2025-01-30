@@ -120,16 +120,16 @@ const Documents = () => {
                 </div>
 
                 <DataTable value={data?.data} lazy paginator={true} first={tableState?.first ?? 0} rows={data?.elementsByPage} onPage={(e) => handlePagination(e)} totalRecords={data?.elementsByPage * data?.totalPages}>
-                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Badge onClick={() => handleCopy(rowData._id)} className="cursor-pointer text-lg" value={`${rowData._id.substr(-4)}`}></Badge>}></Column>
+                    <Column field="_id" header="Id" body={(rowData: IDocument) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="type.name" header="Tipo"></Column>
-                    <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData.name)}`}></Column>
-                    <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
-                    <Column field="version" header="Versión" body={(rowData) => `V. ${rowData.version}`}></Column>
-                    <Column field="step" body={(rowData) => <DocumentStates state={rowData.step} />} header="Estado"></Column>
+                    <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData?.name)}`}></Column>
+                    <Column field="createdAt" header="Fecha" body={(rowData: IDocument) => `${format(rowData?.createdAt, 'dd/MM/yyyy hh:mm:ss')}`}></Column>
+                    <Column field="version" header="Versión" body={(rowData) => `V. ${rowData?.version}`}></Column>
+                    <Column field="step" body={(rowData) => <DocumentStates state={rowData?.step} />} header="Estado"></Column>
                     <Column
                         field="actions"
                         body={(rowData) => (
-                            <DocumentActions handleView={() => handleView(rowData._id)} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)}>
+                            <DocumentActions handleView={() => handleView(rowData?._id)} handleEdit={() => handleEdit(rowData)} handleDelete={() => handleModalDelete(rowData)}>
                                 <Button onClick={() => handleArchive(rowData)} icon="pi pi-folder" className="ml-2" severity="help" tooltip="Archivar" />
                             </DocumentActions>
                         )}

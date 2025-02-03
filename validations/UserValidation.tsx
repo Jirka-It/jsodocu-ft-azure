@@ -8,9 +8,9 @@ const UserSchema = z
         name: z.string().min(1),
         lastName: z.string().min(1),
         username: z.string().email().min(1),
-        password: z.string().min(1).optional(),
+        password: z.string().regex(new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9]).{8,}$')),
+        confirmPassword: z.string().regex(new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9]).{8,}$')),
         accountId: z.string().min(1).optional(),
-        confirmPassword: z.string().min(1).optional(),
         state: z.string().min(1),
         roles: z.array(z.string()).nonempty().min(1)
     })

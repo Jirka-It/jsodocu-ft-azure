@@ -27,3 +27,16 @@ const UserSchema = z
 export const UserValidation = (data: IUser): Array<IZodError> | string => {
     return ModelValidation(data, UserSchema);
 };
+
+const UserSchemaUpdate = z.object({
+    name: z.string().min(1),
+    lastName: z.string().min(1),
+    username: z.string().email().min(1),
+    accountId: z.string().min(1).optional(),
+    state: z.string().min(1),
+    roles: z.array(z.string()).nonempty().min(1)
+});
+
+export const UserValidationUpdate = (data: IUser): Array<IZodError> | string => {
+    return ModelValidation(data, UserSchemaUpdate);
+};

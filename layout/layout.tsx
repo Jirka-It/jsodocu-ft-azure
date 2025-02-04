@@ -1,5 +1,6 @@
 'use client';
-import React, { useCallback, useEffect, useRef, useContext } from 'react';
+import React, { useCallback, useEffect, useRef, useContext, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { classNames, DomHandler } from 'primereact/utils';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { LayoutContext } from './context/layoutcontext';
@@ -13,15 +14,23 @@ import AppRightMenu from './AppRightMenu';
 import { PrimeReactContext } from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
 import { ChildContainerProps } from '@customTypes/index';
+import { useSession } from 'next-auth/react';
+import { GuardRoute } from '@lib/GuardRoute';
+import { setShowGuardModal } from '@store/slices/modalSlices';
 
 const Layout = (props: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, isSlim, isCompact, isHorizontal, isDesktop } = useContext(LayoutContext);
     const { setRipple } = useContext(PrimeReactContext);
+    const [guard, setGuard] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
     const topbarRef = useRef(null);
     const sidebarRef = useRef(null);
     const copyTooltipRef = useRef(null);
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const { data: session }: any = useSession(); //data:session
+
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
         type: 'click',
         listener: (event) => {
@@ -90,6 +99,14 @@ const Layout = (props: ChildContainerProps) => {
     }, [layoutState.overlayMenuActive, layoutState.staticMenuMobileActive, layoutState.overlaySubmenuActive]);
 
     useEffect(() => {
+        const guard = GuardRoute(session.access_token, pathname);
+
+        if (!guard) {
+            setGuard(false);
+            dispatch(setShowGuardModal(true));
+        } else {
+            setGuard(true);
+        }
         const onRouteChange = () => {
             hideMenu();
         };
@@ -125,22 +142,28 @@ const Layout = (props: ChildContainerProps) => {
 
     return (
         <div className={containerClassName} data-theme={layoutConfig.colorScheme}>
-            <Tooltip ref={copyTooltipRef} target=".block-action-copy" position="bottom" content="Copied to clipboard" event="focus" />
+            {guard ? (
+                <>
+                    <Tooltip ref={copyTooltipRef} target=".block-action-copy" position="bottom" content="Copied to clipboard" event="focus" />
 
-            <div className="layout-content-wrapper">
-                <AppTopbar ref={topbarRef} sidebarRef={sidebarRef} />
-                <div className="layout-content">
-                    <AppBreadCrumb />
+                    <div className="layout-content-wrapper">
+                        <AppTopbar ref={topbarRef} sidebarRef={sidebarRef} />
+                        <div className="layout-content">
+                            <AppBreadCrumb />
 
-                    {props.children}
-                </div>
-                <AppFooter />
-            </div>
-            <AppConfig />
+                            {props.children}
+                        </div>
+                        <AppFooter />
+                    </div>
+                    <AppConfig />
 
-            <AppSearch />
-            <AppRightMenu></AppRightMenu>
-            <div className="layout-mask"></div>
+                    <AppSearch />
+                    <AppRightMenu></AppRightMenu>
+                    <div className="layout-mask"></div>
+                </>
+            ) : (
+                ''
+            )}
         </div>
     );
 };

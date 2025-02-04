@@ -6,7 +6,7 @@ import { IModalCreate } from '@interfaces/IModal';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { ValidationFlow } from '@lib/ValidationFlow';
-import { UserValidation } from '@validations/UserValidation';
+import { UserValidation, UserValidationUpdate } from '@validations/UserValidation';
 import { Password } from 'primereact/password';
 import styles from './UserModal.module.css';
 import { PickList, PickListEvent } from 'primereact/picklist';
@@ -139,7 +139,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
         var validationFlow = null;
         if (data) {
             validationFlow = ValidationFlow(
-                UserValidation({
+                UserValidationUpdate({
                     name,
                     lastName,
                     username,

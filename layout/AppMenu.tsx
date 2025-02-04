@@ -123,7 +123,8 @@ const AppMenu = () => {
                     to: '/documents-types'
                 }
             ]
-        },
+        }
+        /*
         { separator: true },
         {
             label: 'Sistema',
@@ -144,6 +145,7 @@ const AppMenu = () => {
                 }
             ]
         }
+      */
     ];
 
     return <AppSubMenu model={model} />;

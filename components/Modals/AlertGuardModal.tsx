@@ -21,7 +21,7 @@ export default function AlertGuardModal() {
 
     const footerContent = (
         <div className="flex justify-content-center">
-            <Button label="Ir al Dashboard" severity="danger" onClick={() => handleClose()} />
+            <Button label="Ir al dashboard" severity="danger" onClick={() => handleClose()} />
         </div>
     );
 

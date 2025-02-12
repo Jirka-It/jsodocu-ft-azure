@@ -86,8 +86,8 @@ const RegisterPage: Page = () => {
     return (
         <>
             <Toast ref={toast} />
-            <div className="flex h-screen">
-                <form className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-between" onSubmit={handleRegister}>
+            <div className="flex h-auto">
+                <form className="w-full lg:w-4 h-screen text-center px-4 py-4 flex flex-column justify-content-between" onSubmit={handleRegister}>
                     <img src={`/layout/images/sodocu-transparent.svg`} className="h-4rem mt-4 mb-4" alt="logo-layout" />
 
                     <div className="flex flex-column align-items-center gap-4">

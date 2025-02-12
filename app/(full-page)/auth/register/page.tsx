@@ -18,6 +18,7 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 import { registerUser } from '@api/auth/register';
 import { State } from '@enums/StateEnum';
 import { Message } from 'primereact/message';
+import TermsConditionsModal from '@components/Modals/TermsConditionsModal';
 
 const RegisterPage: Page = () => {
     const [name, setName] = useState<string>('');
@@ -32,8 +33,9 @@ const RegisterPage: Page = () => {
     const router = useRouter();
     const toast = useRef(null);
 
-    const showPDF = async () => {
-        window.open('/files/document.pdf', '_blank');
+    const acceptTermsConditions = async (state: boolean) => {
+        setConfirmed(state);
+        setOpenTermsConditionsModal(false);
     };
 
     const handleRegister = async (e) => {
@@ -168,11 +170,11 @@ const RegisterPage: Page = () => {
                                 <label htmlFor="checkbox" className="text-900 font-medium mr-2">
                                     Acepto la
                                 </label>
-                                <a onClick={() => showPDF()} className="text-blue-500 font-semibold cursor-pointerhover:text-primary cursor-pointer">
+                                <a onClick={() => setOpenTermsConditionsModal(true)} className="text-blue-500 font-semibold cursor-pointerhover:text-primary cursor-pointer">
                                     Política de Tratamiento de Datos.
                                 </a>
 
-                                {/* <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => setOpenTermsConditionsModal(e)} /> */}
+                                <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => acceptTermsConditions(e)} />
                             </div>
                             <Button label="Regístrate" className="w-full" onClick={handleRegister}></Button>
                             <span className="font-semibold text-color-secondary">

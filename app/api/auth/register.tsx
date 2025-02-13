@@ -26,7 +26,7 @@ export const registerUser = async (registerUser: IRegister): Promise<IRegisterRe
 
                     return {
                         code: error.response.status,
-                        message: 'Verifique los datos ingresados'
+                        message: error.response.data.message
                     };
                 }
             } catch (error) {

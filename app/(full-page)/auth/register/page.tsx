@@ -18,6 +18,7 @@ import { ValidationFlow } from '@lib/ValidationFlow';
 import { registerUser } from '@api/auth/register';
 import { State } from '@enums/StateEnum';
 import { Message } from 'primereact/message';
+import TermsConditionsModal from '@components/Modals/TermsConditionsModal';
 
 const RegisterPage: Page = () => {
     const [name, setName] = useState<string>('');
@@ -32,8 +33,9 @@ const RegisterPage: Page = () => {
     const router = useRouter();
     const toast = useRef(null);
 
-    const showPDF = async () => {
-        window.open('/files/document.pdf', '_blank');
+    const acceptTermsConditions = async (state: boolean) => {
+        setConfirmed(state);
+        setOpenTermsConditionsModal(false);
     };
 
     const handleRegister = async (e) => {
@@ -84,8 +86,8 @@ const RegisterPage: Page = () => {
     return (
         <>
             <Toast ref={toast} />
-            <div className="flex h-screen">
-                <form className="w-full lg:w-4 h-full text-center px-6 py-6 flex flex-column justify-content-between" onSubmit={handleRegister}>
+            <div className="flex h-auto">
+                <form className="w-full lg:w-4 h-screen text-center px-4 py-4 flex flex-column justify-content-between" onSubmit={handleRegister}>
                     <img src={`/layout/images/sodocu-transparent.svg`} className="h-4rem mt-4 mb-4" alt="logo-layout" />
 
                     <div className="flex flex-column align-items-center gap-4">
@@ -168,11 +170,11 @@ const RegisterPage: Page = () => {
                                 <label htmlFor="checkbox" className="text-900 font-medium mr-2">
                                     Acepto la
                                 </label>
-                                <a onClick={() => showPDF()} className="text-blue-500 font-semibold cursor-pointerhover:text-primary cursor-pointer">
+                                <a onClick={() => setOpenTermsConditionsModal(true)} className="text-blue-500 font-semibold cursor-pointerhover:text-primary cursor-pointer">
                                     Política de Tratamiento de Datos.
                                 </a>
 
-                                {/* <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => setOpenTermsConditionsModal(e)} /> */}
+                                <TermsConditionsModal state={openTermsConditionsModal} setState={(e) => acceptTermsConditions(e)} />
                             </div>
                             <Button label="Regístrate" className="w-full" onClick={handleRegister}></Button>
                             <span className="font-semibold text-color-secondary">

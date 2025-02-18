@@ -1,4 +1,3 @@
-import { MenuModal } from '@customTypes/layout';
 import { useSession } from 'next-auth/react';
 import AppSubMenu from './AppSubMenu';
 import { Permission } from '@enums/PermissionEnum';
@@ -8,7 +7,7 @@ import { ISession } from '@interfaces/ISession';
 
 const AppMenu = () => {
     const { data: session } = useSession(); //data:session
-    const [model, setModel] = useState(null);
+    const [model, setModel] = useState([]);
     useEffect(() => {
         const v: ISession = session as any;
         const decoded = TokenBasicInformation(v.access_token);
@@ -147,7 +146,7 @@ const AppMenu = () => {
         ]);
     };
 
-    return model ? <AppSubMenu model={model} /> : '';
+    return <AppSubMenu model={model} />;
 };
 
 export default AppMenu;

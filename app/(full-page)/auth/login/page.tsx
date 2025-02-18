@@ -153,7 +153,7 @@ const LoginPage: Page = () => {
                         </Link>
                     </p>
                 </form>
-                <div className="w-8 hidden lg:flex flex-column justify-content-between align-items-center px-6 py-6 bg-cover bg-norepeat" style={{ backgroundImage: "url('/demo/images/auth/bg-login.webp')" }}>
+                <div className="w-8 hidden lg:flex flex-column justify-content-between align-items-center px-6 py-6 bg-cover bg-norepeat" style={{ backgroundImage: "url('/layout/images/bg-login.webp')" }}>
                     {/*
                     <div className="mt-auto mb-auto">
                         <span className="block text-white text-7xl font-semibold">

@@ -26,7 +26,7 @@ export const GuardRoute = (token: string, route: string): boolean => {
         } else if (route.startsWith('/configuration/users')) {
             return VerifyPermissions(token, [Permission.SUDO, Permission.USERS]);
         } else if (route.startsWith('/configuration/account')) {
-            return VerifyPermissions(token, [Permission.SUDO, Permission.ACCOUNTS]);
+            return VerifyPermissions(token, [Permission.SUDO, Permission.ACCOUNTS, Permission.ACCOUNT]);
         } else if (route.startsWith('/categories')) {
             return VerifyPermissions(token, [Permission.SUDO, Permission.DOCUMENT_VARIABLES]);
         } else if (route.startsWith('/documents-types')) {

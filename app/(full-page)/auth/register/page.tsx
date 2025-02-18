@@ -87,7 +87,7 @@ const RegisterPage: Page = () => {
         <>
             <Toast ref={toast} />
             <div className="flex h-auto">
-                <form className="w-full lg:w-4 h-screen text-center px-4 py-4 flex flex-column justify-content-between" onSubmit={handleRegister}>
+                <form className="w-full lg:w-4 text-center px-4 py-4 flex flex-column justify-content-between" onSubmit={handleRegister}>
                     <img src={`/layout/images/sodocu-transparent.svg`} className="h-4rem mt-4 mb-4" alt="logo-layout" />
 
                     <div className="flex flex-column align-items-center gap-4">
@@ -193,7 +193,7 @@ const RegisterPage: Page = () => {
                         </Link>
                     </p>
                 </form>
-                <div className="w-8 hidden lg:flex flex-column justify-content-between align-items-center px-6 py-6 bg-cover bg-norepeat" style={{ backgroundImage: "url('/demo/images/auth/bg-login.webp')" }}>
+                <div className="w-8 hidden lg:flex flex-column justify-content-between align-items-center px-6 py-6 bg-cover bg-norepeat" style={{ backgroundImage: "url('/layout/images/bg-login.webp')" }}>
                     {/*
                     <div className="mt-auto mb-auto">
                         <span className="block text-white text-7xl font-semibold">

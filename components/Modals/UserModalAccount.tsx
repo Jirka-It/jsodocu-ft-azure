@@ -14,7 +14,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { findAll as findAllRoles } from '@api/roles';
 import { create, findByUsername, update as updateUser } from '@api/users';
 
-import { State } from '@enums/StateEnum';
 import { Badge } from 'primereact/badge';
 import { IRol } from '@interfaces/IRol';
 import { states } from '@lib/data';

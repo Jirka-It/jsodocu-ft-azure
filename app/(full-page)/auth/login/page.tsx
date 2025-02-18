@@ -11,7 +11,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Password } from 'primereact/password';
 import { LoginValidation } from '@validations/LoginValidation';
 import { Toast } from 'primereact/toast';
-import { showError } from '@lib/ToastMessages';
+import { showError, showWarn } from '@lib/ToastMessages';
 import { IZodError } from '@interfaces/IAuth';
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { ValidationFlow } from '@lib/ValidationFlow';
@@ -70,6 +70,8 @@ const LoginPage: Page = () => {
             showError(toast, '', 'Credenciales incorrectas.');
         } else if (parseInt(res.error) === HttpStatus.FORBIDDEN) {
             showError(toast, '', 'Su cuenta ha sido inactivada y debe contactar al administrador.');
+        } else if (parseInt(res.error) === HttpStatus.CONFLICT) {
+            showWarn(toast, '', 'Su cuenta se encuentra en proceso de activación, por favor contacte con soporte.');
         } else {
             showError(toast, '', 'Contacte con soporte.');
         }

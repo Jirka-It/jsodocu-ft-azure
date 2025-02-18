@@ -10,6 +10,7 @@ export enum Configuration {
 export enum Permission {
     SUDO = 'SUDO',
     HOME = 'HOM-000',
+    ACCOUNT = 'HOM-001',
     //Documents
     DOCUMENTS = 'DOC-100',
     EDIT_VIEW_DOCUMENT = 'DOC-101',

@@ -41,6 +41,13 @@ export const QuillToolbar = ({ inReview }) => (
                 <option value="">Normal</option>
             </select>
         </span>
+        <span class="ql-formats">
+            <button class="ql-direction" value="rtl"></button>
+            <select class="ql-align"></select>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-clean"></button>
+        </span>
         <span className="ql-formats">
             <button className="ql-bold" />
             <button className="ql-italic" />

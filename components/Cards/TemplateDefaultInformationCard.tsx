@@ -4,7 +4,7 @@ import { VerifyPermissions } from '@lib/Permissions';
 import { Permission } from '@enums/PermissionEnum';
 import { useSession } from 'next-auth/react';
 
-const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleTemplateToDoc, handleDelete }) => {
+const TemplateDefaultInformationCard = ({ name, type, state, handleView, handleEdit, handleTemplateToDoc, handleDelete }) => {
     const { data: session }: any = useSession(); //data:session
 
     return (
@@ -12,12 +12,21 @@ const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, ha
             <div className="shadow-2 p-4 m-2 surface-card border-round">
                 <div className="relative mb-3">
                     <div className="absolute right-0 flex flex-column">
-                        <Button onClick={() => handleEdit()} tooltip="Editar plantilla" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />
+                        {VerifyPermissions(session?.access_token, [Permission.EDIT_DEFAULT_TEMPLATES_BUTTON]) ? (
+                            <Button onClick={() => handleEdit()} tooltip="Editar plantilla" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />
+                        ) : (
+                            <div></div>
+                        )}
 
                         {state === State.ACTIVE ? (
                             <>
                                 <Button onClick={() => handleTemplateToDoc()} tooltip="Usar como documento" className="mb-2" icon="pi pi-folder" severity="help" aria-label="Use how document" />
-                                <Button onClick={() => handleDelete()} tooltip="Desactivar plantilla" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
+
+                                {VerifyPermissions(session?.access_token, [Permission.DELETE_DEFAULT_TEMPLATES_BUTTON]) ? (
+                                    <Button onClick={() => handleDelete()} tooltip="Desactivar plantilla" icon="pi pi-trash" severity="danger" aria-label="Inactive template" />
+                                ) : (
+                                    <div></div>
+                                )}
                             </>
                         ) : (
                             <Button onClick={() => handleDelete()} tooltip="Activar plantilla" icon="pi pi-check-circle" severity="success" aria-label="Active template" />
@@ -34,4 +43,4 @@ const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, ha
     );
 };
 
-export default TemplateInformationCard;
+export default TemplateDefaultInformationCard;

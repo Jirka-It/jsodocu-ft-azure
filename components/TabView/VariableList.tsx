@@ -16,6 +16,8 @@ import { VariableType } from '@enums/DocumentEnum';
 import VariableActions from '@components/TableExtensions/VariableActions';
 import { IVariable } from '@interfaces/IVariable';
 import { findAll, update, remove } from '@api/variables';
+import { findAll as findAllCategories } from '@api/categories';
+
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { CopyToClipBoard } from '@lib/CopyToClipBoard';
 import { departments } from '@lib/data';
@@ -23,10 +25,16 @@ import { showError, showSuccess } from '@lib/ToastMessages';
 import { Badge } from 'primereact/badge';
 import { CutText } from '@lib/CutText';
 import { types } from '@lib/Types';
+import useDebounce from '@hooks/debounceHook';
+import { ICategoryResponse } from '@interfaces/ICategory';
 
 export default function VariableList() {
     const toast = useRef(null);
     const params = useParams();
+    const [categories, setCategories] = useState<ICategoryResponse>();
+    const [category, setCategory] = useState<any>();
+    const [searchParam, setSearchParam] = useState<string>('');
+    const debouncedSearchParam = useDebounce(searchParam, 800);
     const [variables, setVariables] = useState<Array<IVariable>>([]);
     const [page, setPage] = useState<number>(1);
     const [municipalities, setMunicipalities] = useState<Array<string>>();
@@ -47,12 +55,27 @@ export default function VariableList() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        getData();
+    }, [category, debouncedSearchParam]);
+
+    useEffect(() => {
+        getDataCategories();
+    }, []);
+
+    const getDataCategories = async (page: number = 1, size: number = 999) => {
+        const res = await findAllCategories({ page, size });
+        setCategories(res);
+    };
+
     const getData = async (page: number = 1, size: number = 20) => {
-        const res = await findAll({ page, size, documentId: params.id });
-        setVariables((prevArray) => {
-            const newArray = prevArray.concat(res.data);
-            return newArray;
-        });
+        const paramsApi = { page, size, documentId: params.id };
+
+        if (searchParam) paramsApi['searchParam'] = searchParam;
+        if (category) paramsApi['categoryId'] = category;
+
+        const res = await findAll(paramsApi);
+        setVariables(res.data);
     };
 
     const addVariable = (v: IVariable) => {
@@ -157,8 +180,17 @@ export default function VariableList() {
         <InfiniteScroll dataLength={variables.length} next={fetchMoreData} hasMore={true} loader={''}>
             <section>
                 <Toast ref={toast} />
-                <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2 mb-3" label="Variable" />
-                <VariableModal state={openModal} toast={toast} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} />
+                <div className="w-full flex justify-content-between mb-3">
+                    <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Variable" />
+
+                    <div className="flex align-items-center">
+                        <Dropdown value={category} showClear onChange={(e) => setCategory(e.value)} options={categories?.data} id="category" optionLabel="name" optionValue="_id" placeholder="Categoría de la variable" className="w-15rem mr-4" />
+                        <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                    </div>
+                </div>
+
+                {openModal ? <VariableModal state={openModal} toast={toast} setState={(e) => setOpenModal(e)} addData={(v) => addVariable(v)} /> : ''}
+
                 <DataTable value={variables} emptyMessage=" ">
                     <Column field="_id" header="ID" body={(rowData: IVariable) => <Badge onClick={() => handleCopy(rowData?._id)} className="cursor-pointer text-lg" value={`${rowData?._id.substr(-4)}`}></Badge>}></Column>
                     <Column field="name" header="Nombre" body={(rowData) => `${CutText(rowData?.name)}`}></Column>

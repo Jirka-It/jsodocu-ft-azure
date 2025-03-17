@@ -1,6 +1,9 @@
 'use client';
 const { format } = require('date-fns');
+
 import React, { useEffect, useRef, useState } from 'react';
+import { Calendar } from 'primereact/calendar';
+
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -32,15 +35,21 @@ const Documents = () => {
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
+    const [dates, setDates] = useState(null);
 
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearchParam]);
+    }, [dates, debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
         const params = { page, size, step: State.EDITION };
         if (searchParam) params['searchParam'] = searchParam;
+
+        if (dates && dates[0] && dates[1]) {
+            params['startDate'] = format(dates[0], 'yyyy-MM-dd');
+            params['endDate'] = format(dates[1], 'yyyy-MM-dd');
+        }
         const res = await findAll(params);
         setData(res);
     };
@@ -114,6 +123,7 @@ const Documents = () => {
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" className="mr-2" label="Documento" />
 
                     <div className="flex align-items-center">
+                        <Calendar value={dates} placeholder="Rango de fechas" className="mr-3" onChange={(e) => setDates(e.value)} showButtonBar selectionMode="range" readOnlyInput locale="es" />
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                     </div>

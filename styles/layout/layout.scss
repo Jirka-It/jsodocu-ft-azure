@@ -17,6 +17,15 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
 @import './_breadcrumb';
 
 
+.p-dropdown .p-dropdown-label.p-placeholder {
+    color: #adb5bd;
+}
+
+input::placeholder {
+    color: #adb5bd;
+}
+
+
 // TREE
 
 .p-treenode-label {

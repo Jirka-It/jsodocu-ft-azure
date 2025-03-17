@@ -17,7 +17,6 @@ import { useSearchParams } from 'next/navigation';
 import { IToken } from '@interfaces/ISession';
 import { Password } from 'primereact/password';
 import { Message } from 'primereact/message';
-import styles from '../../../../components/Modals/UserModal.module.css';
 import { PasswordValidation } from '@validations/PasswordValidation';
 import { updatePassword } from '@api/users';
 import { HttpStatus } from '@enums/HttpStatusEnum';

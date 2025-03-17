@@ -1,10 +1,13 @@
 'use client';
 const { format } = require('date-fns');
 import React, { useEffect, useRef, useState } from 'react';
+import { Calendar } from 'primereact/calendar';
+import { AutoComplete } from 'primereact/autocomplete';
+import { findAll as findAllDocTypes } from '@api/types';
+
 import { DataTable, DataTableStateEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import BasicActions from '@components/TableExtensions/BasicActions';
 import DocumentStates from '@components/TableExtensions/DocumentStates';
 import DeleteModal from '@components/Modals/DeleteModal';
 import DocumentModal from '@components/Modals/DocumentModal';
@@ -15,11 +18,13 @@ import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import useDebounce from '@hooks/debounceHook';
-import { State } from '@enums/DocumentEnum';
+import { State as StateDocument } from '@enums/DocumentEnum';
+import { State } from '@enums/StateEnum';
 import { showError, showInfo, showWarn } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { useDispatch } from 'react-redux';
 import { addInEdition } from '@store/slices/menuSlices';
+import { IDocType } from '@interfaces/IDocType';
 
 const Documents = () => {
     const dispatch = useDispatch();
@@ -31,15 +36,46 @@ const Documents = () => {
     const [tableState, setTableState] = useState<DataTableStateEvent>();
     const [document, setDocument] = useState<IDocument>(null);
     const [data, setData] = useState<IDocumentResponse>();
+    const [dates, setDates] = useState(null);
+
+    /***Autocomplete */
+    const [docTypes, setDocTypes] = useState<Array<IDocType>>();
+    const [docType, setDocType] = useState<any>();
+    const [docTypeFilter, setDocTypeFilter] = useState<any>();
+    const debouncedDocTypeFilter = useDebounce(docTypeFilter, 800);
+
+    /***Autocomplete */
 
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearchParam]);
+    }, [dates, docType, debouncedSearchParam]);
+
+    useEffect(() => {
+        if (docTypeFilter !== null) {
+            getDocTypes();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedDocTypeFilter]);
+
+    //DocTypes
+
+    const getDocTypes = async (page: number = 1, size: number = 5, state: string = State.ACTIVE) => {
+        const params = { page, size, state };
+        if (docTypeFilter) params['searchParam'] = docTypeFilter;
+        setDocTypeFilter(null);
+        const res = await findAllDocTypes(params);
+        setDocTypes(res.data);
+    };
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {
-        const params = { page, size, step: State.ARCHIVED };
+        const params = { page, size, step: StateDocument.ARCHIVED };
         if (searchParam) params['searchParam'] = searchParam;
+        if (dates && dates[0] && dates[1]) {
+            params['startDate'] = format(dates[0], 'yyyy-MM-dd');
+            params['endDate'] = format(dates[1], 'yyyy-MM-dd');
+        }
+
         const res = await findAll(params);
         setData(res);
     };
@@ -53,7 +89,7 @@ const Documents = () => {
     const handleActive = async (data: IDocument) => {
         try {
             const res = await updateWithState(data._id, {
-                step: State.EDITION,
+                step: StateDocument.EDITION,
                 dateOfUpdate: format(new Date(), 'yyyy-MM-dd')
             });
 
@@ -99,6 +135,21 @@ const Documents = () => {
             <div className="card">
                 <div className="w-full flex justify-content-end mb-3">
                     <div className="flex align-items-center">
+                        <Calendar value={dates} placeholder="Rango de fechas" className="mr-6" onChange={(e) => setDates(e.value)} showButtonBar selectionMode="range" readOnlyInput locale="es" />
+                        <AutoComplete
+                            delay={800}
+                            showEmptyMessage={true}
+                            className="mr-6"
+                            emptyMessage="Sin resultados"
+                            autoHighlight={true}
+                            field="name"
+                            placeholder="Tipo"
+                            value={docType}
+                            suggestions={docTypes}
+                            completeMethod={(e) => setDocTypeFilter(e.query)}
+                            onSelect={(e) => setDocType(e.value)}
+                            onClear={() => setDocType('')}
+                        />
                         <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
                         <i className="pi pi-refresh cursor-pointer" style={{ fontSize: '2rem' }} onClick={() => handleUpdate(1, true)}></i>
                     </div>

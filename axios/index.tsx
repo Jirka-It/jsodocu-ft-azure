@@ -7,7 +7,10 @@ import { setShowModal } from '@store/slices/modalSlices';
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL_BACKEND, // Replace with your API base URL
     timeout: 0,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
+    paramsSerializer: {
+        encode: (param) => encodeURIComponent(param).replaceAll('%24', '$')
+    }
 });
 
 // Add a request interceptor

@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 //<Button onClick={() => handleDelete()} icon="pi pi-trash" severity="danger" tooltip="Eliminar" />
 export default function CustomUserTypeActions({ handleEdit, handleDelete, handleEditPassword, data }: ICustomUserAction) {
     return (
-        <div>
+        <div className="flex">
             <Button onClick={() => handleEdit()} icon="pi pi-file-edit" className="mr-2" tooltip="Editar" />
 
             <Button onClick={() => handleEditPassword()} icon="pi pi-key" severity="warning" className="mr-2" tooltip="Clave" />

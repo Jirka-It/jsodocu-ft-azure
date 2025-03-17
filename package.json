@@ -11,8 +11,6 @@
     },
     "dependencies": {
         "@reduxjs/toolkit": "^2.5.0",
-        "react-redux": "^9.2.0",
-        "redux": "^5.0.1",
         "axios": "^1.7.7",
         "chart.js": "4.3.2",
         "crypto-js": "^4.2.0",
@@ -28,17 +26,19 @@
         "react-dom": "18.2.0",
         "react-infinite-scroll-component": "^6.1.0",
         "react-quill": "^2.0.0",
+        "react-redux": "^9.2.0",
+        "redux": "^5.0.1",
         "typescript": "5.0.4",
         "zod": "^3.23.8"
     },
     "devDependencies": {
-        "eslint": "8.35.0",
-        "eslint-config-next": "13.4.9",
-        "prettier": "2.8.4",
-        "sass": "^1.58.3",
         "@types/node": "18.15.11",
         "@types/react": "^18.2.25",
         "@types/react-dom": "18.0.11",
-        "@types/react-transition-group": "^4.4.1"
+        "@types/react-transition-group": "^4.4.1",
+        "eslint": "8.35.0",
+        "eslint-config-next": "13.4.9",
+        "prettier": "2.8.4",
+        "sass": "^1.58.3"
     }
 }

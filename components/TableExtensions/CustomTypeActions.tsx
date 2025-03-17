@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 //<Button onClick={() => handleDelete()} icon="pi pi-trash" severity="danger" tooltip="Eliminar" />
 export default function CustomTypeActions({ handleEdit, handleDelete, data, children }: ICustomAction) {
     return (
-        <div>
+        <div className="flex">
             <Button onClick={() => handleEdit()} icon="pi pi-file-edit" className="mr-2" tooltip="Editar" />
             {data === State.PENDING ? (
                 <>

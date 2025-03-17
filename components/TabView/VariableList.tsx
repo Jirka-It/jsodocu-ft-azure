@@ -180,12 +180,12 @@ export default function VariableList() {
         <InfiniteScroll dataLength={variables.length} next={fetchMoreData} hasMore={true} loader={''}>
             <section>
                 <Toast ref={toast} />
-                <div className="w-full flex justify-content-between mb-3">
+                <div className="w-full sm:flex justify-content-between mb-3">
                     <Button onClick={() => setOpenModal(true)} icon="pi pi-plus" label="Variable" />
 
-                    <div className="flex align-items-center">
+                    <div className="mt-3 sm:mt-0 sm:flex align-items-center">
                         <Dropdown value={category} showClear onChange={(e) => setCategory(e.value)} options={categories?.data} id="category" optionLabel="name" optionValue="_id" placeholder="Categoría de la variable" className="w-15rem mr-4" />
-                        <InputText value={searchParam} onChange={(e) => setSearchParam(e.target.value)} id="searchParm" className="mr-3" type="text" placeholder="Buscar" />
+                        <InputText value={searchParam} className="sm:w-20rem" onChange={(e) => setSearchParam(e.target.value)} id="searchParm" type="text" placeholder="Buscar" />
                     </div>
                 </div>
 

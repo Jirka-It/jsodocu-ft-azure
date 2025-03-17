@@ -150,7 +150,7 @@ const Users = () => {
             <UserModal state={openModal} toast={toast} data={user} setState={(e) => setOpenModal(e)} update={(page, update) => handleUpdate(page, update)} />
             <UserPasswordModal state={openPasswordModal} toast={toast} data={user} setState={(e) => setOpenPasswordModal(e)} />
             <div className="card">
-                <div className="w-full flex justify-content-between mb-3">
+                <div className="w-full sm:flex justify-content-between mb-3">
                     <Button
                         onClick={() => {
                             setOpenModal(true);
@@ -160,7 +160,7 @@ const Users = () => {
                         className="mr-2"
                         label="Usuario"
                     />
-                    <div className="flex align-items-center">
+                    <div className="mt-3 sm:mt-0 sm:flex align-items-center">
                         <AutoComplete
                             delay={800}
                             showEmptyMessage={true}

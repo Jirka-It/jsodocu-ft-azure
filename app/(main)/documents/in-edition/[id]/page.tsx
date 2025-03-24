@@ -3,14 +3,13 @@
 import React from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 
-import styles from './DocumentEdit.module.css';
 import VariableList from '@components/TabView/VariableList';
 import Editor from '@components/TabView/Editor';
 import Revision from '@components/TabView/Revision';
 
 const Document = () => {
     return (
-        <section className={styles['layout-tab-view']}>
+        <section className="layout-tab-view">
             <TabView>
                 <TabPanel header="Variables" leftIcon="pi pi-times mr-2">
                     <VariableList />

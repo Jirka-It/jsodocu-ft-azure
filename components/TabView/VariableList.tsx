@@ -68,14 +68,22 @@ export default function VariableList() {
         setCategories(res);
     };
 
-    const getData = async (page: number = 1, size: number = 20) => {
+    const getData = async (page: number = 1, size: number = 20, scroll: boolean = false) => {
         const paramsApi = { page, size, documentId: params.id };
 
         if (searchParam) paramsApi['searchParam'] = searchParam;
         if (category) paramsApi['categoryId'] = category;
 
         const res = await findAll(paramsApi);
-        setVariables(res.data);
+
+        if (scroll) {
+            setVariables((prevArray) => {
+                const newArray = prevArray.concat(res.data);
+                return newArray;
+            });
+        } else {
+            setVariables(res.data);
+        }
     };
 
     const addVariable = (v: IVariable) => {
@@ -87,7 +95,7 @@ export default function VariableList() {
 
     const fetchMoreData = () => {
         const newPage = page + 1;
-        getData(newPage, 20);
+        getData(newPage, 20, true);
         setPage(newPage);
     };
 

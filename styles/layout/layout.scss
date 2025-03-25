@@ -16,6 +16,40 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
 @import './_responsive';
 @import './_breadcrumb';
 
+//Variable list
+
+.layout-static-inactive {
+    .layout-tab-view ul.p-tabview-nav {
+
+        width: calc(100% - 56px) !important;
+    }
+
+}
+
+.layout-tab-view ul.p-tabview-nav {
+
+    width: calc(100% - 281px);
+}
+
+.layout-tab-view ul.p-tabview-nav {
+    display: flex;
+    justify-content: center;
+    z-index: 99;
+    position: fixed;
+    height: 70px;
+    margin-top: -2rem;
+}
+
+.layout-tab-view a.p-tabview-nav-link {
+    height: 71px;
+}
+
+.layout-tab-view div.p-tabview-panels {
+    margin-top: 3rem;
+}
+
+
+
 
 .p-dropdown .p-dropdown-label.p-placeholder {
     color: #adb5bd;

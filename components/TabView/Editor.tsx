@@ -327,6 +327,8 @@ export default function Editor({ inReview }) {
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
         setInputClicked(true);
         setNodeSelected(null);
         if (node && node.article) {

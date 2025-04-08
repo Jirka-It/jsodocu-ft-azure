@@ -478,7 +478,7 @@ export default function Editor({ inReview }) {
                 )}
 
                 {doc && nodes && nodes.length > 0 ? (
-                    <div>
+                    <div className="editor-tree">
                         <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                     </div>
                 ) : (

@@ -31,17 +31,34 @@ $sidebarShadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14)
     width: calc(100% - 281px);
 }
 
+
+//Editor
+
+.editor-tree {
+    .p-tree {
+        overflow: scroll;
+        height: 50rem;
+    }
+}
+
+@media (max-width: 980px) {
+    .layout-tab-view ul.p-tabview-nav {
+
+        width: calc(100% - 57px);
+    }
+}
+
 .layout-tab-view ul.p-tabview-nav {
     display: flex;
     justify-content: center;
     z-index: 99;
     position: fixed;
-    height: 70px;
+    height: 50px;
     margin-top: -2rem;
 }
 
 .layout-tab-view a.p-tabview-nav-link {
-    height: 71px;
+    height: 50px;
 }
 
 .layout-tab-view div.p-tabview-panels {

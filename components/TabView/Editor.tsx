@@ -26,7 +26,6 @@ import { findById, update } from '@api/articles';
 import { count, replaceText } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { showError, showSuccess } from '@lib/ToastMessages';
-
 import EditorToolbar, { formats } from './EditorToolbar';
 
 import styles from './Editor.module.css';
@@ -36,27 +35,48 @@ import FileModal from '@components/Modals/FileModal';
 export default function Editor({ inReview }) {
     const toast = useRef(null);
     const quill = useRef(null);
+    const editorDiv = useRef(null);
+
     const params = useParams();
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
     const [modules, setModules] = useState<any>(null);
-
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [openModal, setOpenModal] = useState<boolean>(false);
-
     const [comment, setComment] = useState<string>('');
     const [newRange, setNewRange] = useState();
-
     const [openModalComment, setOpenModalComment] = useState<boolean>(false);
-
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
     const [inputClicked, setInputClicked] = useState<boolean>(false);
-
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
+
+    //const [scrollPosition, setScrollPosition] = useState(0);
+
+    useEffect(() => {
+        let debounceTimer;
+        const handleScroll = () => {
+            console.log('asdas');
+            // Cancel the las timer
+            clearTimeout(debounceTimer);
+            // Set a new timer
+            debounceTimer = setTimeout(() => {
+                if (editorDiv.current && window.innerWidth > 991) {
+                    editorDiv.current.style.marginTop = (window.scrollY == 0 ? 0 : window.scrollY - 10) + 'px';
+                }
+            }, 50); // Time to prevent one cascade of scroll's event
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            clearTimeout(debounceTimer); // Clean the timer
+        };
+    }, []);
 
     useEffect(() => {
         getChapters();
@@ -327,14 +347,12 @@ export default function Editor({ inReview }) {
     };
 
     const handleClickEvent = async (node: INodeGeneral) => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-
         setInputClicked(true);
-        setNodeSelected(null);
         if (node && node.article) {
             const res = await findById(node.key);
             setNodeSelected({ ...res, key: res._id });
             setContent(res.content);
+
             return;
         }
 
@@ -342,6 +360,7 @@ export default function Editor({ inReview }) {
             const res = await findParagraph(node.key);
             setNodeSelected({ ...res, key: res._id });
             setContent(res.content);
+
             return;
         }
     };
@@ -488,9 +507,9 @@ export default function Editor({ inReview }) {
                 )}
             </div>
 
-            {modules && nodeSelected ? (
-                <>
-                    <div className="col-12 lg:col-9 text-center">
+            <div className="col-12 lg:col-9 text-center" ref={editorDiv}>
+                {modules && nodeSelected ? (
+                    <>
                         <div className="flex justify-content-between">
                             <Tooltip target=".count-badge-docs" />
 
@@ -535,11 +554,11 @@ export default function Editor({ inReview }) {
                         ) : (
                             ''
                         )}
-                    </div>
-                </>
-            ) : (
-                ''
-            )}
+                    </>
+                ) : (
+                    ''
+                )}
+            </div>
         </section>
     );
 }

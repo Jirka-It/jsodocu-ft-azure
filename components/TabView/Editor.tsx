@@ -57,9 +57,8 @@ export default function Editor({ inReview }) {
     //const [scrollPosition, setScrollPosition] = useState(0);
 
     useEffect(() => {
-        let debounceTimer;
+        /* let debounceTimer;
         const handleScroll = () => {
-            console.log('asdas');
             // Cancel the las timer
             clearTimeout(debounceTimer);
             // Set a new timer
@@ -75,7 +74,7 @@ export default function Editor({ inReview }) {
         return () => {
             window.removeEventListener('scroll', handleScroll);
             clearTimeout(debounceTimer); // Clean the timer
-        };
+        };*/
     }, []);
 
     useEffect(() => {

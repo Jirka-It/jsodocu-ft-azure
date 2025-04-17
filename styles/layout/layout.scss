@@ -121,11 +121,15 @@ comment {
 
 .ql-container {
     .ql-editor {
-        min-height: 45rem;
-        max-height: 45rem;
+        min-height: calc(100vh - 20rem);
+        max-height: calc(100vh - 20rem);
     }
 }
 
+.editor-tree {
+    height: calc(100vh - 20rem);
+    overflow: scroll;
+}
 
 .ql-editor {
 

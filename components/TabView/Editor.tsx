@@ -54,29 +54,6 @@ export default function Editor({ inReview }) {
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
 
-    //const [scrollPosition, setScrollPosition] = useState(0);
-
-    useEffect(() => {
-        /* let debounceTimer;
-        const handleScroll = () => {
-            // Cancel the las timer
-            clearTimeout(debounceTimer);
-            // Set a new timer
-            debounceTimer = setTimeout(() => {
-                if (editorDiv.current && window.innerWidth > 991) {
-                    editorDiv.current.style.marginTop = (window.scrollY == 0 ? 0 : window.scrollY - 10) + 'px';
-                }
-            }, 50); // Time to prevent one cascade of scroll's event
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            clearTimeout(debounceTimer); // Clean the timer
-        };*/
-    }, []);
-
     useEffect(() => {
         getChapters();
         getVariables();

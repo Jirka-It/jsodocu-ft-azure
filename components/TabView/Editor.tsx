@@ -26,7 +26,6 @@ import { findById, update } from '@api/articles';
 import { count, replaceText } from '@lib/ReplaceText';
 import { addSection, deleteSection, handleChangeEvent, handleEditorClick, updateApprove, updateComments } from '@lib/Editor';
 import { showError, showSuccess } from '@lib/ToastMessages';
-
 import EditorToolbar, { formats } from './EditorToolbar';
 
 import styles from './Editor.module.css';
@@ -36,25 +35,22 @@ import FileModal from '@components/Modals/FileModal';
 export default function Editor({ inReview }) {
     const toast = useRef(null);
     const quill = useRef(null);
+    const editorDiv = useRef(null);
+
     const params = useParams();
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
     const [nodes, setNodes] = useState<Array<INode>>();
     const [modules, setModules] = useState<any>(null);
-
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [openModal, setOpenModal] = useState<boolean>(false);
-
     const [comment, setComment] = useState<string>('');
     const [newRange, setNewRange] = useState();
-
     const [openModalComment, setOpenModalComment] = useState<boolean>(false);
-
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
     const [nodeSelected, setNodeSelected] = useState<INodeGeneral>();
     const [content, setContent] = useState<string>(null);
     const [inputClicked, setInputClicked] = useState<boolean>(false);
-
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
 
@@ -328,11 +324,11 @@ export default function Editor({ inReview }) {
 
     const handleClickEvent = async (node: INodeGeneral) => {
         setInputClicked(true);
-        setNodeSelected(null);
         if (node && node.article) {
             const res = await findById(node.key);
             setNodeSelected({ ...res, key: res._id });
             setContent(res.content);
+
             return;
         }
 
@@ -340,6 +336,7 @@ export default function Editor({ inReview }) {
             const res = await findParagraph(node.key);
             setNodeSelected({ ...res, key: res._id });
             setContent(res.content);
+
             return;
         }
     };
@@ -478,7 +475,7 @@ export default function Editor({ inReview }) {
                 )}
 
                 {doc && nodes && nodes.length > 0 ? (
-                    <div>
+                    <div className="editor-tree">
                         <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                     </div>
                 ) : (
@@ -486,9 +483,9 @@ export default function Editor({ inReview }) {
                 )}
             </div>
 
-            {modules && nodeSelected ? (
-                <>
-                    <div className="col-12 lg:col-9 text-center">
+            <div className="col-12 lg:col-9 text-center" ref={editorDiv}>
+                {modules && nodeSelected ? (
+                    <>
                         <div className="flex justify-content-between">
                             <Tooltip target=".count-badge-docs" />
 
@@ -533,11 +530,11 @@ export default function Editor({ inReview }) {
                         ) : (
                             ''
                         )}
-                    </div>
-                </>
-            ) : (
-                ''
-            )}
+                    </>
+                ) : (
+                    ''
+                )}
+            </div>
         </section>
     );
 }

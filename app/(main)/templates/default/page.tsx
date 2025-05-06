@@ -14,7 +14,7 @@ import { State as StateDoc } from '@enums/StateEnum';
 
 import { Scope } from '@enums/DocumentEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
-import TemplateInformationCard from '@components/Cards/TemplateInformationCard';
+import TemplateDefaultInformationCard from '@components/Cards/TemplateDefaultInformationCard';
 import { InputSwitch } from 'primereact/inputswitch';
 import { addInEdition } from '@store/slices/menuSlices';
 import { useDispatch } from 'react-redux';
@@ -123,7 +123,7 @@ const Documents = () => {
                     onPage={(e) => handlePagination(e)}
                     totalRecords={data?.elementsByPage * data?.totalPages}
                     itemTemplate={(doc: IDocument, i) => (
-                        <TemplateInformationCard
+                        <TemplateDefaultInformationCard
                             key={i}
                             name={doc.name}
                             type={doc.type.name}
@@ -132,7 +132,7 @@ const Documents = () => {
                             handleView={() => handleView(doc._id)}
                             handleTemplateToDoc={() => handleTemplateToDoc(doc)}
                             handleDelete={() => handleDelete(doc)}
-                        ></TemplateInformationCard>
+                        ></TemplateDefaultInformationCard>
                     )}
                 />
             </div>

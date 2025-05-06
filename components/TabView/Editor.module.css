@@ -1,5 +1,5 @@
 .div-editor-html {
-    height: 53rem;
+    height: calc(100vh - 15.3rem);
     background-color: white;
     overflow: scroll;
 }

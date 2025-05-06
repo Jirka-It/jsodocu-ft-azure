@@ -33,7 +33,7 @@ export const GuardRoute = (token: string, route: string): boolean => {
             return VerifyPermissions(token, [Permission.SUDO, Permission.DOCUMENT_TYPES]);
         }
 
-        return false;
+        return true;
     } catch (error) {
         return false;
     }

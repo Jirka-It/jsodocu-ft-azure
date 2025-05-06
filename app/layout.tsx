@@ -2,6 +2,7 @@
 
 import { LayoutProvider } from '../layout/context/layoutcontext';
 import { PrimeReactProvider } from 'primereact/api';
+import { addLocale } from 'primereact/api';
 
 import Providers from '@components/Providers';
 import { Provider } from 'react-redux';
@@ -16,6 +17,16 @@ import AlertModal from '@components/Modals/AlertModal';
 import AlertGuardModal from '@components/Modals/AlertGuardModal';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    addLocale('es', {
+        firstDayOfWeek: 1,
+        dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+        dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+        dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Lunio', 'Lulio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+        today: 'Hoy',
+        clear: 'Limpiar'
+    });
     return (
         <html lang="en" suppressHydrationWarning>
             <head>

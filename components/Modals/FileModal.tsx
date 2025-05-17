@@ -15,6 +15,7 @@ import { update as updateParagraph } from '@api/paragraphs';
 import { INodeGeneral } from '@interfaces/INode';
 import { IFileTable } from '@interfaces/IFile';
 import DeleteModal from './DeleteModal';
+import { getExtensionOfFile } from '@lib/getExtensionOfFile';
 
 export default function FileModal({ state, setState, data, toast }: IModalCreate) {
     const [files, setFiles] = useState<Array<IFileTable>>(null);
@@ -121,8 +122,18 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
     const handleView = async (data: IFileTable) => {
         const res = await findFile({ filePath: data.filePath });
 
-        const fileToDownload = URL.createObjectURL(res);
-        window.open(fileToDownload);
+        console.log('res', res);
+
+        const type = getExtensionOfFile(res.type);
+
+        const link = document.createElement('a');
+        link.download = `document-sodocu.${type}`;
+        const url = URL.createObjectURL(res);
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     };
 
     //Table event

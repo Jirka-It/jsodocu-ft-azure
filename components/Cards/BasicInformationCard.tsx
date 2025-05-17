@@ -1,6 +1,5 @@
 import { IZodError } from '@interfaces/IAuth';
 import Image from 'next/image';
-import { env } from '@config/env';
 
 import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { Button } from 'primereact/button';
@@ -20,7 +19,7 @@ import { IAccount } from '@interfaces/IAccount';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { showError, showSuccess } from '@lib/ToastMessages';
 import BasicStates from '@components/TableExtensions/BasicStates';
-import { create, remove } from '@api/file';
+import { create, findFile, remove } from '@api/file';
 import { newFile } from '@lib/File';
 
 export default function BasicInformationForm() {
@@ -54,7 +53,8 @@ export default function BasicInformationForm() {
             setWebsite(res.website);
             setCity(res.city);
             setDescription(res.description);
-            setFile(res.photo);
+            const resImage = await findFile({ filePath: res.photo });
+            setFile(URL.createObjectURL(resImage));
         } catch (error) {}
     };
 
@@ -66,9 +66,9 @@ export default function BasicInformationForm() {
 
         if (res.status === HttpStatus.CREATED) {
             const filePath = res.filePath;
-
+            const resImage = await findFile({ filePath: filePath });
             // Set file
-            setFile(filePath);
+            setFile(URL.createObjectURL(resImage));
 
             // Update file
             await update(account._id, {
@@ -146,7 +146,7 @@ export default function BasicInformationForm() {
                                 </div>
                             ) : (
                                 <div>
-                                    <Image src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${file}` || ''} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
+                                    <Image src={`${file}` || ''} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
                                     <input className=" hidden" type="file" onChange={handleChange} ref={inputFile} />
                                     <i className="pi pi-image"></i>
                                 </div>

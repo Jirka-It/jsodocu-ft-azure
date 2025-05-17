@@ -9,6 +9,7 @@ import AvatarInformation from '@components/Cards/AvatarInformationCard';
 import { findDashboard } from '@api/users';
 import { HttpStatus } from '@enums/HttpStatusEnum';
 import { IUserDashboard } from '@interfaces/IUser';
+import { findFile } from '@api/file';
 
 const ordersChartOptions = {
     maintainAspectRatio: false,
@@ -73,7 +74,11 @@ const Dashboard = () => {
                 ]
             });
 
-            setData(res);
+            console.log('res', res);
+
+            const photo = await findFile({ filePath: res.photo });
+
+            setData({ ...res, photo: URL.createObjectURL(photo) });
         }
     };
 
@@ -81,9 +86,14 @@ const Dashboard = () => {
 
     return (
         <div className="layout-dashboard">
-            <div className="grid">
-                <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
-            </div>
+            {data ? (
+                <div className="grid">
+                    <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
+                </div>
+            ) : (
+                ''
+            )}
+
             <div className="grid mb-4">
                 <div className="col-12 md:col-6 lg:col-3">
                     <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" value={data?.inEdition} iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />

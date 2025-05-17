@@ -15,7 +15,7 @@ import { VerifyErrorsInForms } from '@lib/VerifyErrorsInForms';
 import { IZodError } from '@interfaces/IAuth';
 import { ValidationFlow } from '@lib/ValidationFlow';
 import { findDashboard, update } from '@api/users';
-import { create as createImage, remove as removeImage } from '@api/file';
+import { create as createImage, findFile, remove as removeImage } from '@api/file';
 
 import { showError, showSuccess } from '@lib/ToastMessages';
 import { HttpStatus } from '@enums/HttpStatusEnum';
@@ -46,12 +46,12 @@ export default function ProfileModal({ state, setState, toast }: IModalCreate) {
         const res = await findDashboard();
         if (res.status === HttpStatus.OK) {
             setUser(res);
-            setFile(res.photo);
-
             setName(res.name);
             setLastName(res.lastName);
             setEmail(res.username);
             setAccount(res.account);
+            const resImage = await findFile({ filePath: res.photo });
+            setFile(URL.createObjectURL(resImage));
         }
     };
 
@@ -74,9 +74,9 @@ export default function ProfileModal({ state, setState, toast }: IModalCreate) {
 
         if (res.status === HttpStatus.CREATED) {
             const filePath = res.filePath;
-
+            const resImage = await findFile({ filePath: filePath });
             // Set file
-            setFile(filePath);
+            setFile(URL.createObjectURL(resImage));
 
             // Update file
             await update(user.id, {
@@ -183,7 +183,7 @@ export default function ProfileModal({ state, setState, toast }: IModalCreate) {
                             </div>
                         ) : (
                             <div>
-                                <Image src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${file}` || ''} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
+                                <Image src={`${file}` || ''} width={500} height={500} alt="Avatar" onClick={onFileUploadClick} />
                                 <input accept=".jpg, .jpeg, .png" className=" hidden" type="file" onChange={handleChange} ref={inputFile} />
                                 <i className="pi pi-image"></i>
                             </div>

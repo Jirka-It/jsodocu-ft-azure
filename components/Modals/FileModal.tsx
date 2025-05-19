@@ -121,6 +121,9 @@ export default function FileModal({ state, setState, data, toast }: IModalCreate
 
     const handleView = async (data: IFileTable) => {
         const res = await findFile({ filePath: data.filePath });
+
+        console.log('res', res);
+
         const type = getExtensionOfFile(res.type);
 
         const link = document.createElement('a');

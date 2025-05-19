@@ -2,7 +2,6 @@
 
 import React, { forwardRef, useImperativeHandle, useContext, useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { env } from '@config/env';
 
 import Link from 'next/link';
 import AppBreadCrumb from './AppBreadCrumb';
@@ -16,6 +15,7 @@ import { IUser } from '@interfaces/IUser';
 import { TokenBasicInformation } from '@lib/Token';
 import ProfileModal from '@components/Modals/ProfileModal';
 import { Toast } from 'primereact/toast';
+import { findFile } from '@api/file';
 
 const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElement> }, ref) => {
     const { data: session } = useSession(); //data:session
@@ -30,8 +30,21 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
         const data: ISession = session as any;
         const decoded = TokenBasicInformation(data.access_token);
 
-        setUser(decoded.user);
+        setDataUser(decoded.user);
     }, [session]);
+
+    const setDataUser = async (decoded: IUser) => {
+        try {
+            if (decoded.accountPhoto) {
+                const resImage = await findFile({ filePath: decoded.accountPhoto });
+                setUser({ ...decoded, accountPhoto: URL.createObjectURL(resImage) });
+            } else {
+                setUser({ ...decoded, accountPhoto: null });
+            }
+        } catch (error) {
+            setUser({ ...decoded, accountPhoto: null });
+        }
+    };
 
     const { onMenuToggle, layoutConfig } = useContext(LayoutContext);
 
@@ -135,11 +148,7 @@ const AppTopbar = forwardRef((props: { sidebarRef: React.RefObject<HTMLDivElemen
                     <li className="profile-item static sm:relative">
                         <StyleClass nodeRef={btnRef2} selector="@next" enterClassName="hidden" enterActiveClassName="scalein" leaveToClassName="hidden" leaveActiveClassName="fadeout" hideOnOutsideClick={true}>
                             <a tabIndex={1} ref={btnRef2}>
-                                {user?.accountPhoto ? (
-                                    <Image className="border-circle mr-2" src={`${env.NEXT_PUBLIC_API_URL_BACKEND}/${user.accountPhoto}` || ''} width={40} height={40} alt="Avatar" />
-                                ) : (
-                                    <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>
-                                )}
+                                {user?.accountPhoto ? <Image className="border-circle mr-2" src={`${user.accountPhoto}` || ''} width={40} height={40} alt="Avatar" /> : <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }}></i>}
 
                                 {user ? <span className="profile-name">{`${user.name} ${user.lastName ?? ''}`}</span> : ''}
                             </a>

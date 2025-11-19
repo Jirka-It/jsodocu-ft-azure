@@ -30,7 +30,7 @@ export const metadata: Metadata = {
         ]
     },
     twitter: {
-        card: seoConfig.twitter.card,
+        card: 'summary' as const,
         site: seoConfig.twitter.site,
         creator: seoConfig.twitter.creator,
         title: seoConfig.fullTitle,

@@ -80,54 +80,60 @@ export const addSection = async (node: INodeGeneral, setNodes: Function, setExpa
     }
 };
 
-export const handleChangeEvent = (node: INodeGeneral, content: string, setNodes: Function, timer: any, setTimer: any, doc: IDocument) => {
-    if (doc && doc.step === State.APPROVED) {
-        return;
-    }
+export const handleChangeEvent = (
+  node: INodeGeneral,
+  content: string,
+  setNodes: Function,
+  timer: any,
+  setTimer: any,
+  doc: IDocument
+): void => {
+  if (doc?.step === State.APPROVED) {
+    return;
+  }
+
+  if (node.value === content) {
+    return;
+  }
+
+  setNodes((prevArray: INodeGeneral[]) => {
     if (node.chapter) {
-        setNodes((prevArray) => {
-            const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.key) {
-                    c['value'] = content;
-                }
-                return c;
-            });
-            return [...modifiedNodes];
-        });
+      return prevArray.map((c) => 
+        c.key === node.key ? { ...c, value: content } : c
+      );
     }
 
-    if (node.article) {
-        setNodes((prevArray) => {
-            const modifiedNodes = prevArray.map((c) => {
-                if (c.key === node.ownChapter) {
-                    c.children.map((a) => {
-                        if (a.key === node.key) {
-                            a['value'] = content;
-                        }
-                        return a;
-                    });
-                }
-
-                return c;
-            });
-            return [...modifiedNodes];
-        });
+    if (node.article && node.ownChapter) {
+      return prevArray.map((c) => {
+        if (c.key === node.ownChapter && c.children) {
+          const updatedChildren = c.children.map((a) =>
+            a.key === node.key ? { ...a, value: content } : a
+          );
+          return { ...c, children: updatedChildren };
+        }
+        return c;
+      });
     }
 
-    clearTimeout(timer);
-    const newTimer = setTimeout(async () => {
-        if (node.article) {
-            updateArticle(node.key, { value: content });
-        }
+    return prevArray;
+  });
 
-        if (node.chapter) {
-            update(node.key, { value: content });
-        }
-    }, 800);
+  clearTimeout(timer);
+  
+  const newTimer = setTimeout(async () => {
+    try {
+      if (node.article) {
+        await updateArticle(node.key!, { value: content });
+      } else if (node.chapter) {
+        await update(node.key!, { value: content });
+      }
+    } catch (error) {
+      console.error('Error updating content:', error);
+    }
+  }, 800);
 
-    setTimer(newTimer);
+  setTimer(newTimer);
 };
-
 export const deleteSection = async (node: INodeGeneral, setNodes: Function) => {
     if (node.chapter) {
         try {

@@ -70,31 +70,59 @@ export const structuredData = {
         areaServed: seoConfig.contact.areaServed,
         availableLanguage: ['Spanish']
     },
-    serviceProvided: [
-        {
-            '@type': 'Service',
-            name: 'Generación de Documentos Legales Digitales',
-            description: 'Creación de plantillas digitales para documentos legales que agilizan los procesos empresariales y trámites inmobiliarios.',
-            areaServed: seoConfig.contact.areaServed
-        },
-        {
-            '@type': 'Service',
-            name: 'Documentos para Constructora',
-            description: 'Plantillas especializadas para documentos legales relacionados con construcción e inmobiliario.',
-            areaServed: seoConfig.contact.areaServed
-        },
-        {
-            '@type': 'Service',
-            name: 'Gestión de Escrituras y Contratos',
-            description: 'Herramientas digitales para la creación y gestión de escrituras, contratos y documentos notariales.',
-            areaServed: seoConfig.contact.areaServed
-        },
-        {
-            '@type': 'Service',
-            name: 'Reglamentos y Documentación Legal',
-            description: 'Plantillas para reglamentos de propiedad horizontal y documentación legal inmobiliaria.',
-            areaServed: seoConfig.contact.areaServed
-        }
-    ]
+    hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Servicios de Sodocu',
+        itemListElement: [
+            {
+                '@type': 'Offer',
+                itemOffered: {
+                    '@type': 'Service',
+                    name: 'Generación de Documentos Legales Digitales',
+                    description: 'Creación de plantillas digitales para documentos legales que agilizan los procesos empresariales y trámites inmobiliarios.',
+                    areaServed: {
+                        '@type': 'Country',
+                        name: 'Colombia'
+                    }
+                }
+            },
+            {
+                '@type': 'Offer',
+                itemOffered: {
+                    '@type': 'Service',
+                    name: 'Documentos para Constructora',
+                    description: 'Plantillas especializadas para documentos legales relacionados con construcción e inmobiliario.',
+                    areaServed: {
+                        '@type': 'Country',
+                        name: 'Colombia'
+                    }
+                }
+            },
+            {
+                '@type': 'Offer',
+                itemOffered: {
+                    '@type': 'Service',
+                    name: 'Gestión de Escrituras y Contratos',
+                    description: 'Herramientas digitales para la creación y gestión de escrituras, contratos y documentos notariales.',
+                    areaServed: {
+                        '@type': 'Country',
+                        name: 'Colombia'
+                    }
+                }
+            },
+            {
+                '@type': 'Offer',
+                itemOffered: {
+                    '@type': 'Service',
+                    name: 'Reglamentos y Documentación Legal',
+                    description: 'Plantillas para reglamentos de propiedad horizontal y documentación legal inmobiliaria.',
+                    areaServed: {
+                        '@type': 'Country',
+                        name: 'Colombia'
+                    }
+                }
+            }
+        ]
+    }
 };
 

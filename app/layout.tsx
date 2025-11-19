@@ -16,6 +16,7 @@ import '../styles/demo/Demos.scss';
 import AlertModal from '@components/Modals/AlertModal';
 import AlertGuardModal from '@components/Modals/AlertGuardModal';
 import AdditionalMetaTags from '@components/SEO/AdditionalMetaTags';
+import { structuredData } from '../config/seo';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     addLocale('es', {
@@ -28,11 +29,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         today: 'Hoy',
         clear: 'Limpiar'
     });
+
     return (
         <html lang="es" suppressHydrationWarning>
             <head>
                 <meta charSet="utf-8" />
                 <AdditionalMetaTags />
+                <script
+                    id="structured-data-script"
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
                 <link id="theme-link" href={`/theme/theme-light/blue/theme.css`} rel="stylesheet"></link>
             </head>
             <body>

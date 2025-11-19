@@ -16,6 +16,7 @@ export interface INodeGeneral {
     article?: boolean;
     paragraph?: boolean;
     document?: string | boolean;
+    children?: INodeGeneral[];
 }
 
 export interface INodeParagraph extends INodeGeneral {}

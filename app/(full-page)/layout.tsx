@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     robots: { index: true, follow: true },
     viewport: { initialScale: 1, width: 'device-width' },
     openGraph: {
-        type: seoConfig.type,
+        type: 'website' as const,
         title: seoConfig.fullTitle,
         url: seoConfig.url,
         description: seoConfig.description,

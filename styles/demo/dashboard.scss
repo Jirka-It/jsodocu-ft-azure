@@ -1,0 +1,67 @@
+// Animaciones para el Dashboard
+
+@keyframes fadeindown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeinup {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeinleft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeinright {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fadeindown {
+    animation: fadeindown 0.5s ease-out forwards;
+}
+
+.fadeinup {
+    animation: fadeinup 0.7s ease-out forwards;
+}
+
+.fadeinleft {
+    animation: fadeinleft 0.5s ease-out forwards;
+}
+
+.fadeinright {
+    animation: fadeinright 0.5s ease-out forwards;
+}
+
+// Asegurar que los elementos con opacity-0 no sean visibles antes de la animación
+.opacity-0 {
+    opacity: 0;
+}
+

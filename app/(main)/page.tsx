@@ -47,6 +47,7 @@ const ordersChartOptions = {
 const Dashboard = () => {
     const [ordersChart, setOrdersChart] = useState(null);
     const [data, setData] = useState<IUserDashboard>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         getData();
@@ -79,6 +80,11 @@ const Dashboard = () => {
             const photo = await findFile({ filePath: res.photo });
 
             setData({ ...res, photo: URL.createObjectURL(photo) });
+            
+            // Activar animaciones después de cargar los datos
+            setTimeout(() => {
+                setIsLoaded(true);
+            }, 100);
         }
     };
 
@@ -87,7 +93,7 @@ const Dashboard = () => {
     return (
         <div className="layout-dashboard">
             {data ? (
-                <div className="grid">
+                <div className={`grid ${isLoaded ? 'fadeindown' : 'opacity-0'}`}>
                     <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
                 </div>
             ) : (
@@ -95,25 +101,25 @@ const Dashboard = () => {
             )}
 
             <div className="grid mb-4">
-                <div className="col-12 md:col-6 lg:col-3">
+                <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinleft' : 'opacity-0'}`} style={{ animationDelay: '0.1s' }}>
                     <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" value={data?.inEdition} iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
-                <div className="col-12 md:col-6 lg:col-3">
+                <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinleft' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
                     <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" value={data?.inReview} iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
 
-                <div className="col-12 md:col-6 lg:col-3">
+                <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinright' : 'opacity-0'}`} style={{ animationDelay: '0.3s' }}>
                     <HomeInformationCard title={'Documentos Aprobados'} icon="pi pi-chart-line" value={data?.approved} iconColor="text-green-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                 </div>
 
-                <div className="col-12 md:col-6 lg:col-3">
+                <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinright' : 'opacity-0'}`} style={{ animationDelay: '0.4s' }}>
                     <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={`${data?.averageUsePercentage || 0}%`} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                 </div>
             </div>
 
             <div className="grid">
                 <div className="col-12">
-                    <div className="card">
+                    <div className={`card ${isLoaded ? 'fadeinup' : 'opacity-0'}`} style={{ animationDelay: '0.5s' }}>
                         {/*
                         <div className="flex w-full justify-content-between align-items-center">
                             <h4>Promedio Uso</h4>

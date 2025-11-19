@@ -1,0 +1,15 @@
+# robots.txt para Sodocu
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /configuration/
+Disallow: /dashboard-banking/
+Disallow: /documents/
+Disallow: /documents-types/
+Disallow: /templates/
+Disallow: /categories/
+Disallow: /auth/
+
+# Sitemap
+Sitemap: https://sodocu.com/sitemap.xml
+

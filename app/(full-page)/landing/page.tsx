@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { StyleClass } from 'primereact/styleclass';
 import { classNames } from 'primereact/utils';
 import { Page } from '@customTypes/layout';
+import StructuredData from '@components/SEO/StructuredData';
 
 const LandingPage: Page = () => {
     const [isHidden, setIsHidden] = useState(false);
@@ -17,7 +18,9 @@ const LandingPage: Page = () => {
     };
 
     return (
-        <div className="relative overflow-hidden flex flex-column justify-content-center">
+        <>
+            <StructuredData />
+            <div className="relative overflow-hidden flex flex-column justify-content-center">
             <div className="absolute top-0 bg-shape-top bg-no-repeat bg-cover w-full"></div>
             <div id="home" className="pages-wrapper z-1">
                 <div className="px-4 md:px-8 flex align-items-center justify-content-between relative lg:static" style={{ minHeight: '80px' }}>
@@ -342,6 +345,7 @@ const LandingPage: Page = () => {
                 <div className="absolute bottom-0 bg-shape-bottom bg-no-repeat bg-cover w-full"></div>
             </div>
         </div>
+        </>
     );
 };
 

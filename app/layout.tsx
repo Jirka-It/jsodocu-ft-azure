@@ -15,6 +15,7 @@ import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
 import AlertModal from '@components/Modals/AlertModal';
 import AlertGuardModal from '@components/Modals/AlertGuardModal';
+import AdditionalMetaTags from '@components/SEO/AdditionalMetaTags';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     addLocale('es', {
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         clear: 'Limpiar'
     });
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="es" suppressHydrationWarning>
             <head>
+                <meta charSet="utf-8" />
+                <AdditionalMetaTags />
                 <link id="theme-link" href={`/theme/theme-light/blue/theme.css`} rel="stylesheet"></link>
             </head>
             <body>

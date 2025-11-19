@@ -47,7 +47,6 @@ const ordersChartOptions = {
 const Dashboard = () => {
     const [ordersChart, setOrdersChart] = useState(null);
     const [data, setData] = useState<IUserDashboard>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         getData();
@@ -78,22 +77,16 @@ const Dashboard = () => {
 
                 console.log('res', res);
 
-                const photo = await findFile({ filePath: res.photo });
-
-                setData({ ...res, photo: URL.createObjectURL(photo) });
-                
-                // Activar animaciones después de cargar los datos
-                setTimeout(() => {
-                    setIsLoaded(true);
-                }, 100);
-            } else {
-                // Si hay un error, aún así mostrar el contenido sin animación
-                setIsLoaded(true);
+                try {
+                    const photo = await findFile({ filePath: res.photo });
+                    setData({ ...res, photo: URL.createObjectURL(photo) });
+                } catch (photoError) {
+                    console.error('Error loading photo:', photoError);
+                    setData({ ...res, photo: null });
+                }
             }
         } catch (error) {
             console.error('Error loading dashboard:', error);
-            // En caso de error, asegurar que el contenido se muestre sin animación
-            setIsLoaded(true);
         }
     };
 
@@ -102,7 +95,7 @@ const Dashboard = () => {
     return (
         <div className="layout-dashboard">
             {data ? (
-                <div className={`grid ${isLoaded ? 'fadeindown' : ''}`}>
+                <div className="grid">
                     <AvatarInformation name={`${data?.name} ${data?.lastName}`} account={data?.account} photo={data?.photo} roles={data?.roles} />
                 </div>
             ) : (
@@ -111,18 +104,18 @@ const Dashboard = () => {
 
             {data && (
                 <div className="grid mb-4">
-                    <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinleft' : ''}`} style={{ animationDelay: '0.1s' }}>
+                    <div className="col-12 md:col-6 lg:col-3">
                         <HomeInformationCard title={'Documentos Realizados'} icon="pi pi-file" value={data?.inEdition} iconColor="text-blue-500	" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                     </div>
-                    <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinleft' : ''}`} style={{ animationDelay: '0.2s' }}>
+                    <div className="col-12 md:col-6 lg:col-3">
                         <HomeInformationCard title={'Validaciones Pendientes'} icon="pi pi-box" value={data?.inReview} iconColor="text-red-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                     </div>
 
-                    <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinright' : ''}`} style={{ animationDelay: '0.3s' }}>
+                    <div className="col-12 md:col-6 lg:col-3">
                         <HomeInformationCard title={'Documentos Aprobados'} icon="pi pi-chart-line" value={data?.approved} iconColor="text-green-500" color="text-green-500" iconArrow="pi pi-arrow-up-right" />
                     </div>
 
-                    <div className={`col-12 md:col-6 lg:col-3 ${isLoaded ? 'fadeinright' : ''}`} style={{ animationDelay: '0.4s' }}>
+                    <div className="col-12 md:col-6 lg:col-3">
                         <HomeInformationCard title={'Promedio Uso'} icon="pi pi-clock" value={`${data?.averageUsePercentage || 0}%`} iconColor="text-orange-500" color="text-red-500" iconArrow="pi pi-arrow-down-right" />
                     </div>
                 </div>
@@ -130,7 +123,7 @@ const Dashboard = () => {
 
             <div className="grid">
                 <div className="col-12">
-                    <div className={`card ${isLoaded ? 'fadeinup' : ''}`} style={{ animationDelay: '0.5s' }}>
+                    <div className="card">
                         {/*
                         <div className="flex w-full justify-content-between align-items-center">
                             <h4>Promedio Uso</h4>

@@ -60,6 +60,11 @@
     animation: fadeinright 0.5s ease-out forwards;
 }
 
+// Asegurar que los elementos sean visibles por defecto
+.layout-dashboard > * {
+    opacity: 1;
+}
+
 // Asegurar que los elementos con opacity-0 no sean visibles antes de la animación
 .opacity-0 {
     opacity: 0;

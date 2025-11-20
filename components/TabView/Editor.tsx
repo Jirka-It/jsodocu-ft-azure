@@ -4,6 +4,7 @@ import { Toast } from 'primereact/toast';
 import ReactQuill from 'react-quill';
 import { Badge } from 'primereact/badge';
 import { Tooltip } from 'primereact/tooltip';
+import { Paginator } from 'primereact/paginator';
 
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
@@ -40,7 +41,6 @@ export default function Editor({ inReview }) {
     const params = useParams();
     const [timer, setTimer] = useState(null);
     const [doc, setDoc] = useState<IDocument>(null);
-    const [nodes, setNodes] = useState<Array<INode>>();
     const [modules, setModules] = useState<any>(null);
     const [openModalClose, setOpenModalClose] = useState<boolean>(false);
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -53,6 +53,11 @@ export default function Editor({ inReview }) {
     const [inputClicked, setInputClicked] = useState<boolean>(false);
     const [nodeSelectedToDelete, setNodeSelectedToDelete] = useState<INodeGeneral>(null);
     const [expandedKeys, setExpandedKeys] = useState<any>();
+
+    //Pagination
+    const [nodes, setNodes] = useState<Array<INode>>([]);
+    const [currentPage, setCurrentPage] = useState(0); // PrimeReact usa base 0
+    const [rows, setRows] = useState(4); // Items por página
 
     useEffect(() => {
         getChapters();
@@ -83,6 +88,14 @@ export default function Editor({ inReview }) {
         setDoc(res);
     };
 
+    const first = currentPage * rows;
+    const currentItems = nodes.slice(first, first + rows);
+
+    const onPageChange = (event: any) => {
+        setCurrentPage(event.page);
+        setRows(event.rows);
+    };
+
     //Quill functions
 
     // Get data and quill's modules
@@ -96,7 +109,6 @@ export default function Editor({ inReview }) {
             });
 
             setExpandedKeys(keys);
-
             setNodes(res.data);
         }
     };
@@ -475,9 +487,12 @@ export default function Editor({ inReview }) {
                 )}
 
                 {doc && nodes && nodes.length > 0 ? (
-                    <div className="editor-tree">
-                        <Tree value={nodes} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
-                    </div>
+                    <>
+                        <div className="editor-tree">
+                            <Tree value={currentItems} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
+                        </div>
+                        <Paginator first={first} rows={rows} totalRecords={nodes.length} onPageChange={onPageChange} template="PrevPageLink PageLinks NextPageLink" />
+                    </>
                 ) : (
                     ''
                 )}

@@ -245,7 +245,7 @@ export default function Revision({ inReview }) {
 
                 <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
                 <div className="mt-3 flex justify-content-end">
-                    <Button onClick={fetchMoreData} label={`${emptyRequest ? 'Documento cargado' : 'Ver más'}`} severity={`${emptyRequest ? 'success' : 'danger'}`} />
+                    <Button onClick={fetchMoreData} label={`${emptyRequest ? 'Documento completo' : 'Ver más'}`} severity={`${emptyRequest ? 'success' : 'danger'}`} />
                 </div>
             </div>
         </section>

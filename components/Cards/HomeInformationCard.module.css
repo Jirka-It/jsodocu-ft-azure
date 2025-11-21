@@ -1,3 +1,10 @@
+.layout-home-card 
+{
+    height: 100%;
+
+}
+
+
 .layout-home-card div:global(.p-card-title) {
     font-weight: 600;
     font-size: 1.2rem;

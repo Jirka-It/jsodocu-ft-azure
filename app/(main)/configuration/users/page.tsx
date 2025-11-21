@@ -50,16 +50,19 @@ const Users = () => {
         if (accountFilter !== null) {
             getDataAccounts();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedAccountFilter]);
 
     useEffect(() => {
         if (rolFilter !== null) {
             getDataRoles();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedAccountRol]);
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checked, debouncedSearchParam, account, rol]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {

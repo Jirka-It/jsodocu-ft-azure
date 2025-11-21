@@ -47,6 +47,7 @@ export default function UserModal({ state, setState, update, data, toast }: IMod
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     useEffect(() => {

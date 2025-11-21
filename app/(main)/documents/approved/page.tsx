@@ -164,10 +164,10 @@ const Documents = () => {
                     <Column
                         field="actions"
                         body={(rowData) => (
-                            <>
+                            <div className="flex">
                                 <Button onClick={() => handleView(rowData?._id)} icon="pi pi-eye" className="mr-2" severity="help" tooltip="Revisar" />
                                 <Button onClick={() => handleExport(rowData)} icon="pi pi-file-import" className="mr-2" tooltip="Exportar" />
-                            </>
+                            </div>
                         )}
                         header="Acciones"
                     ></Column>

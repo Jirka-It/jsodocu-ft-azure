@@ -30,6 +30,7 @@ export default function Revision({ inReview }) {
     const [user, setUser] = useState<any>('');
     const [doc, setDoc] = useState<IDocument>(null);
     const [variables, setVariables] = useState<Array<IVariableLight>>([]);
+    const [emptyRequest, setEmptyRequest] = useState<boolean>(false);
 
     const [comments, setComments] = useState<number>(0);
     const [length, setLength] = useState(1);
@@ -93,7 +94,7 @@ export default function Revision({ inReview }) {
                 setUser(res.creator);
             }
 
-            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 5 });
+            const resChapter = await findAllPreview(paramsUrl.id, { page: 1, size: 2 });
 
             setContent(content + (res.title ?? '') + '\n' + resChapter);
         } catch (error) {
@@ -107,6 +108,8 @@ export default function Revision({ inReview }) {
         if (res) {
             setLength(length + 1);
             setContent(content + res);
+        } else {
+            setEmptyRequest(true);
         }
     };
 
@@ -240,9 +243,10 @@ export default function Revision({ inReview }) {
                     </div>
                 </div>
 
-                <InfiniteScroll dataLength={length} next={fetchMoreData} hasMore={true} loader="" height={700} className="ql-editor">
-                    <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
-                </InfiniteScroll>
+                <div className={`shadow-1 p-2 ${stylesRevision['editor']}`} dangerouslySetInnerHTML={{ __html: replaceText(content, variables) }}></div>
+                <div className="mt-3 flex justify-content-end">
+                    <Button onClick={fetchMoreData} label={`${emptyRequest ? 'Documento cargado' : 'Ver más'}`} severity={`${emptyRequest ? 'success' : 'danger'}`} />
+                </div>
             </div>
         </section>
     );

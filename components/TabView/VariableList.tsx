@@ -185,7 +185,7 @@ export default function VariableList() {
     };
 
     return (
-        <InfiniteScroll dataLength={variables.length} next={fetchMoreData} hasMore={true} loader={''}>
+        <InfiniteScroll dataLength={variables?.length} next={fetchMoreData} hasMore={true} loader={''}>
             <section>
                 <Toast ref={toast} />
                 <div className="w-full sm:flex justify-content-between mb-3">

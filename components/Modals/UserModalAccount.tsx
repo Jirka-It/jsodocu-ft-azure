@@ -42,6 +42,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     useEffect(() => {
@@ -61,6 +62,7 @@ export default function UserModalAccount({ state, setState, update, data, accoun
             setStateUser(states[0]);
             setTarget([]);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     const headerElement = (

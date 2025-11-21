@@ -39,6 +39,7 @@ export default function RolModal({ state, setState, update, data, toast }: IModa
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     useEffect(() => {

@@ -31,6 +31,7 @@ const Roles = () => {
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checked, debouncedSearchParam]);
 
     const getData = async (page: number = 1, size: number = data ? data?.elementsByPage : 10) => {

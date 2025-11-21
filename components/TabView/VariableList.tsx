@@ -57,6 +57,7 @@ export default function VariableList() {
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category, debouncedSearchParam]);
 
     useEffect(() => {

@@ -455,7 +455,7 @@ export default function Editor({ inReview }) {
             {openModal && nodeSelected ? <FileModal state={openModal} toast={toast} data={nodeSelected} setState={(e) => setOpenModal(e)} /> : ''}
             <DeleteEditorModal state={openModalClose} setState={(e) => setOpenModalClose(e)} remove={() => deleteNode()} />
 
-            <div className="col-12 lg:col-3">
+            <div className="col-12 lg:col-4 xl:col-3">
                 <h5 className="m-0">{doc?.name}</h5>
                 <p className="m-0 text-blue-500">{doc?.type?.name}</p>
 
@@ -491,14 +491,14 @@ export default function Editor({ inReview }) {
                         <div className="editor-tree">
                             <Tree value={currentItems} nodeTemplate={nodeTemplate} expandedKeys={expandedKeys} onToggle={(e) => setExpandedKeys(e.value)} className={`w-full pl-0 ${styles['tree']}`} />
                         </div>
-                        <Paginator first={first} rows={rows} totalRecords={nodes.length} onPageChange={onPageChange} template="PrevPageLink PageLinks NextPageLink" />
+                        <Paginator first={first} rows={rows} totalRecords={nodes.length} onPageChange={onPageChange} pageLinkSize={4} template="PrevPageLink PageLinks NextPageLink" />
                     </>
                 ) : (
                     ''
                 )}
             </div>
 
-            <div className="col-12 lg:col-9 text-center" ref={editorDiv}>
+            <div className="col-12 lg:col-8 xl:col-9 text-center" ref={editorDiv}>
                 {modules && nodeSelected ? (
                     <>
                         <div className="flex justify-content-between">

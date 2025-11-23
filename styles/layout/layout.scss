@@ -128,7 +128,7 @@ comment {
 
 .editor-tree {
     height: calc(100vh - 20rem);
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .ql-editor {

@@ -1,7 +1,5 @@
 import { State } from '@enums/StateEnum';
 import { Button } from 'primereact/button';
-import { VerifyPermissions } from '@lib/Permissions';
-import { Permission } from '@enums/PermissionEnum';
 import { useSession } from 'next-auth/react';
 
 const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, handleTemplateToDoc, handleDelete }) => {
@@ -9,7 +7,7 @@ const TemplateInformationCard = ({ name, type, state, handleView, handleEdit, ha
 
     return (
         <div className="col-12 md:col-6 lg:col-3">
-            <div className="shadow-2 p-4 m-2 surface-card border-round">
+            <div className="shadow-2 p-4 m-2 surface-card border-round h-full">
                 <div className="relative mb-3">
                     <div className="absolute right-0 flex flex-column">
                         <Button onClick={() => handleEdit()} tooltip="Editar plantilla" className="mb-2" icon="pi pi-pencil" aria-label="Edit template" />

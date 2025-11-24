@@ -9,7 +9,7 @@ const TemplateDefaultInformationCard = ({ name, type, state, handleView, handleE
 
     return (
         <div className="col-12 md:col-6 lg:col-3">
-            <div className="shadow-2 p-4 m-2 surface-card border-round">
+            <div className="shadow-2 p-4 m-2 surface-card border-round h-full">
                 <div className="relative mb-3">
                     <div className="absolute right-0 flex flex-column">
                         {VerifyPermissions(session?.access_token, [Permission.EDIT_DEFAULT_TEMPLATES_BUTTON]) ? (

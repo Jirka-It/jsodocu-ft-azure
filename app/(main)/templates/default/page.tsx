@@ -115,6 +115,7 @@ const Documents = () => {
                 </div>
 
                 <DataView
+                    emptyMessage="Sin resultados"
                     value={data?.data}
                     lazy
                     paginator={true}
